@@ -1,4 +1,4 @@
-TARGET = App0
+TARGET = SongBook_Editor
 TEMPLATE = app
 
 SOURCES +=\
@@ -22,5 +22,7 @@ DISTFILES += \
     resource.rc
 
 HEADERS += \
-    app.h
+    app.h \
+    version.h \
+    config.h
 

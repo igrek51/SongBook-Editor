@@ -115,9 +115,9 @@ void App::wm_create(HWND *window){
 		int screen_h = GetDeviceCaps(screen, VERTRES);
 		DeleteDC(screen);
 		SetWindowPos(hwnd,HWND_TOP,0,0,screen_w/2,screen_h-30,0);
-	}
-    //baza akordów na start
-    if(config_chordsbase_on_startup==1){
+    }
+    //baza akordów na start (jeœli nie by³ otwierany wybrany plik)
+    if(config_chordsbase_on_startup==1 && argc<2){
         chordsbase();
     }
 	echo("wersja "+version);

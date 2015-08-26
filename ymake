@@ -24,7 +24,7 @@ COMPILER_FLAGS=
 -Wall
 
 LINKER_FLAGS=
--Wall -mwindows -s
+-Wall -s -mwindows
 
 RESOURCE=
 resource.rc

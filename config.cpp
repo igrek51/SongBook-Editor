@@ -1,4 +1,29 @@
 #include "app.h"
+#include "config.h"
+
+Config* Config::instance = NULL;
+
+Config* Config::geti(){
+    if(instance == NULL){
+        instance = new Config();
+    }
+    return instance;
+}
+
+Config::Config(){
+    songs_dir = ".";
+	config_halfscreen = 0;
+    config_fontface = "Calibri";
+    config_fontsize1 = 18;
+    config_fontsize2 = 18;
+    config_log_enabled = 1;
+    config_pasek_enabled = 1;
+    config_autoscroll_scale = 0;
+    config_chordsbase_on_startup = 0;
+    autoscroll_interval = 500;
+	autoscroll_wait = 35;
+}
+
 
 string get_config_string(string group, string name, string def, string filename){
 	char *temp = new char [512];
