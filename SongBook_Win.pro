@@ -16,7 +16,9 @@ SOURCES +=\
     richedit.cpp \
     subclassing.cpp \
     transpose.cpp \
-    wm.cpp
+    wm.cpp \
+    system_windows.cpp \
+    log.cpp
 
 DISTFILES += \
     resource.rc
@@ -24,5 +26,8 @@ DISTFILES += \
 HEADERS += \
     app.h \
     version.h \
-    config.h
+    config.h \
+    system.h \
+    files.h \
+    log.h
 
