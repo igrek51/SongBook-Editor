@@ -1,5 +1,6 @@
 #include "config.h"
 #include "files.h"
+#include "log.h"
 
 Config* Config::instance = NULL;
 
@@ -13,16 +14,18 @@ Config* Config::geti(){
 Config::Config(){
     //Sta³e
     config_filename = "conf.ini";
+    log_filename = "log.txt";
     //Zmienne
+    //wczytywane z pliku - wartoœci domyœlne
     songs_dir = ".";
-	config_halfscreen = 0;
-    config_fontface = "Calibri";
-    config_fontsize1 = 18;
-    config_fontsize2 = 18;
-    config_log_enabled = 1;
-    config_pasek_enabled = 1;
-    config_autoscroll_scale = 0;
-    config_chordsbase_on_startup = 0;
+    fontface = "Calibri";
+	halfscreen = false;
+    log_enabled = true;
+    toolbar_show = true;
+    autoscroll_scale = false;
+    chordsbase_on_startup = false;
+    fontsize1 = 18;
+    fontsize2 = 18;
     autoscroll_interval = 500;
 	autoscroll_wait = 35;
 }
@@ -34,24 +37,24 @@ ConfigVariable::ConfigVariable(string name, string value){
 
 
 void Config::load_from_file(){
-    Log::ok("Wczytywanie ustawieñ");
+    Log::log("Wczytywanie ustawieñ");
     if(!file_exists(config_filename)){
-        Log::error("Brak pliku konfiguracyjnego");
+        Log::error("Brak pliku konfiguracyjnego - wczytanie wartoœci domyœlnych");
         return;
     }
     vector<ConfigVariable*>* variables = get_config_variables(config_filename);
     //odczyt zmiennych
 	songs_dir = get_config_string(variables, "songs_dir");
-	config_fontface = get_config_string(variables, "fontface");
+	fontface = get_config_string(variables, "fontface");
 	autoscroll_interval = get_config_int(variables, "autoscroll_interval");
 	autoscroll_wait = get_config_int(variables, "autoscroll_wait");
-	config_autoscroll_scale = get_config_int(variables, "autoscroll_scale");
-	config_halfscreen = get_config_int(variables, "halfscreen");
-    config_fontsize1 = get_config_int(variables, "fontsize1");
-    config_fontsize2 = get_config_int(variables, "fontsize2");
-    config_log_enabled = get_config_int(variables, "log_enabled");
-    config_pasek_enabled = get_config_int(variables, "toolbar_show");
-    config_chordsbase_on_startup = get_config_int(variables, "chordsbase_on_startup");
+	autoscroll_scale = get_config_bool(variables, "autoscroll_scale");
+	halfscreen = get_config_bool(variables, "halfscreen");
+    fontsize1 = get_config_int(variables, "fontsize1");
+    fontsize2 = get_config_int(variables, "fontsize2");
+    log_enabled = get_config_bool(variables, "log_enabled");
+    toolbar_show = get_config_bool(variables, "toolbar_show");
+    chordsbase_on_startup = get_config_bool(variables, "chordsbase_on_startup");
     //sprz¹tanie
     for(unsigned int i=0; i<variables->size(); i++){
         delete variables->at(i);
@@ -119,4 +122,12 @@ int Config::get_config_int(vector<ConfigVariable*>* variables, string name){
     string s = get_config_string(variables, name);
     if(s.length()==0) return 0;
     return atoi(s.c_str());
+}
+
+bool Config::get_config_bool(vector<ConfigVariable*>* variables, string name){
+    string s = get_config_string(variables, name);
+    if(s.length()==0) return false;
+    if(s=="true") return true;
+    if(s=="1") return true;
+    return false;
 }

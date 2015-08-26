@@ -1,5 +1,15 @@
 #include "app.h"
 
+App* App::instance = NULL;
+
+App* App::geti(){
+    if(instance == NULL){
+        instance = new App();
+    }
+    return instance;
+}
+
+
 App::App(int w, int h, string version, int ctrls){
     this->version = version+" (win)";
 	window_w=w;
@@ -20,13 +30,13 @@ App::App(int w, int h, string version, int ctrls){
 }
 
 App::~App(){
-	log("Clean up...");
+	Log::log("Clean up...");
 	autoscroll_off();
 	for(int i=0; i<ctrls_num; i++){
 		un_subclass(i);
 		if(hctrl[i]!=NULL) DestroyWindow(hctrl[i]);
     }
-	log("Goodbye World...");
+	Log::log("Goodbye World...");
 	PostQuitMessage(0);
 }
 

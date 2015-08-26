@@ -1,36 +1,59 @@
-#include "app.h"
+#include "io.h"
+#include "config.h"
+#include "system.h"
+#include "files.h"
 #include <fstream>
+#include <sstream>
 #include <ctime>
 
-string get_time_date(){
-	time_t rawtime;
-	struct tm *timeinfo;
-  time(&rawtime);
-  timeinfo = localtime(&rawtime);
-  stringstream ss2;
-  if(timeinfo->tm_hour<10) ss2<<"0";
-  ss2<<timeinfo->tm_hour<<":";
-  if(timeinfo->tm_min<10) ss2<<"0";
-  ss2<<timeinfo->tm_min<<":";
-  if(timeinfo->tm_sec<10) ss2<<"0";
-  ss2<<timeinfo->tm_sec<<", ";
-  if(timeinfo->tm_mday<10) ss2<<"0";
-  ss2<<timeinfo->tm_mday<<".";
-  if(timeinfo->tm_mon+1<10) ss2<<"0";
-  ss2<<timeinfo->tm_mon+1<<".";
-  ss2<<timeinfo->tm_year+1900;
-  return ss2.str();
+IO* IO::instance = NULL;
+
+IO* IO::geti(){
+    if(instance == NULL){
+        instance = new IO();
+    }
+    return instance;
 }
 
-void App::log(string l){
-	if(config_log_enabled!=1) return;
-	fstream plik;
-	plik.open("log.txt",fstream::out|fstream::app);
-	plik<<get_time_date()<<" - "<<l<<endl;
-	plik.close();
+IO::IO(){
+    last_echo = "";
+    clear_log();
 }
 
-void App::echo(string s){
+
+void IO::clear_log(){
+    clear_file(Config::log_filename);
+}
+
+void IO::log(string l){
+    fstream plik;
+    plik.open(Config::log_filename.c_str(), fstream::out|fstream::app);
+    if(!plik.good()){
+        plik.close();
+        message_box("B³¹d", "B³¹d zapisu do pliku dziennika: "+Config::log_filename);
+        return;
+    }
+    plik<<get_time()<<" - "<<l<<endl;
+    plik.close();
+}
+
+void IO::log(int l){
+    stringstream ss;
+    ss<<l;
+    log(ss.str());
+}
+
+void IO::error(string l){
+    echo("[ B£¥D ! ] - "+l);
+}
+
+void IO::critical_error(string l){
+    echo("[ B£¥D KRYTYCZNY ! ] - "+l);
+    message_box("B³¹d", l);
+}
+
+
+void IO::echo(string s){
 	//powtarzaj¹ce siê komunikaty
 	if(s==last_echo){
 		if(repeated_echo==0) repeated_echo=1;
@@ -44,21 +67,24 @@ void App::echo(string s){
 		ss<<s<<" ("<<repeated_echo<<")";
 		s=ss.str();
 	}
+
+
+
 	SetWindowText(hctrl[1],s.c_str());
 	UpdateWindow(hwnd);
+
+
+
 	log(s);
 }
 
-void App::echo(int e){
-	ss_clear(ss);
-	ss<<e;
-	echo(ss.str());
+void IO::echo(int e){
+    stringstream ss;
+    ss<<e;
+    echo(ss.str());
 }
 
-void App::ss_clear(stringstream &sstream){
-	sstream.str("");
-	sstream.clear();
-}
+
 
 void App::get_argv(){
 	string arg=GetCommandLine();
@@ -127,6 +153,25 @@ bool App::is_arg(string par){
 	return false;
 }
 
-void App::message(string m){
-	MessageBox(hwnd,m.c_str(),"Info",MB_OK|MB_ICONINFORMATION);
+
+
+
+string get_time(){
+    time_t rawtime;
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    stringstream ss2;
+    if(timeinfo->tm_hour<10) ss2<<"0";
+    ss2<<timeinfo->tm_hour<<":";
+    if(timeinfo->tm_min<10) ss2<<"0";
+    ss2<<timeinfo->tm_min<<":";
+    if(timeinfo->tm_sec<10) ss2<<"0";
+    ss2<<timeinfo->tm_sec;
+    return ss2.str();
+}
+
+void ss_clear(stringstream &sstream){
+	sstream.str("");
+	sstream.clear();
 }

@@ -17,8 +17,7 @@ SOURCES +=\
     subclassing.cpp \
     transpose.cpp \
     wm.cpp \
-    system_windows.cpp \
-    log.cpp
+    system.cpp
 
 DISTFILES += \
     resource.rc
@@ -29,5 +28,6 @@ HEADERS += \
     config.h \
     system.h \
     files.h \
-    log.h
+    log.h \
+    io.h
 

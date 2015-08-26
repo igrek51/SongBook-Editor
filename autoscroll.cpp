@@ -2,7 +2,7 @@
 #include <richedit.h>
 
 void App::autoscroll_exec(){
-	log("Timer...");
+	Log::log("Timer...");
 	if(autoscroll_count==0){
 		KillTimer(hwnd,1);
 		SetTimer(hwnd,1,autoscroll_interval,(TIMERPROC)NULL);
@@ -46,7 +46,7 @@ void App::autoscroll_on(){
 	ss<<"Autoscroll w³¹czony (opóŸnienie: "<<autoscroll_wait<<" s, interwa³: "<<autoscroll_interval<<" ms)";
 	echo(ss.str());
 	SetTimer(hwnd,1,autoscroll_wait*1000,(TIMERPROC)NULL);
-	log("Timer on");
+	Log::log("Timer on");
 }
 
 void App::autoscroll_nowait(int change){
@@ -69,7 +69,7 @@ void App::autoscroll_nowait(int change){
 	ss_clear(ss);
 	ss<<"Autoscroll w³¹czony (interwa³: "<<autoscroll_interval<<" ms)";
 	echo(ss.str());
-	log("Timer on - nowait");
+	Log::log("Timer on - nowait");
 	autoscroll_exec();
 }
 
@@ -78,7 +78,7 @@ void App::autoscroll_off(){
 	KillTimer(hwnd,1);
 	autoscroll = false;
 	SetWindowText(hctrl[18],"Autoscroll: off");
-	log("Timer off");
+	Log::log("Timer off");
 }
 
 void App::autoscroll_switch(){

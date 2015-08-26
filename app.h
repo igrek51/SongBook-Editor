@@ -1,16 +1,20 @@
 #ifndef APP_H
 #define APP_H
 
-#include <windows.h>
+#include <iostream>
 #include <sstream>
+#include "config.h"
+#include "log.h"
 
 using namespace std;
 
-class App{
+class App {
 private:
+    static App* instance;
 	int ctrls_num;
 	HWND hwnd;
 public:
+    static App* geti();
 	App(int w, int h, string version, int ctrls = 0);
 	~App();
 	HWND *hctrl;
@@ -36,16 +40,6 @@ public:
 	void message(string m);
 	void ss_clear(stringstream &sstream);
 	stringstream ss;
-	//config
-	string songs_dir;
-	int config_halfscreen;
-    string config_fontface;
-    int config_fontsize1;
-    int config_fontsize2;
-    int config_log_enabled;
-    int config_pasek_enabled;
-    int config_autoscroll_scale;
-    int config_chordsbase_on_startup;
 	//WM
 	void wm_create(HWND *window);
 	void wm_command(WPARAM wParam);

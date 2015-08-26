@@ -105,7 +105,7 @@ void App::wm_create(HWND *window){
 	//pasek schowany przy starcie
 	pasek_shown = true;
 	fullscreen_on = false;
-	if(config_pasek_enabled==0){
+	if(Config::toolbar_show==0){
 		pasek_switch(0);
 	}
 	//okno na po³owie ekranu

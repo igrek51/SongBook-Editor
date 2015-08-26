@@ -11,6 +11,8 @@ private:
 public:
     static System* geti();
 
+    bool dir_exists(string name);
+    void message_box(string title, string message);
 };
 
 #endif
