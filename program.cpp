@@ -13,6 +13,18 @@ void App::update_title(){
 	SetWindowText(main_window, ss.str().c_str());
 }
 
+void App::controls_fonts_set(){
+    for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
+        string fontface = Config::geti()->buttons_fontface;
+        int fontsize = Config::geti()->buttons_fontsize;
+        if(Controls::geti()->controls.at(i)->name == "editor"){
+            fontface = Config::geti()->editor_fontface;
+            fontsize = Config::geti()->editor_fontsize;
+        }
+        Controls::geti()->set_font(Controls::geti()->controls.at(i)->handle, fontface, fontsize);
+    }
+}
+
 void App::toolbar_switch(int change){
     if(change==1){
         Config::geti()->toolbar_show = true;

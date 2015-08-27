@@ -17,7 +17,7 @@ App::App(){
 }
 
 App::~App(){
-	IO::geti()->log("Clean up...");
+	IO::geti()->log("Sprz¹tanie...");
 	autoscroll_off();
     delete Controls::geti();
 	IO::geti()->log("Goodbye World...");

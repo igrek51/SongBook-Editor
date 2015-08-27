@@ -35,9 +35,9 @@ public:
     void event_syskeydown(WPARAM wParam);
 	void event_keydown(WPARAM wParam);
 	//  CMD
-	string last_cmd, param;
+	string last_cmd;
 	void exec_cmd();
-	void exec_cmd(string str2);
+	void exec_cmd(string cmd);
 	//  Pliki
 	void new_file();
 	void open_file(string filename);
@@ -94,6 +94,7 @@ public:
     void un_subclass(string name);
 	//  program - inne funkcje
 	void update_title();
+    void controls_fonts_set();
 	void toolbar_switch(int change=2);
 	void fullscreen_set(bool full);
     void quick_replace();

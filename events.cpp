@@ -73,19 +73,11 @@ void App::event_init(HWND *window){
     HWND editor_handle = CreateWindowEx(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, "", WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL, 0, 80, w, h-80, main_window, (HMENU)100, *hInst, 0);
     Controls::geti()->controls.push_back(new Control(editor_handle, "editor"));
 	//autoscroll edits
-    IO::geti()->log("Ustawianie kontrolek, zmiana czcionek...");
+    IO::geti()->log("Wype³nianie kontrolek, zmiana czcionek...");
     Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
     Controls::geti()->set_text("autoscroll_wait", Config::geti()->autoscroll_wait);
 	//czcionki
-    for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
-        string fontface = Config::geti()->buttons_fontface;
-        int fontsize = Config::geti()->buttons_fontsize;
-        if(Controls::geti()->controls.at(i)->name == "editor"){
-            fontface = Config::geti()->editor_fontface;
-            fontsize = Config::geti()->editor_fontsize;
-        }
-        Controls::geti()->set_font(Controls::geti()->controls.at(i)->handle, fontface, fontsize);
-    }
+    controls_fonts_set();
 	SetFocus(Controls::geti()->find("editor"));
 	//subclassing
     IO::geti()->log("Subclassing...");
