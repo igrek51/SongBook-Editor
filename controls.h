@@ -21,7 +21,6 @@ private:
 	static Controls* instance;
 public:
     static Controls* geti();
-	Controls();
     ~Controls();
     vector<Control*> controls;
     //  Wyszukiwanie kontrolek
