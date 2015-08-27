@@ -56,7 +56,7 @@ void App::exec_cmd(string cmd){
 	}else if(cmd1=="autoscroll_off"){
 		autoscroll_off();
 	}else if(cmd1=="siema"){
-		IO::geti()->message_box("","No siema :)");
+		IO::geti()->message_box("Wiadomoœæ","No siema :)");
 		SetFocus(Controls::geti()->find("cmd"));
 	}else if(cmd1=="new"){
 		new_file();

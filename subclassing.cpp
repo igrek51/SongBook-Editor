@@ -15,13 +15,12 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
         return 0;
     }
     string nazwa = kontrolka->name;
-    /*
 	//nowe procedury kontrolek
-	if(ctrl==0){ //wiersz poleceñ
+	if(nazwa=="cmd"){ //wiersz poleceñ
 		switch(message){
 			case WM_CHAR:{
 				if(wParam==VK_ESCAPE){
-					SetFocus(hctrl[2]);
+					SetFocus(Controls::geti()->find("editor"));
 					return 0;
 				}
 				if(wParam==VK_RETURN){
@@ -39,18 +38,18 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0; //przechwycenie
 				}
 				if(wParam==VK_UP){
-					SetWindowText(hctrl[0],last_cmd.c_str());
-					SendMessage(hctrl[0], EM_SETSEL, last_cmd.length(), last_cmd.length());
+                    Controls::geti()->set_text("cmd", last_cmd);
+					SendMessage(Controls::geti()->find("cmd"), EM_SETSEL, last_cmd.length(), last_cmd.length());
 					return 0;
 				}
 				if(wParam==VK_DOWN){
-					SetWindowText(hctrl[0],"");
+					Controls::geti()->set_text("cmd", "");
 					return 0;
 				}
 			}break;
 		}
 	}
-	if(ctrl==2){ //edytor
+	if(nazwa=="editor"){ //edytor
 		switch(message){
 			case WM_SYSCOMMAND:{
 				if(wParam==SC_SCREENSAVE){
@@ -59,13 +58,14 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				}
 			}break;
 			case WM_SYSKEYDOWN:{
-				if(wParam==VK_F10){
-				  subclass_wndproc_new(hctrl[2], WM_KEYDOWN, wParam, lParam);
-				  return 0;
-				}
-				if(wParam>='1'&&wParam<='9'){
-				  subclass_wndproc_new(hctrl[2], WM_KEYDOWN, wParam, lParam);
-					return 0;
+                if(wParam==VK_F10){
+                    //zamiana na KeyDown
+                    subclass_wndproc_new(Controls::geti()->find("editor"), WM_KEYDOWN, wParam, lParam);
+                    return 0;
+                }
+                if(wParam>='1'&&wParam<='9'){
+                    subclass_wndproc_new(Controls::geti()->find("editor"), WM_KEYDOWN, wParam, lParam);
+                    return 0;
 				}
 			}break;
 			case WM_KEYDOWN:{
@@ -105,18 +105,18 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 			case WM_CHAR:{
 				if(wParam==']'){
 					string add_text = "]";
-					SendMessage(hctrl[2], EM_REPLACESEL, 0, (LPARAM)add_text.c_str());
+					SendMessage(Controls::geti()->find("editor"), EM_REPLACESEL, 0, (LPARAM)add_text.c_str());
 					refresh_text();
 					CHARFORMAT cf;
                     cf.cbSize = sizeof(cf);
-					SendMessage(hctrl[2],EM_GETCHARFORMAT,SCF_SELECTION,(LPARAM)&cf);
+					SendMessage(Controls::geti()->find("editor"), EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
 					cf.dwMask = CFM_COLOR;
 					cf.crTextColor = RGB(255,255,255);
 					cf.dwEffects = 0;
-					SendMessage(hctrl[2],EM_SETCHARFORMAT,SCF_SELECTION,(LPARAM)&cf);
+					SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
 					cf.dwMask = CFM_BOLD;
 					cf.dwEffects = 0;
-					SendMessage(hctrl[2],EM_SETCHARFORMAT,SCF_SELECTION,(LPARAM)&cf);
+					SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
 					return 0;
 				}
 			}break;
@@ -132,7 +132,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 			}break;
 		}
 	}
-	if(ctrl==22){ //ukrycie paska
+	if(nazwa=="toolbar_toggle"){ //ukrycie paska
 		switch(message){
 			case WM_KEYDOWN:{
 				CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
@@ -140,10 +140,10 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 			}break;
 		}
 	}
-	if(ctrl==9){ //szukany ci¹g znaków
+	if(nazwa=="find_edit"){ //szukany ci¹g znaków
 		switch(message){
 			case WM_SETFOCUS:{
-				echo("(Szukany ci¹g znaków)");
+				IO::geti()->echo("(Szukany ci¹g znaków)");
 			}break;
 			case WM_CHAR:{
 				if(wParam==VK_RETURN){
@@ -151,16 +151,16 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 				if(wParam==VK_TAB){
-					SetFocus(hctrl[10]);
+					SetFocus(Controls::geti()->find("replace_edit"));
 					return 0;
 				}
 			}break;
 		}
 	}
-	if(ctrl==10){ //tekst do zamiany
+	if(nazwa=="replace_edit"){ //tekst do zamiany
 		switch(message){
 			case WM_SETFOCUS:{
-				echo("(Tekst po zamianie)");
+				IO::geti()->echo("(Tekst po zamianie)");
 			}break;
 			case WM_CHAR:{
 				if(wParam==VK_RETURN){
@@ -168,16 +168,16 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 				if(wParam==VK_TAB){
-					SetFocus(hctrl[9]);
+					SetFocus(Controls::geti()->find("find_edit"));
 					return 0;
 				}
 			}break;
 		}
 	}
-	if(ctrl==19){ //autoscroll_interval
+	if(nazwa=="autoscroll_interval"){ //autoscroll_interval
 		switch(message){
 			case WM_SETFOCUS:{
-				echo("(Czas miêdzy kolejnymi przebiegami autoscrolla - wyra¿ony w milisekundach)");
+				IO::geti()->echo("(Czas miêdzy kolejnymi przebiegami autoscrolla - wyra¿ony w milisekundach)");
 			}break;
 			case WM_CHAR:{
 				if(wParam==VK_RETURN){
@@ -187,10 +187,10 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 			}break;
 		}
 	}
-	if(ctrl==20){ //autoscroll_wait
+	if(nazwa=="autoscroll_wait"){ //autoscroll_wait
 		switch(message){
 			case WM_SETFOCUS:{
-				echo("(Czas opóŸnienia przed autoscrollem - wyra¿ony w sekundach)");
+				IO::geti()->echo("(Czas opóŸnienia przed autoscrollem - wyra¿ony w sekundach)");
 			}break;
 			case WM_CHAR:{
 				if(wParam==VK_RETURN){
@@ -200,7 +200,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 			}break;
 		}
 	}
-    */
 	return CallWindowProc(kontrolka->wndproc_old, hwnd, message, wParam, lParam);
 }
 

@@ -52,9 +52,9 @@ void App::event_init(HWND *window){
     x_paint+=buttonw;
 
     x_paint = 0; y_paint+=20;
-    Controls::geti()->create_edit("", x_paint, y_paint, buttonw*2, 20, "find_edit");
+    Controls::geti()->create_edit_center("", x_paint, y_paint, buttonw*2, 20, "find_edit");
     x_paint+=buttonw*2;
-    Controls::geti()->create_edit("", x_paint, y_paint, buttonw*2, 20, "replace_edit");
+    Controls::geti()->create_edit_center("", x_paint, y_paint, buttonw*2, 20, "replace_edit");
     x_paint+=buttonw*2;
     Controls::geti()->create_button("ZnajdŸ", x_paint, y_paint, buttonw, 20, "find");
     x_paint+=buttonw;
@@ -234,7 +234,7 @@ void App::event_syskeydown(WPARAM wParam){
 }
 
 void App::event_keydown(WPARAM wParam){
-	if(wParam==VK_RETURN||wParam==VK_SPACE||wParam==VK_ESCAPE){
+	if(wParam==VK_ESCAPE){
 		SetFocus(Controls::geti()->find("editor"));
 	}
 	if(wParam==VK_F1){
