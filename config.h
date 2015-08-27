@@ -26,7 +26,8 @@ public:
     //  Zmienne
     int window_w;
     int window_h;
-    //z pliku konfiguracyjnego
+    int control_height;
+    //  z pliku konfiguracyjnego
     string songs_dir;
     string editor_fontface;
     bool halfscreen;

@@ -13,8 +13,7 @@ App* App::geti(){
 
 App::App(){
     version = VERSION+" (win)";
-    //  TODO
-    window2 = NULL;
+    instancja2 = NULL;
 }
 
 App::~App(){
@@ -26,6 +25,5 @@ App::~App(){
 }
 
 void App::check_instance(string classname){
-    //  TODO
-    window2 = FindWindow(classname.c_str(),NULL);
+    instancja2 = FindWindow(classname.c_str(),NULL);
 }

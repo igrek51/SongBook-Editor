@@ -2,71 +2,80 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-void App::wm_create(HWND *window){
-	hwnd = *window;
+void App::event_create(HWND *window){
+	main_window = *window;
 	//parametry
-	get_argv();
+	System::geti()->get_args();
     //jeœli aplikacja jest ju¿ uruchomiona
-    if(argc==2&&window2!=NULL){ //jeden dodatkowy parametr - nazwa pliku do otwarcia
-        //save_file_line("please_open",argv[1]);
-        for(unsigned int i=0; i<argv[1].length(); i++){
-            SendMessage(window2, 0x0319, 69, (char)argv[1][i]);
+    if(IO::geti()->args.size()==2 && instancja2!=NULL){//jeden dodatkowy parametr - nazwa pliku do otwarcia
+        for(unsigned int i=0; i<IO::geti()->args.at(1).length(); i++){
+            SendMessage(instancja2, 0x0319, 69, (char)IO::geti()->args.at(1)[i]);
         }
-        SendMessage(window2, 0x0319, 69, 0);
+        SendMessage(instancja2, 0x0319, 69, 0);
         DestroyWindow(hwnd);
         return;
     }
 	//katalog roboczy
 	set_workdir();
 	//ustawienia
-	load_config();
-	transposed=0;
-	autoscroll=false;
-	opened_file="";
-	for(int i=0; i<9; i++) tekst_w[i]="";
-	repeated_echo = 0;
-	last_echo = "";
+    Config::geti()->load_from_file();
+	transposed = 0;
+	autoscroll = false;
+	opened_file = "";
+	for(int i=0; i<9; i++) tekst_wstaw[i]="";
     file_to_open = "";
 	//log
-	if(config_log_enabled==1) clear_file("log.txt");
-	log("Hello World...");
+	IO::geti()->clear_log();
+	IO::geti()->log("Hello World...");
 	//kontrolki
-    int x_paint, y_paint, buttonw = window_w/7;
-    int control_h = 22;
-    x_paint=0; y_paint=40;
-    hctrl[1]=create_static("",0,0,window_w-20,control_h,SS_CENTER|SS_CENTERIMAGE); //output
-    hctrl[0]=create_edit("",0,control_h,window_w,control_h,0); //wiersz poleceñ
+    int buttonw = Config::geti()->window_w/7;
+    int control_h = Config::geti()->control_height;
+    int x_paint=0;
+    int y_paint=40;
+    int w = Config::geti()->window_w;
+    int h = Config::geti()->window_h;
+    Controls::geti()->create_static_center("", 0, 0, w-20, h, "statusbar");
+    Controls::geti()->create_edit("", 0, control_h, w, control_h, "cmd");
 
-    hctrl[3]=create_button("Nowy",x_paint,y_paint,buttonw,20,1); x_paint+=buttonw;
-    hctrl[16]=create_button("Wczytaj",x_paint,y_paint,buttonw,20,12); x_paint+=buttonw;
-    hctrl[4]=create_button("Zapisz",x_paint,y_paint,buttonw,20,2); x_paint+=buttonw;
-    hctrl[13]=create_button("Baza akordów",x_paint,y_paint,buttonw,20,9); x_paint+=buttonw;
+    Controls::geti()->create_button("Nowy", x_paint, y_paint, buttonw, 20, "new");
+    x_paint+=buttonw;
+    Controls::geti()->create_button("Wczytaj", x_paint, y_paint, buttonw, 20, "load");
+    x_paint+=buttonw;
+    Controls::geti()->create_button("Zapisz", x_paint, y_paint, buttonw, 20, "save");
+    x_paint+=buttonw;
+    Controls::geti()->create_button("Baza akordów", x_paint, y_paint, buttonw, 20, "base");
+    x_paint+=buttonw;
 
-    hctrl[19]=create_edit("",x_paint,y_paint,buttonw,20,ES_CENTER); x_paint+=buttonw;//autoscroll_interval
-    hctrl[20]=create_edit("",x_paint,y_paint,buttonw,20,ES_CENTER); x_paint+=buttonw;//autoscroll_wait
-    hctrl[18]=create_button("Autoscroll: off",x_paint,y_paint,buttonw,20,14); x_paint+=buttonw;
+    Controls::geti()->create_edit_center("", x_paint, y_paint, buttonw, 20, "autoscroll_interval");
+    x_paint+=buttonw;
+    Controls::geti()->create_edit_center("", x_paint, y_paint, buttonw, 20, "autoscroll_wait");
+    x_paint+=buttonw;
+    Controls::geti()->create_button("Autoscroll: off", x_paint, y_paint, buttonw, 20, "autoscroll");
+    x_paint+=buttonw;
 
     x_paint = 0; y_paint+=20;
-    hctrl[9]=create_edit("",x_paint,y_paint,buttonw*2,20,0); x_paint+=buttonw*2;//szukany ci¹g
-    hctrl[10]=create_edit("",x_paint,y_paint,buttonw*2,20,0); x_paint+=buttonw*2;
-    hctrl[11]=create_button("Zamieñ",x_paint,y_paint,buttonw,20,7); x_paint+=buttonw;
-    hctrl[17]=create_button("ZnajdŸ",x_paint,y_paint,buttonw,20,13); x_paint+=buttonw;
-    hctrl[5]=create_button("Analizuj",x_paint,y_paint,buttonw,20,3); x_paint+=buttonw;
+    Controls::geti()->create_edit("", x_paint, y_paint, buttonw*2, 20, "find_edit");
+    x_paint+=buttonw*2;
+    Controls::geti()->create_edit("", x_paint, y_paint, buttonw*2, 20, "replace_edit");
+    x_paint+=buttonw*2;
+    Controls::geti()->create_button("ZnajdŸ", x_paint, y_paint, buttonw, 20, "find");
+    x_paint+=buttonw;
+    Controls::geti()->create_button("Zamieñ", x_paint, y_paint, buttonw, 20, "replace");
+    x_paint+=buttonw;
+    Controls::geti()->create_button("Analizuj", x_paint, y_paint, buttonw, 20, "analyze");
+    x_paint+=buttonw;
 
-    hctrl[22]=create_button("^",window_w-control_h,0,20,control_h,16); //schowanie paska
+    Controls::geti()->create_button("^", w-control_h, 0, 20, control_h, "toolbar_hide");
 	//edytor
 	if(LoadLibrary("RICHED32.DLL")==NULL){
-		echo("B³¹d: brak biblioteki RICHED32.DLL");
+		IO::geti()->error("B³¹d: brak biblioteki RICHED32.DLL");
 		return;
 	}
-    hctrl[2]=CreateWindowEx(WS_EX_CLIENTEDGE,RICHEDIT_CLASS,"",WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL,0,80,window_w,window_h-80,hwnd,(HMENU)100,*hInst,0);
+    HWND editor_handle = CreateWindowEx(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, "", WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL, 0, 80, w, h-80, main_window, (HMENU)100, *hInst, 0);
+    controls.push_back(new Control(editor_handle, "editor"));
 	//autoscroll edits
-	ss_clear(ss);
-	ss<<autoscroll_interval;
-	SetWindowText(hctrl[19],ss.str().c_str());
-	ss_clear(ss);
-	ss<<autoscroll_wait;
-	SetWindowText(hctrl[20],ss.str().c_str());
+    Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
+    Controls::geti()->set_text("autoscroll_wait", Config::geti()->autoscroll_wait);
 	//drag & drop
 	DragAcceptFiles(hwnd,true);
 	SetWindowText(hctrl[2],"");
@@ -123,11 +132,11 @@ void App::wm_create(HWND *window){
 	echo("wersja "+version);
 }
 
-void App::wm_command(WPARAM wParam){
+void App::event_command(WPARAM wParam){
 	button_click(wParam);
 }
 
-void App::wm_dropfiles(char *filename){
+void App::event_dropfiles(char *filename){
 	if(file_exists(filename)){
 		open_file(filename);
 		SetFocus(hctrl[2]);
@@ -148,7 +157,7 @@ void App::wm_dropfiles(char *filename){
 	SetForegroundWindow(hwnd);
 }
 
-void App::wm_resize(){
+void App::event_resize(){
     int control_h = 22;
 	RECT wnd_rect;
 	GetClientRect(hwnd, &wnd_rect);
@@ -178,23 +187,23 @@ void App::wm_resize(){
     SetWindowPos(hctrl[5],HWND_TOP,window_w*6/7,control_h*3,window_w/7,control_h,0);
 }
 
-void App::wm_screensave(){
+void App::event_screensave(){
 	log("Screensaver stop");
 	mouse_event(MOUSEEVENTF_MOVE,1,0,0,0);
 	mouse_event(MOUSEEVENTF_MOVE,-1,0,0,0);
 }
 
-void App::wm_timer(){
+void App::event_timer(){
 	autoscroll_exec();
 }
 
-void App::wm_syskeydown(WPARAM wParam){
+void App::event_syskeydown(WPARAM wParam){
 	if(wParam==VK_F10){
 		wm_keydown(wParam);
 	}
 }
 
-void App::wm_appcommand(WPARAM wParam, LPARAM lParam){
+void App::event_appcommand(WPARAM wParam, LPARAM lParam){
     if(wParam==69){
         char newc = (char)lParam;
         if(newc==0){ //koniec przesy³ania nazwy pliku
@@ -213,7 +222,7 @@ void App::wm_appcommand(WPARAM wParam, LPARAM lParam){
     }
 }
 
-void App::wm_keydown(WPARAM wParam){
+void App::event_keydown(WPARAM wParam){
 	if(wParam==VK_RETURN||wParam==VK_SPACE||wParam==VK_ESCAPE){
 		SetFocus(hctrl[2]);
 	}

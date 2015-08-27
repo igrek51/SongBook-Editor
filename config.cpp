@@ -16,10 +16,11 @@ Config::Config(){
     config_filename = "conf.ini";
     log_filename = "log.txt";
     buttons_fontface = "MS Shell Dlg 2";
+    program_name = "Igrek SongBook Editor";
     //Zmienne
     window_w = 600;
     window_h = 680;
-    program_name = "Igrek SongBook Editor";
+    control_height = 22;
     //wczytywane z pliku - wartoœci domyœlne
     songs_dir = ".";
     editor_fontface = "Calibri";
@@ -41,7 +42,6 @@ ConfigVariable::ConfigVariable(string name, string value){
 
 
 void Config::load_from_file(){
-    IO::geti()->log("Wczytywanie ustawieñ");
     if(!file_exists(config_filename)){
         Log::error("Brak pliku konfiguracyjnego - ³adowanie wartoœci domyœlnych");
         return;
@@ -64,6 +64,7 @@ void Config::load_from_file(){
         delete variables->at(i);
     }
     variables->clear();
+    IO::geti()->log("Wczytano ustawienia.");
 }
 
 vector<string>* Config::get_config_lines(string filename){

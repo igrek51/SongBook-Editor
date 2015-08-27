@@ -58,22 +58,6 @@ void App::window_duplicate(){
 	delete[] app_path;
 }
 
-void App::set_workdir(){
-	int last_slash=0;
-	for(unsigned int i=0; i<argv[0].length(); i++){
-		if(argv[0][i]=='\\'||argv[0][i]=='/') last_slash=i;
-	}
-	if(last_slash==0) return;
-	string workdir="";
-	for(int i=0; i<last_slash; i++){
-		workdir+=argv[0][i];
-	}
-	SetCurrentDirectory(workdir.c_str());
-	ss_clear(ss);
-	ss<<"Katalog roboczy: "<<workdir;
-	log(ss.str());
-}
-
 void App::quick_replace(){
 	char *str = load_text();
 	char *selected = new char [str_size];

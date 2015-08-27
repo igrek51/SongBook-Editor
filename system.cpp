@@ -27,7 +27,3 @@ void System::get_args(){
     IO::geti()->get_args_from(GetCommandLine());
 }
 
-void System::set_text(string control_name, string text){
-    SetWindowText(Controls::geti()->find(control_name), text.c_str());
-	//UpdateWindow(hwnd);
-}

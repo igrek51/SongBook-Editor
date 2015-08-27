@@ -6,6 +6,8 @@
 #include <windows.h>
 #include "config.h"
 #include "io.h"
+#include "system.h"
+#include "controls.h"
 
 using namespace std;
 
@@ -14,14 +16,13 @@ private:
     static App* instance;
 public:
     static App* geti();
-	App(int w, int h, string version, int ctrls = 0);
+	App();
 	~App();
-    HWND hwnd;
+    HWND main_window;
+    HWND instancja2;
 	HINSTANCE* hInst;
-	int window_w, window_h;
 	string version;
-    HWND window2;
-    void check_instance(char *classname);
+    void check_instance(string classname);
 	//io
 	string *argv;
 	int argc;
@@ -32,8 +33,7 @@ public:
 	void log(string l);
 	void echo(string s);
 	void echo(int e);
-	int repeated_echo;
-	string last_echo;
+
 	void load_config();
 	bool file_exists(string name);
 	bool dir_exists(string name);
@@ -75,7 +75,7 @@ public:
 	bool znajdz_w(char *str, unsigned int start, unsigned int end, char *wzor);
 	void wstaw_tekst(int nrt);
 	void zapisz_tekst(int nrt);
-	string tekst_w[9];
+	string tekst_wstaw[9];
 	void dodaj_nawias();
 	void dodaj_alternatywne();
 	//formatowanie tekstu

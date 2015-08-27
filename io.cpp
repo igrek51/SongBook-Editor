@@ -18,12 +18,13 @@ IO* IO::geti(){
 
 IO::IO(){
     last_echo = "";
-    clear_log();
+    repeated_echo = 0;
     System::geti()->get_args();
 }
 
 
 void IO::clear_log(){
+    if(!Config::geti()->log_enabled) return;
     clear_file(Config::geti()->log_filename);
 }
 
@@ -70,7 +71,7 @@ void IO::echo(string s){
 		ss<<s<<" ("<<repeated_echo<<")";
 		s=ss.str();
 	}
-    System::geti()->set_text("statusbar", s.c_str());
+    Controls::geti()->set_text("statusbar", s.c_str());
 	log(s);
 }
 
@@ -107,6 +108,22 @@ bool IO::is_arg(string parametr){
 		if(args.at(i)==parametr) return true;
 	}
 	return false;
+}
+
+
+void IO::set_workdir(){
+    if(args.size()==0) return;
+    unsigned int last_slash=0;
+	for(unsigned int i=args.at(0).length()-1; i>=0; i--){
+        if(args.at(0)[i]=='\\' || args.at(0)[i]=='/'){
+            last_slash=i;
+            break;
+        }
+	}
+	if(last_slash==0) return; //nie by³o slasha (lub by³ na pocz¹tku - LINUX!!!)
+	string workdir = args.at(0).substr(0, last_slash);
+	SetCurrentDirectory(workdir.c_str());
+	log("Katalog roboczy: "+workdir);
 }
 
 

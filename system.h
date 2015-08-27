@@ -14,7 +14,6 @@ public:
     bool dir_exists(string name);
     void message_box(string title, string message);
     void get_args();
-    void set_text(string control_name, string text);
 };
 
 #endif

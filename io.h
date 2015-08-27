@@ -20,12 +20,14 @@ public:
     void critical_error(string l);
     //  ECHO
     string last_echo;
+    int repeated_echo;
     void echo(string s);
     void echo(int e);
     //  ARGUMENTY URUCHOMIENIA
     vector<string> args;
     void get_args_from(string args_text);
     bool is_arg(string parametr);
+    void set_workdir();
 };
 
 string get_time();
