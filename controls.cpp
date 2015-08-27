@@ -32,26 +32,36 @@ Control::~Control(){
 }
 
 
-HWND Controls::find(string name){
-    if(name.length()==0) return NULL;
-    for(unsigned int i=0; i<controls.size(); i++){
-        if(controls.at(i)->name == name){
-            return controls.at(i)->handle;
-        }
-    }
-    IO::geti()->log("Nie odnaleziono kontrolki o nazwie: "+name);
-    return NULL;
-}
-
 Control* Controls::find_control(string name){
-    if(name.length()==0) return NULL;
+    if(name.length()==0){
+        IO::geti()->error("Wyszukiwanie kontrolki o pustej nazwie");
+        return NULL;
+    }
     for(unsigned int i=0; i<controls.size(); i++){
         if(controls.at(i)->name == name){
             return controls.at(i);
         }
     }
-    IO::geti()->log("Nie odnaleziono kontrolki o nazwie: "+name);
+    if(name=="cmd"){
+        IO::geti()->critical_error("Nie odnaleziono kontrolki o nazwie: "+name);
+    }else{
+        IO::geti()->error("Nie odnaleziono kontrolki o nazwie: "+name);
+    }
     return NULL;
+}
+
+HWND Controls::find(string name){
+    Control* kontrolka = find_control(name);
+    if(kontrolka==NULL) return NULL;
+    return kontrolka->handle;
+}
+
+bool Controls::exists(string name){
+    if(name.length()==0) return false;
+    for(unsigned int i=0; i<controls.size(); i++){
+        if(controls.at(i)->name == name) return true;
+    }
+    return false;
 }
 
 string Controls::get_button_name(int button_nr){
@@ -59,7 +69,9 @@ string Controls::get_button_name(int button_nr){
     if(button_nr>=1 && button_nr<=(int)controls.size()){
         return controls.at(button_nr-1)->name;
     }
-    IO::geti()->error("Nie odnaleziono kontrolki o numerze: "+button_nr);
+    stringstream ss;
+    ss<<"Nie odnaleziono kontrolki o numerze: "<<button_nr;
+    IO::geti()->error(ss.str());
     return "";
 }
 

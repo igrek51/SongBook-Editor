@@ -24,8 +24,9 @@ public:
     ~Controls();
     vector<Control*> controls;
     //  Wyszukiwanie kontrolek
-    HWND find(string name);
     Control* find_control(string name);
+    HWND find(string name);
+    bool exists(string name);
     string get_button_name(int button_nr);
     //  Tworzenie nowych kontrolek
     void create_button(string text, int x, int y, int w, int h, string name = "");

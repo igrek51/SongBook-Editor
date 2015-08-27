@@ -35,7 +35,7 @@ Config::Config(){
 	halfscreen = false;
     log_enabled = true;
     toolbar_show = true;
-    autoscroll_scale = false;
+    autoscroll_scaling = false;
     chordsbase_on_startup = false;
     buttons_fontsize = 18;
     editor_fontsize = 18;
@@ -60,7 +60,7 @@ void Config::load_from_file(){
 	editor_fontface = get_config_string(variables, "editor_fontface");
 	autoscroll_interval = get_config_int(variables, "autoscroll_interval");
 	autoscroll_wait = get_config_int(variables, "autoscroll_wait");
-	autoscroll_scale = get_config_bool(variables, "autoscroll_scale");
+	autoscroll_scaling = get_config_bool(variables, "autoscroll_scaling");
 	halfscreen = get_config_bool(variables, "halfscreen");
     buttons_fontsize = get_config_int(variables, "buttons_fontsize");
     editor_fontsize = get_config_int(variables, "editor_fontsize");
@@ -72,7 +72,7 @@ void Config::load_from_file(){
         delete variables->at(i);
     }
     variables->clear();
-    IO::geti()->log("Wczytano ustawienia.");
+    IO::geti()->log("Wczytano ustawienia z pliku: "+config_filename);
 }
 
 vector<string>* Config::get_config_lines(string filename){

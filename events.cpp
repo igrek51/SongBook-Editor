@@ -4,25 +4,28 @@
 
 void App::event_init(HWND *window){
 	main_window = *window;
+    IO::geti()->log("Hello World...");
     //parametry
 	System::geti()->get_args();
-    //jeœli aplikacja jest ju¿ uruchomiona
-    if(IO::geti()->args.size()==2 && instancja2!=NULL){//jeden dodatkowy parametr - nazwa pliku do otwarcia
-        for(unsigned int i=0; i<IO::geti()->args.at(1).length(); i++){
-            SendMessage(instancja2, 0x0319, 69, (char)IO::geti()->args.at(1)[i]);
-        }
-        SendMessage(instancja2, 0x0319, 69, 0);
-        DestroyWindow(main_window);
-        return;
-    }
 	//katalog roboczy
 	IO::geti()->set_workdir();
 	//ustawienia
     Config::geti()->load_from_file();
 	//log
-	IO::geti()->clear_log();
-	IO::geti()->log("Hello World...");
+    if(!Config::geti()->log_enabled) IO::geti()->delete_log();
+    //jeœli aplikacja jest ju¿ uruchomiona
+    if(IO::geti()->args.size()==2 && instancja2!=NULL){//jeden dodatkowy parametr - nazwa pliku do otwarcia
+        IO::geti()->log("Wysy³anie pliku do otwartej instancji aplikacji...");
+        for(unsigned int i=0; i<IO::geti()->args.at(1).length(); i++){
+            SendMessage(instancja2, 0x0319, 69, (char)IO::geti()->args.at(1)[i]);
+        }
+        SendMessage(instancja2, 0x0319, 69, 0);
+        IO::geti()->log("Zamykanie zbêdnej instancji aplikacji...");
+        DestroyWindow(main_window);
+        return;
+    }
 	//kontrolki
+    IO::geti()->log("Tworzenie kontrolek...");
     int buttonw = Config::geti()->window_w/7;
     int control_h = Config::geti()->control_height;
     int x_paint=0;
@@ -62,23 +65,17 @@ void App::event_init(HWND *window){
 
     Controls::geti()->create_button("^", w-control_h, 0, 20, control_h, "toolbar_toggle");
 	//edytor
+    IO::geti()->log("Tworzenie edytora tekstu...");
 	if(LoadLibrary("RICHED32.DLL")==NULL){
-		IO::geti()->error("B³¹d: brak biblioteki RICHED32.DLL");
+		IO::geti()->critical_error("B³¹d: brak biblioteki RICHED32.DLL");
 		return;
 	}
     HWND editor_handle = CreateWindowEx(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, "", WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL, 0, 80, w, h-80, main_window, (HMENU)100, *hInst, 0);
     Controls::geti()->controls.push_back(new Control(editor_handle, "editor"));
 	//autoscroll edits
+    IO::geti()->log("Ustawianie kontrolek, zmiana czcionek...");
     Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
     Controls::geti()->set_text("autoscroll_wait", Config::geti()->autoscroll_wait);
-	//drag & drop
-	DragAcceptFiles(main_window, true);
-	Controls::geti()->set_text("editor", "");
-	//wczytanie pliku zadanego parametrem
-	if(IO::geti()->args.size()==2){ //jeden dodatkowy parametr - nazwa pliku do otwarcia
-		open_file(IO::geti()->args.at(1));
-	}
-	update_title();
 	//czcionki
     for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
         string fontface = Config::geti()->buttons_fontface;
@@ -91,21 +88,35 @@ void App::event_init(HWND *window){
     }
 	SetFocus(Controls::geti()->find("editor"));
 	//subclassing
+    IO::geti()->log("Subclassing...");
     for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
         subclass(Controls::geti()->controls.at(i));
     }
 	//pasek schowany przy starcie
 	if(!Config::geti()->toolbar_show){
-		pasek_switch(0);
+		toolbar_switch(0);
 	}
 	//okno na po³owie ekranu
 	if(Config::geti()->halfscreen==1){
+        IO::geti()->log("Rozmieszczanie okna na po³owie ekranu...");
 		HDC screen = GetDC(GetDesktopWindow());
 		int screen_w = GetDeviceCaps(screen, HORZRES);
 		int screen_h = GetDeviceCaps(screen, VERTRES);
 		DeleteDC(screen);
-		SetWindowPos(main_window, HWND_TOP, 0, 0, screen_w/2, screen_h-30, 0);
+		SetWindowPos(main_window, HWND_TOP, -8, 0, screen_w/2, screen_h-34, 0);
+        //  TODO
+    }else{
+        event_resize();
     }
+    //drag & drop
+    IO::geti()->log("Uaktywanianie funkcji drag & drop...");
+	DragAcceptFiles(main_window, true);
+	Controls::geti()->set_text("editor", "");
+	//wczytanie pliku zadanego parametrem
+	if(IO::geti()->args.size()==2){ //jeden dodatkowy parametr - nazwa pliku do otwarcia
+		open_file(IO::geti()->args.at(1));
+	}
+	update_title();
     //baza akordów na start (jeœli nie by³ otwierany wybrany plik)
     if(Config::geti()->chordsbase_on_startup && IO::geti()->args.size()<=1){
         chordsbase();
@@ -114,52 +125,39 @@ void App::event_init(HWND *window){
 }
 
 void App::event_button(WPARAM wParam){
-    //  TODO
-    /*
-    string name = get_button_name(wParam);
+    if(!(wParam>=1 && wParam<=Controls::geti()->controls.size())) return;
+    string name = Controls::geti()->get_button_name(wParam);
+    if(name.length()==0) return;
 	if(name == "nowy"){ //nowy
 		new_file();
-	}
-	if(wParam==12){ //wczytaj
+	}else if(name == "load"){ //wczytaj
 		char *str2 = new char[512];
-		GetWindowText(hctrl[0],str2,512);
+		GetWindowText(Controls::geti()->find("cmd"), str2, 512);
 		if(strlen(str2)==0){
-			echo("Podaj nazwê pliku");
+			IO::geti()->echo("Podaj nazwê pliku.");
 		}else{
 			open_file(str2);
 		}
 		delete[] str2;
-	}
-	if(wParam==2){ //zapisz
+	}else if(name == "save"){ //zapisz
 		save_file();
-	}
-    if(wParam==3){ //analizuj
-		int licznik=0;
-		while(skanuj()) licznik++;
-		if(licznik==0) echo("Brak zmian");
-		else echo("Wprowadzono zmiany");
-	}
-	if(wParam==7){ //zamieñ
+	}else if(name == "analyze"){ //analizuj
+		analyze();
+	}else if(name == "replace"){ //zamieñ
 		zamien();
-	}
-	if(wParam==13){ //znajdŸ
+	}else if(name == "find"){ //znajdŸ
 		znajdz();
-	}
-    if(wParam==9){ //baza akordów
+	}else if(name == "base"){ //baza akordów
         chordsbase();
-	}
-	if(wParam==14){ //autoscroll
+	}else if(name == "autoscroll"){ //autoscroll
 		autoscroll_switch();
+	}else if(name == "toolbar_toggle"){ //schowanie paska
+		if(Config::geti()->fullscreen_on) fullscreen_set(false);
+        else toolbar_switch();
 	}
-	if(wParam==16){ //schowanie paska
-		if(fullscreen_on) fullscreen_set(false);
-        else pasek_switch();
-	}
-    */
 }
 
 void App::event_dropfiles(string filename){
-    /*
 	if(file_exists(filename)){
 		open_file(filename);
 		SetFocus(Controls::geti()->find("editor"));
@@ -176,11 +174,10 @@ void App::event_dropfiles(string filename){
 		IO::geti()->error("nieprawid³owa œcie¿ka: \""+filename+"\"");
 	}
 	SetForegroundWindow(main_window);
-    */
 }
 
 void App::event_resize(){
-    /*
+    IO::geti()->log("Resize - Odœwie¿anie uk³adu kontrolek...");
     int control_h = 22;
 	RECT wnd_rect;
 	GetClientRect(main_window, &wnd_rect);
@@ -210,7 +207,6 @@ void App::event_resize(){
     SetWindowPos(Controls::geti()->find("find"),HWND_TOP,w*5/7,control_h*3,w/7,control_h,0);
     SetWindowPos(Controls::geti()->find("replace"),HWND_TOP,w*4/7,control_h*3,w/7,control_h,0);
     SetWindowPos(Controls::geti()->find("analyze"),HWND_TOP,w*6/7,control_h*3,w/7,control_h,0);
-    */
 }
 
 void App::event_screensave(){
@@ -269,7 +265,7 @@ void App::event_keydown(WPARAM wParam){
 			autoscroll_nowait();
 		}
 	}else if(wParam==VK_F9){
-		pasek_switch();
+		toolbar_switch();
 	}else if(wParam==VK_F11){
 		fullscreen_set(!Config::geti()->fullscreen_on);
 	}
@@ -283,9 +279,9 @@ void App::event_keydown(WPARAM wParam){
 		}else if(wParam=='F'){
 			SetFocus(Controls::geti()->find("find_edit"));
 		}else if(wParam==VK_ADD){ // +
-			//change_font_size(+1);
+			change_font_size(+1);
 		}else if(wParam==VK_SUBTRACT){ // -
-			//change_font_size(-1);
+			change_font_size(-1);
 		}else if(wParam==VK_OEM_3){ // `
 			SetFocus(Controls::geti()->find("cmd"));
 			SendMessage(Controls::geti()->find("cmd"), EM_SETSEL, 0, -1);

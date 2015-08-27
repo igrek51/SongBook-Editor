@@ -13,7 +13,7 @@ void App::update_title(){
 	SetWindowText(main_window, ss.str().c_str());
 }
 
-void App::pasek_switch(int change){
+void App::toolbar_switch(int change){
     if(change==1){
         Config::geti()->toolbar_show = true;
     }else if(change==0){
@@ -23,6 +23,7 @@ void App::pasek_switch(int change){
     }
     event_resize();
     if(Config::geti()->toolbar_show){
+        IO::geti()->log("Ods³anianie paska narzêdzi...");
         Controls::geti()->set_text("toolbar_toggle", "^");
         for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
             Control* kontrolka = Controls::geti()->controls.at(i);
@@ -32,6 +33,7 @@ void App::pasek_switch(int change){
             ShowWindow(kontrolka->handle, SW_SHOW);
         }
     }else{
+        IO::geti()->log("Ukrywanie paska narzêdzi...");
         Controls::geti()->set_text("toolbar_toggle", "v");
         for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
             Control* kontrolka = Controls::geti()->controls.at(i);
@@ -85,6 +87,7 @@ void App::quick_replace(){
 }
 
 void App::chordsbase(){
+    IO::geti()->log("Otwieranie bazy akordów...");
     if(Config::geti()->songs_dir.length()>0){
         ShellExecute(0, "open", Config::geti()->songs_dir.c_str(), "", "", SW_SHOW);
     }
@@ -160,4 +163,11 @@ void App::save_file(){
 		ss<<" !)";
 	}
 	IO::geti()->echo(ss.str());
+}
+
+void App::analyze(){
+    int licznik = 0;
+    while(skanuj()) licznik++;
+    if(licznik==0) IO::geti()->echo("Brak zmian");
+    else IO::geti()->echo("Wprowadzono zmiany");
 }

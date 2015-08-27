@@ -18,12 +18,19 @@ IO* IO::geti(){
 IO::IO(){
     last_echo = "";
     repeated_echo = 0;
+    clear_log();
 }
 
 
 void IO::clear_log(){
     if(!Config::geti()->log_enabled) return;
     clear_file(Config::geti()->log_filename);
+}
+
+void IO::delete_log(){
+    if(file_exists(Config::geti()->log_filename)){
+        DeleteFile(Config::geti()->log_filename.c_str());
+    }
 }
 
 void IO::log(string l){
@@ -46,13 +53,23 @@ void IO::log(int l){
     log(ss.str());
 }
 
-void IO::error(string l){
-    echo("[ B£¥D ! ] - "+l);
+void IO::log(string s, int l){
+    stringstream ss;
+    ss<<s<<": "<<l;
+    log(ss.str());
+}
+
+void IO::error(string l, bool show_output){
+    if(show_output){
+        echo("[ B£¥D ! ] - "+l);
+    }else{
+        log("[ B£¥D ! ] - "+l);
+    }
 }
 
 void IO::critical_error(string l){
-    echo("[ B£¥D KRYTYCZNY ! ] - "+l);
-    message_box("B³¹d", l);
+    log("[ B£¥D KRYTYCZNY ! ] - "+l);
+    message_box("B³¹d krytyczny", l);
 }
 
 
@@ -88,6 +105,12 @@ void IO::message_box(string title, string message){
 
 void IO::get_args_from(string args_text){
     args.clear();
+    //uciêcie spacji na koñcu
+    if(args_text.length()>0){
+        if(args_text[args_text.length()-1]==' '){
+            args_text = args_text.substr(0, args_text.length()-1);
+        }
+    }
     bool cudzyslow = false;
     for(int i=0; i<(int)args_text.length(); i++){
         if(args_text[i]=='\"') cudzyslow = !cudzyslow;

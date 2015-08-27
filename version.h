@@ -1,8 +1,8 @@
-//v 2 3 41
-// -- 15:50:38, 27.08.2015 --
+//v 2 4 41
+// -- 23:55:11, 27.08.2015 --
 #ifndef VERSION_H
 #define VERSION_H
 
-#define VERSION "2.3.41"
+#define VERSION "2.4.41"
 
 #endif

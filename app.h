@@ -43,6 +43,7 @@ public:
 	void open_file(string filename);
 	void save_file();
 	//  edycja
+    void analyze();
 	bool skanuj();
 	void usun_akordy();
 	void usun_wersje();
@@ -93,7 +94,7 @@ public:
     void un_subclass(string name);
 	//  program - inne funkcje
 	void update_title();
-	void pasek_switch(int change=2);
+	void toolbar_switch(int change=2);
 	void fullscreen_set(bool full);
     void quick_replace();
     void chordsbase();

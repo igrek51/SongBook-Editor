@@ -10,14 +10,16 @@ using namespace std;
 class IO {
 private:
 	static IO* instance;
+    IO();
 public:
     static IO* geti();
-	IO();
     //  LOG
     void clear_log();
+    void delete_log();
     void log(string l);
     void log(int l);
-    void error(string l);
+    void log(string s, int l);
+    void error(string l, bool show_output = true);
     void critical_error(string l);
     //  ECHO
     string last_echo;

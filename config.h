@@ -47,7 +47,7 @@ public:
     bool halfscreen;
     bool log_enabled;
     bool toolbar_show;
-    bool autoscroll_scale;
+    bool autoscroll_scaling;
     bool chordsbase_on_startup;
     int buttons_fontsize;
     int editor_fontsize;
