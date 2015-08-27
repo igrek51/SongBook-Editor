@@ -1,6 +1,7 @@
 #include "app.h"
 
 void App::exec_cmd(){
+    /*
 	char *str2 = new char[256];
 	GetWindowText(hctrl[0],str2,256);
 	if(strlen(str2)==0){
@@ -12,9 +13,11 @@ void App::exec_cmd(){
 	exec_cmd(str2_s);
 	last_cmd=str2_s;
 	delete[] str2;
+    */
 }
 
 void App::exec_cmd(string str2){
+    /*
 	ss_clear(ss);
 	ss<<"> "<<str2;
 	echo(ss.str());
@@ -72,8 +75,6 @@ void App::exec_cmd(string str2){
 		new_file();
     }else if(str2=="format"){
         refresh_text();
-    }else if(str2=="duplicate"){
-        window_duplicate();
     }else if(str2=="remove_chords"){
         usun_akordy();
     }else if(str2=="remove_alt"){
@@ -162,4 +163,5 @@ void App::exec_cmd(string str2){
 		ss<<"! B³¹d: Nie znaleziono polecenia: "<<str2;
 		echo(ss.str());
 	}
+    */
 }

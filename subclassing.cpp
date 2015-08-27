@@ -2,15 +2,20 @@
 #include <richedit.h>
 
 LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
-	//rozpoznanie numeru kontrolki
-	int ctrl=-1;
-	for(int i=0; i<ctrls_num; i++){
-		if(hwdp==hctrl[i]){
-			ctrl=i;
-			break;
-		}
+	//odnalezienie kontrolki
+    Control* kontrolka = NULL;
+	for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
+        if(Controls::geti()->controls.at(i)->handle == hwnd){
+            kontrolka = Controls::geti()->controls.at(i);
+            break;
+        }
 	}
-	if(ctrl==-1) return 0;
+    if(kontrolka==NULL){
+        IO::geti()->error("Subclassing: Nie znaleziono kontrolki o podanym uchwycie");
+        return 0;
+    }
+    string nazwa = kontrolka->name;
+    /*
 	//nowe procedury kontrolek
 	if(ctrl==0){ //wiersz poleceñ
 		switch(message){
@@ -195,7 +200,8 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 			}break;
 		}
 	}
-	return CallWindowProc(wndproc_old[ctrl], hwdp, message, wParam, lParam);
+    */
+	return CallWindowProc(kontrolka->wndproc_old, hwnd, message, wParam, lParam);
 }
 
 void App::subclass(Control* kontrolka){

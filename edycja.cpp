@@ -2,6 +2,7 @@
 #include <richedit.h>
 
 bool App::skanuj(){
+    /*
 	bool changed=false;
 	char *str = load_text();
 	int nawias=0;
@@ -136,9 +137,12 @@ bool App::skanuj(){
 	}
 	save_text(str);
 	return changed;
+    */
+    return false;
 }
 
 void App::usun_akordy(){
+    /*
 	char *str = load_text();
 	unsigned int sel_start, sel_end;
 	if(get_selected(sel_start,sel_end,str)==false){
@@ -167,9 +171,11 @@ void App::usun_akordy(){
 	}
 	save_text(str);
 	echo("Usuniêto akordy");
+    */
 }
 
 void App::usun_wersje(){
+    /*
 	char *str = load_text();
 	int nawias=0;
 	for(int i=0; (unsigned int)i<str_size; i++){
@@ -197,9 +203,11 @@ void App::usun_wersje(){
 	}
 	save_text(str);
 	echo("Usuniêto alternatywne wersje akordów");
+    */
 }
 
 void App::zamien(){
+    /*
 	char *str1 = new char[256];
 	GetWindowText(hctrl[9],str1,256);
 	if(strlen(str1)==0){
@@ -260,6 +268,7 @@ void App::zamien(){
 		ss<<" tekstu.";
 		echo(ss.str());
 	}
+    */
 }
 
 char to_lowercase(char in){
@@ -277,6 +286,7 @@ char to_lowercase(char in){
 }
 
 bool App::znajdz_w(char *str, unsigned int start, unsigned int end, char *wzor){
+    /*
 	for(unsigned int i=start; i<=end-strlen(wzor); i++){
 		//szukanie wzorca
 		bool found=true;
@@ -296,10 +306,12 @@ bool App::znajdz_w(char *str, unsigned int start, unsigned int end, char *wzor){
 			return true;
 		}
 	}
+    */
 	return false;
 }
 
 void App::znajdz(){
+    /*
 	char *wzor = new char[256];
 	GetWindowText(hctrl[9],wzor,256);
 	if(strlen(wzor)==0){
@@ -315,9 +327,11 @@ void App::znajdz(){
 	delete[] str;
 	delete[] wzor;
 	echo("Nie znaleziono fragmentu");
+    */
 }
 
 void App::wstaw_tekst(int nrt){
+    /*
 	if(nrt<1||nrt>9) return;
 	string add_text = tekst_w[nrt-1];
 	if(add_text.length()==0){
@@ -330,9 +344,11 @@ void App::wstaw_tekst(int nrt){
 	ss_clear(ss);
 	ss<<"Wstawiono tekst nr "<<nrt<<": "<<add_text;
 	echo(ss.str());
+    */
 }
 
 void App::zapisz_tekst(int nrt){
+    /*
 	if(nrt<1||nrt>9) return;
 	str_size = GetWindowTextLength(hctrl[2]);
 	char *selected = new char [str_size];
@@ -347,9 +363,11 @@ void App::zapisz_tekst(int nrt){
 	ss<<"Zapisano tekst nr "<<nrt<<": "<<selected;
 	delete[] selected;
 	echo(ss.str());
+    */
 }
 
 void App::dodaj_nawias(){
+    /*
 	char *str = load_text();
 	unsigned int sel_start, sel_end;
 	get_selected(sel_start,sel_end,str);
@@ -362,9 +380,11 @@ void App::dodaj_nawias(){
 	insert_char(str,str_size,sel_start,'[');
 	last_sel_end+=2;
 	save_text(str);
+    */
 }
 
 void App::dodaj_alternatywne(){
+    /*
 	if(transposed==0){
 		echo("! Zerowe przesuniêcie akordów");
 		return;
@@ -410,4 +430,5 @@ void App::dodaj_alternatywne(){
 	refresh_text();
 	delete[] str;
 	echo("Dodano alternatywn¹ wersjê akordów");
+    */
 }

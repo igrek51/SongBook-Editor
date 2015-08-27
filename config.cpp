@@ -1,6 +1,7 @@
 #include "config.h"
 #include "files.h"
 #include "io.h"
+#include <cstdlib>
 
 Config* Config::instance = NULL;
 
@@ -23,6 +24,7 @@ Config::Config(){
     control_height = 22;
     transposed = 0;
 	autoscroll = false;
+    autoscroll_count = 0;
     fullscreen_on = false;
 	opened_file = "";
     file_to_open = "";
@@ -49,19 +51,19 @@ ConfigVariable::ConfigVariable(string name, string value){
 
 void Config::load_from_file(){
     if(!file_exists(config_filename)){
-        Log::error("Brak pliku konfiguracyjnego - ³adowanie wartoœci domyœlnych");
+        IO::geti()->error("Brak pliku konfiguracyjnego - ³adowanie wartoœci domyœlnych");
         return;
     }
     vector<ConfigVariable*>* variables = get_config_variables(config_filename);
     //odczyt zmiennych
 	songs_dir = get_config_string(variables, "songs_dir");
-	fontface = get_config_string(variables, "fontface");
+	editor_fontface = get_config_string(variables, "editor_fontface");
 	autoscroll_interval = get_config_int(variables, "autoscroll_interval");
 	autoscroll_wait = get_config_int(variables, "autoscroll_wait");
 	autoscroll_scale = get_config_bool(variables, "autoscroll_scale");
 	halfscreen = get_config_bool(variables, "halfscreen");
-    fontsize1 = get_config_int(variables, "fontsize1");
-    fontsize2 = get_config_int(variables, "fontsize2");
+    buttons_fontsize = get_config_int(variables, "buttons_fontsize");
+    editor_fontsize = get_config_int(variables, "editor_fontsize");
     log_enabled = get_config_bool(variables, "log_enabled");
     toolbar_show = get_config_bool(variables, "toolbar_show");
     chordsbase_on_startup = get_config_bool(variables, "chordsbase_on_startup");
@@ -121,8 +123,8 @@ vector<ConfigVariable*>* Config::get_config_variables(string filename){
 string Config::get_config_string(vector<ConfigVariable*>* variables, string name){
     if(variables==NULL) return "";
     for(unsigned int i=0; i<variables->size(); i++){
-        if(variables->at(i).name == name){
-            return variables->at(i).value;
+        if(variables->at(i)->name == name){
+            return variables->at(i)->value;
         }
     }
     IO::geti()->error("Nie znaleziono zmiennej w pliku konfiguracyjnym: "+name);

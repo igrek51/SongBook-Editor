@@ -1,4 +1,5 @@
 #include "controls.h"
+#include "app.h"
 #include <commctrl.h>
 #include <richedit.h>
 
@@ -26,10 +27,8 @@ Control::Control(HWND handle, string name){
 }
 
 Control::~Control(){
-    //  TODO
-    un_subclass(i);
-    if(hctrl[i]!=NULL) DestroyWindow(hctrl[i]);
-
+    App::geti()->un_subclass(this);
+    if(this->handle!=NULL) DestroyWindow(this->handle);
 }
 
 
@@ -57,7 +56,7 @@ Control* Controls::find_control(string name){
 
 string Controls::get_button_name(int button_nr){
     //jeœli numer jest poprawny
-    if(button_nr>=1 && button_nr<=controls.size()){
+    if(button_nr>=1 && button_nr<=(int)controls.size()){
         return controls.at(button_nr-1)->name;
     }
     IO::geti()->error("Nie odnaleziono kontrolki o numerze: "+button_nr);
@@ -98,7 +97,7 @@ void Controls::create_static_center(string text, int x, int y, int w, int h, str
 
 void Controls::create_groupbox(string text, int x, int y, int w, int h){
     HWND handle = CreateWindowEx(0, WC_BUTTON, text.c_str(), WS_CHILD|WS_VISIBLE|BS_GROUPBOX, x, y, w, h, App::geti()->main_window, 0, *App::geti()->hInst, 0);
-    controls.push_back(new Control(handle, name));
+    controls.push_back(new Control(handle, ""));
 }
 
 
@@ -113,6 +112,24 @@ void Controls::set_text(string control_name, int number){
     set_text(control_name, ss.str());
 }
 
+string Controls::get_text(string control_name){
+    Control* kontrolka = find_control(control_name);
+    if(kontrolka==NULL) return "";
+    if(kontrolka->handle==NULL) return "";
+    char *str2 = new char[512];
+	GetWindowText(kontrolka->handle, str2, 512);
+    string result = str2;
+	delete[] str2;
+    return result;
+}
+
+int Controls::get_int(string control_name){
+    string content = get_text(control_name);
+    if(content.length()==0) return 0;
+    return atoi(content.c_str());
+}
+
+
 void Controls::set_font(HWND kontrolka, string fontface, int fontsize){
     if(kontrolka==NULL) return;
     HFONT hFont = CreateFont(fontsize, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, 0, fontface.c_str());
@@ -124,5 +141,5 @@ void Controls::set_font(HWND kontrolka, string fontface, int fontsize){
 }
 
 void Controls::set_font(string name, string fontface, int fontsize){
-    set_font(find(name), fontface, fontsize)
+    set_font(find(name), fontface, fontsize);
 }

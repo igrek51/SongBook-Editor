@@ -54,6 +54,7 @@ public:
 	void dodaj_nawias();
 	void dodaj_alternatywne();
 	//  formatowanie tekstu
+    void change_font_size(int change);
 	void format_text(char *str);
 	void refresh_text();
 	//  richedit
@@ -94,7 +95,6 @@ public:
 	void update_title();
 	void pasek_switch(int change=2);
 	void fullscreen_set(bool full);
-	void window_duplicate();
     void quick_replace();
     void chordsbase();
 };

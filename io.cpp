@@ -4,7 +4,6 @@
 #include "files.h"
 #include "controls.h"
 #include <fstream>
-#include <sstream>
 #include <ctime>
 
 IO* IO::instance = NULL;
@@ -67,9 +66,9 @@ void IO::echo(string s){
 	}
 	last_echo = s;
 	if(repeated_echo>0){
-		ss_clear(ss);
+		stringstream ss;
 		ss<<s<<" ("<<repeated_echo<<")";
-		s=ss.str();
+		s = ss.str();
 	}
     Controls::geti()->set_text("statusbar", s.c_str());
 	log(s);
@@ -101,7 +100,7 @@ void IO::get_args_from(string args_text){
     args.push_back(args_text);
     stringstream ss;
 	ss<<"Parametry uruchomienia ("<<args.size()<<"): ";
-	for(int i=0; i<args.size(); i++){
+	for(unsigned int i=0; i<args.size(); i++){
 		ss<<args.at(i);
 		if(i<args.size()-1) ss<<", ";
 	}
@@ -109,7 +108,7 @@ void IO::get_args_from(string args_text){
 }
 
 bool IO::is_arg(string parametr){
-	for(int i=1; i<args.size(); i++){
+	for(unsigned int i=1; i<args.size(); i++){
 		if(args.at(i)==parametr) return true;
 	}
 	return false;

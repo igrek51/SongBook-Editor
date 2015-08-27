@@ -2,6 +2,7 @@
 #include <richedit.h>
 
 void App::change_font_size(int change){
+    /*
 	fontsize+=change;
 	if(fontsize<1) fontsize=1;
 	change_font(hctrl[2]);
@@ -15,9 +16,11 @@ void App::change_font_size(int change){
 		ss<<", Interwa³ autoscrolla: "<<autoscroll_interval<<" ms";
 	}
 	echo(ss.str());
+    */
 }
 
 void App::format_text(char *str){
+    /*
 	//log("format_text()...");
 	unsigned int temp_sel_start, temp_sel_end, temp_scroll;
 	get_selected_1(temp_sel_start,temp_sel_end);
@@ -91,13 +94,16 @@ void App::format_text(char *str){
 	SendMessage(hctrl[2],EM_HIDESELECTION,0,0);
 	set_selected_1(temp_sel_start,temp_sel_end);
 	set_scroll(temp_scroll);
+    */
 }
 
 void App::refresh_text(){
+    /*
 	str_size = GetWindowTextLength(hctrl[2]);
 	char *str = new char[str_size+1];
 	str[str_size]=0;
 	GetWindowText(hctrl[2],str,str_size+1);
 	format_text(str);
 	delete[] str;
+    */
 }

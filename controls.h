@@ -36,9 +36,11 @@ public:
     void create_static(string text, int x, int y, int w, int h, string name = "");
     void create_static_center(string text, int x, int y, int w, int h, string name = "");
     void create_groupbox(string text, int x, int y, int w, int h);
-    //  Zmiana zawartoœci
+    //  Zawartoœæ
     void set_text(string control_name, string text);
     void set_text(string control_name, int number);
+    string get_text(string control_name);
+    int get_int(string control_name);
     //  Zmiana czcionki
     void set_font(HWND kontrolka, string fontface, int fontsize);
     void set_font(string name, string fontface, int fontsize);

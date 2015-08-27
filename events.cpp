@@ -12,11 +12,11 @@ void App::event_init(HWND *window){
             SendMessage(instancja2, 0x0319, 69, (char)IO::geti()->args.at(1)[i]);
         }
         SendMessage(instancja2, 0x0319, 69, 0);
-        DestroyWindow(hwnd);
+        DestroyWindow(main_window);
         return;
     }
 	//katalog roboczy
-	set_workdir();
+	IO::geti()->set_workdir();
 	//ustawienia
     Config::geti()->load_from_file();
 	//log
@@ -67,13 +67,13 @@ void App::event_init(HWND *window){
 		return;
 	}
     HWND editor_handle = CreateWindowEx(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, "", WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL, 0, 80, w, h-80, main_window, (HMENU)100, *hInst, 0);
-    controls.push_back(new Control(editor_handle, "editor"));
+    Controls::geti()->controls.push_back(new Control(editor_handle, "editor"));
 	//autoscroll edits
     Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
     Controls::geti()->set_text("autoscroll_wait", Config::geti()->autoscroll_wait);
 	//drag & drop
 	DragAcceptFiles(main_window, true);
-	set_text("editor", "");
+	Controls::geti()->set_text("editor", "");
 	//wczytanie pliku zadanego parametrem
 	if(IO::geti()->args.size()==2){ //jeden dodatkowy parametr - nazwa pliku do otwarcia
 		open_file(IO::geti()->args.at(1));
@@ -87,7 +87,7 @@ void App::event_init(HWND *window){
             fontface = Config::geti()->editor_fontface;
             fontsize = Config::geti()->editor_fontsize;
         }
-        set_font(Controls::geti()->controls.at(i)->handle, fontface, fontsize);
+        Controls::geti()->set_font(Controls::geti()->controls.at(i)->handle, fontface, fontsize);
     }
 	SetFocus(Controls::geti()->find("editor"));
 	//subclassing
@@ -107,7 +107,7 @@ void App::event_init(HWND *window){
 		SetWindowPos(main_window, HWND_TOP, 0, 0, screen_w/2, screen_h-30, 0);
     }
     //baza akordów na start (jeœli nie by³ otwierany wybrany plik)
-    if(Config::geti()->config_chordsbase_on_startup && IO::geti()->args.size()<=1){
+    if(Config::geti()->chordsbase_on_startup && IO::geti()->args.size()<=1){
         chordsbase();
     }
 	IO::geti()->echo("wersja "+version);
@@ -161,12 +161,14 @@ void App::event_button(WPARAM wParam){
 void App::event_dropfiles(string filename){
 	if(file_exists(filename)){
 		open_file(filename);
-		SetFocus(hctrl[2]);
+		SetFocus(Controls::geti()->find("editor"));
 	}else if(dir_exists(filename)){
 		new_file();
-		opened_file = filename;
-		if(opened_file[opened_file.length()-1]!='\\') opened_file+="\\";
-        Controls::geti()->set_text("cmd", opened_file);
+		Config::geti()->opened_file = filename;
+        if(Config::geti()->opened_file[Config::geti()->opened_file.length()-1]!='\\'){
+            Config::geti()->opened_file+="\\";
+        }
+        Controls::geti()->set_text("cmd", Config::geti()->opened_file);
 		SetFocus(Controls::geti()->find("cmd"));
 		IO::geti()->echo("Nowy plik w folderze: \""+filename+"\"");
 	}else{
@@ -222,14 +224,14 @@ void App::event_appcommand(WPARAM wParam, LPARAM lParam){
         char newc = (char)lParam;
         if(newc==0){ //koniec przesy³ania nazwy pliku
             stringstream ss;
-            ss<<"Otwieranie pliku z zewnêtrznego polecenia: "<<file_to_open;
+            ss<<"Otwieranie pliku z zewnêtrznego polecenia: "<<Config::geti()->file_to_open;
             IO::geti()->log(ss.str());
-            open_file(file_to_open);
-            file_to_open = "";
+            open_file(Config::geti()->file_to_open);
+            Config::geti()->file_to_open = "";
             SetForegroundWindow(main_window);
             return;
         }
-        file_to_open += newc;
+        Config::geti()->file_to_open += newc;
     }
 }
 
@@ -250,13 +252,13 @@ void App::event_keydown(WPARAM wParam){
 	}else if(wParam==VK_F3){
 		change_scroll(+35);
 	}else if(wParam==VK_F5){
-		autoscroll_nowait(+autoscroll_interval*0.25);
+		autoscroll_nowait(+Config::geti()->autoscroll_interval*0.25);
 	}else if(wParam==VK_F6){
-		autoscroll_nowait(-autoscroll_interval*0.2);
+		autoscroll_nowait(-Config::geti()->autoscroll_interval*0.2);
 	}else if(wParam==VK_F7){
 		autoscroll_switch();
 	}else if(wParam==VK_F8){
-		if(autoscroll){
+		if(Config::geti()->autoscroll){
 			autoscroll_off();
 			IO::geti()->echo("Autoscroll wy³¹czony");
 		}else{
@@ -277,9 +279,9 @@ void App::event_keydown(WPARAM wParam){
 		}else if(wParam=='F'){
 			SetFocus(Controls::geti()->find("find_edit"));
 		}else if(wParam==VK_ADD){ // +
-			change_font_size(+1);
+			//change_font_size(+1);
 		}else if(wParam==VK_SUBTRACT){ // -
-			change_font_size(-1);
+			//change_font_size(-1);
 		}else if(wParam==VK_OEM_3){ // `
 			SetFocus(Controls::geti()->find("cmd"));
 			SendMessage(Controls::geti()->find("cmd"), EM_SETSEL, 0, -1);
@@ -288,7 +290,7 @@ void App::event_keydown(WPARAM wParam){
 		}else if(wParam==VK_RIGHT){
 			transpose(+1);
 		}else if(wParam=='0'||wParam==VK_NUMPAD0){
-			transpose(-transposed);
+			transpose(-Config::geti()->transposed);
 		}
 	}
 }

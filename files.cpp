@@ -1,5 +1,5 @@
 #include "files.h"
-#include "app.h"
+#include "system.h"
 #include <fstream>
 
 void clear_file(string filename){
@@ -17,6 +17,10 @@ bool file_exists(string name){
 		plik.close();
 		return false;
 	}
+}
+
+bool dir_exists(string name){
+    return System::geti()->dir_exists(name);
 }
 
 vector<string>* get_all_lines(string filename){

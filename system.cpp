@@ -2,6 +2,7 @@
 #include "io.h"
 #include <windows.h>
 #include <commctrl.h>
+#include <richedit.h>
 
 System* System::instance = NULL;
 
