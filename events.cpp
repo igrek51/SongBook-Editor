@@ -4,7 +4,7 @@
 
 void App::event_init(HWND *window){
 	main_window = *window;
-	//parametry
+    //parametry
 	System::geti()->get_args();
     //jeœli aplikacja jest ju¿ uruchomiona
     if(IO::geti()->args.size()==2 && instancja2!=NULL){//jeden dodatkowy parametr - nazwa pliku do otwarcia
@@ -159,6 +159,7 @@ void App::event_button(WPARAM wParam){
 }
 
 void App::event_dropfiles(string filename){
+    /*
 	if(file_exists(filename)){
 		open_file(filename);
 		SetFocus(Controls::geti()->find("editor"));
@@ -175,9 +176,11 @@ void App::event_dropfiles(string filename){
 		IO::geti()->error("nieprawid³owa œcie¿ka: \""+filename+"\"");
 	}
 	SetForegroundWindow(main_window);
+    */
 }
 
 void App::event_resize(){
+    /*
     int control_h = 22;
 	RECT wnd_rect;
 	GetClientRect(main_window, &wnd_rect);
@@ -207,6 +210,7 @@ void App::event_resize(){
     SetWindowPos(Controls::geti()->find("find"),HWND_TOP,w*5/7,control_h*3,w/7,control_h,0);
     SetWindowPos(Controls::geti()->find("replace"),HWND_TOP,w*4/7,control_h*3,w/7,control_h,0);
     SetWindowPos(Controls::geti()->find("analyze"),HWND_TOP,w*6/7,control_h*3,w/7,control_h,0);
+    */
 }
 
 void App::event_screensave(){

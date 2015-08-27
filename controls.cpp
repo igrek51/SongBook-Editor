@@ -39,7 +39,7 @@ HWND Controls::find(string name){
             return controls.at(i)->handle;
         }
     }
-    IO::geti()->error("Nie odnaleziono kontrolki o nazwie: "+name);
+    IO::geti()->log("Nie odnaleziono kontrolki o nazwie: "+name);
     return NULL;
 }
 
@@ -50,7 +50,7 @@ Control* Controls::find_control(string name){
             return controls.at(i);
         }
     }
-    IO::geti()->error("Nie odnaleziono kontrolki o nazwie: "+name);
+    IO::geti()->log("Nie odnaleziono kontrolki o nazwie: "+name);
     return NULL;
 }
 
@@ -102,8 +102,10 @@ void Controls::create_groupbox(string text, int x, int y, int w, int h){
 
 
 void Controls::set_text(string control_name, string text){
-    SetWindowText(find(control_name), text.c_str());
-	//UpdateWindow(hwnd);
+    HWND uchwyt = find(control_name);
+    if(uchwyt==NULL) return;
+    SetWindowText(uchwyt, text.c_str());
+	//UpdateWindow(main_window);
 }
 
 void Controls::set_text(string control_name, int number){

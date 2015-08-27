@@ -4,17 +4,15 @@ using namespace std;
 
 LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-App *app = new App();
-
 LRESULT CALLBACK wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
-	return app->subclass_wndproc_new(hwnd, message, wParam, lParam);
+	return App::geti()->subclass_wndproc_new(hwnd, message, wParam, lParam);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow){
-	app->hInst = &hInstance;
-	app->windowProc = windowProc;
-	app->wndproc_new = wndproc_new;
-    app->check_instance(Config::geti()->program_name);
+	App::geti()->hInst = &hInstance;
+	App::geti()->windowProc = windowProc;
+	App::geti()->wndproc_new = wndproc_new;
+    App::geti()->check_instance(Config::geti()->program_name);
 	WNDCLASS windowClass;
 	windowClass.lpfnWndProc = windowProc;
 	windowClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -48,41 +46,41 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	switch(message){
 		case WM_CREATE:{
-			app->event_init(&hwnd);
+			App::geti()->event_init(&hwnd);
 		}break;
 		case WM_COMMAND:{
-			app->event_button(wParam);
+			App::geti()->event_button(wParam);
 		}break;
 		case WM_DROPFILES:{
 			HDROP fDrop = (HDROP)wParam;
 			char* fName = new char[512];
 			DragQueryFile(fDrop,0,fName,512);
 			DragFinish(fDrop);
-			app->event_dropfiles(fName);
+			App::geti()->event_dropfiles(fName);
 			delete[] fName;
 		}break;
 		case WM_SIZE:{
-			app->event_resize();
+			App::geti()->event_resize();
 		}break;
 		case WM_TIMER:{
-			app->event_timer();
+			App::geti()->event_timer();
 		}break;
 		case WM_KEYDOWN:{
-			app->event_keydown(wParam);
+			App::geti()->event_keydown(wParam);
 		}
 		case WM_SYSKEYDOWN:{
-			app->event_syskeydown(wParam);
+			App::geti()->event_syskeydown(wParam);
 		}
         case WM_SYSCOMMAND:{
             if(wParam==SC_SCREENSAVE){
-                app->event_screensave();
+                App::geti()->event_screensave();
             }
         }break;
         case 0x0319:{ //APP_COMMAND
-            app->event_appcommand(wParam,lParam);
+            App::geti()->event_appcommand(wParam,lParam);
         }break;
 		case WM_DESTROY:{
-			delete app;
+			delete App::geti();
 			return 0;
 		}break;
 	}

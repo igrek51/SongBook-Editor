@@ -18,7 +18,6 @@ IO* IO::geti(){
 IO::IO(){
     last_echo = "";
     repeated_echo = 0;
-    System::geti()->get_args();
 }
 
 
@@ -29,6 +28,7 @@ void IO::clear_log(){
 
 void IO::log(string l){
     if(!Config::geti()->log_enabled) return;
+    if(!file_exists(Config::geti()->log_filename)) clear_log();
     fstream plik;
     plik.open(Config::geti()->log_filename.c_str(), fstream::out|fstream::app);
     if(!plik.good()){
@@ -117,10 +117,10 @@ bool IO::is_arg(string parametr){
 
 void IO::set_workdir(){
     if(args.size()==0) return;
-    unsigned int last_slash=0;
-	for(unsigned int i=args.at(0).length()-1; i>=0; i--){
+    int last_slash=0;
+	for(int i=(int)args.at(0).length()-1; i>=0; i--){
         if(args.at(0)[i]=='\\' || args.at(0)[i]=='/'){
-            last_slash=i;
+            last_slash = i;
             break;
         }
 	}

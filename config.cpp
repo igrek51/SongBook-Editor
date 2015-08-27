@@ -78,10 +78,11 @@ void Config::load_from_file(){
 vector<string>* Config::get_config_lines(string filename){
     vector<string>* lines = get_all_lines(filename);
     if(lines==NULL) return NULL;
-    for(unsigned int i=0; i<lines->size(); i++){
+    for(int i=0; i<(int)lines->size(); i++){
         if(lines->at(i).length()==0){ //usuniêcie pustych elementów
             lines->erase(lines->begin()+i);
             i--;
+            continue;
         }
         if(lines->at(i).length()>=2){ //usuniêcie komentarzy
             if(lines->at(i)[0]==';' || (lines->at(i)[0]=='/' && lines->at(i)[1]=='/')){
@@ -102,8 +103,8 @@ vector<ConfigVariable*>* Config::get_config_variables(string filename){
         //szukanie znaku =
         for(unsigned int j=1; j<lines->at(i).length(); j++){
             if(lines->at(i)[j] == '='){
-                string name = lines->at(i).substr(0, i);
-                string value = lines->at(i).substr(i+1);
+                string name = lines->at(i).substr(0, j);
+                string value = lines->at(i).substr(j+1);
                 //obciêcie spacji na pocz¹tku i na koñcu
                 if(name.length()>0 && name[name.length()-1] == ' '){
                     name = name.substr(0, name.length()-1);
