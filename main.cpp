@@ -1,13 +1,11 @@
 #include "app.h"
-#include "version.h"
+#include "system.h"
 
 using namespace std;
 
 LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-const char *progName = "Igrek SongBook Editor";
-
-App *app = new App(600,680,VERSION,26);
+App *app = new App();
 
 LRESULT CALLBACK wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	return app->subclass_wndproc_new(hwnd, message, wParam, lParam);
@@ -17,28 +15,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	app->hInst = &hInstance;
 	app->windowProc = windowProc;
 	app->wndproc_new = wndproc_new;
-    app->check_instance((char*)progName);
+    app->check_instance(Config::geti()->program_name);
 	WNDCLASS windowClass;
 	windowClass.lpfnWndProc = windowProc;
-	windowClass.style       = CS_HREDRAW | CS_VREDRAW;
-	windowClass.hInstance   = hInstance;
-	windowClass.hCursor     = LoadCursor(NULL, IDC_ARROW);
-	windowClass.hIcon       = LoadIcon(hInstance,MAKEINTRESOURCE(2)); //LoadIcon(NULL, IDI_APPLICATION);
-	windowClass.hbrBackground=(HBRUSH)COLOR_BTNSHADOW;
-	windowClass.cbClsExtra  = 0;
-	windowClass.cbWndExtra  = 0;
-	windowClass.lpszClassName = progName;
+	windowClass.style = CS_HREDRAW | CS_VREDRAW;
+	windowClass.hInstance = hInstance;
+	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	windowClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(2)); //LoadIcon(NULL, IDI_APPLICATION);
+	windowClass.hbrBackground = (HBRUSH)COLOR_BTNSHADOW;
+	windowClass.cbClsExtra = 0;
+	windowClass.cbWndExtra = 0;
+	windowClass.lpszClassName = Config::geti()->program_name.c_str();
 	windowClass.lpszMenuName  = NULL;
 	if(!RegisterClass(&windowClass)){
-		app->message("! RegisterClass failed");
+		System::geti()->message_box("B³¹d krytyczny!", "RegisterClass failed");
 		return 0;
 	}
-	HWND window = CreateWindowEx(0,progName,progName,WS_OVERLAPPEDWINDOW,CW_USEDEFAULT,CW_USEDEFAULT,app->window_w+16,app->window_h+38,NULL,NULL,hInstance,NULL);
+	HWND window = CreateWindowEx(0, Config::geti()->program_name.c_str(), Config::geti()->program_name.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, Config::geti()->window_w+16, Config::geti()->window_h+38, NULL, NULL, hInstance, NULL);
 	if(!window){
-		app->message("! window NULL pointer");
+		System::geti()->message_box("B³¹d krytyczny!", "window NULL pointer");
 		return 0;
 	}
-	ShowWindow(window,nCmdShow);
+	ShowWindow(window, nCmdShow);
 	UpdateWindow(window);
 	MSG message;
 	while(GetMessage(&message, NULL, 0, 0)){
@@ -51,38 +49,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	switch(message){
 		case WM_CREATE:{
-			app->wm_create(&hwnd);
+			app->event_create(&hwnd);
 		}break;
 		case WM_COMMAND:{
-			app->wm_command(wParam);
+			app->event_button(wParam);
 		}break;
 		case WM_DROPFILES:{
 			HDROP fDrop = (HDROP)wParam;
 			char* fName = new char[512];
 			DragQueryFile(fDrop,0,fName,512);
 			DragFinish(fDrop);
-			app->wm_dropfiles(fName);
+			app->event_dropfiles(fName);
 			delete[] fName;
 		}break;
 		case WM_SIZE:{
-			app->wm_resize();
+			app->event_resize();
 		}break;
 		case WM_TIMER:{
-			app->wm_timer();
+			app->event_timer();
 		}break;
 		case WM_KEYDOWN:{
-			app->wm_keydown(wParam);
+			app->event_keydown(wParam);
 		}
 		case WM_SYSKEYDOWN:{
-			app->wm_syskeydown(wParam);
+			app->event_syskeydown(wParam);
 		}
         case WM_SYSCOMMAND:{
             if(wParam==SC_SCREENSAVE){
-                app->wm_screensave();
+                app->event_screensave();
             }
         }break;
-        case 0x0319:{ //app_command
-            app->wm_appcommand(wParam,lParam);
+        case 0x0319:{ //APP_COMMAND
+            app->event_appcommand(wParam,lParam);
         }break;
 		case WM_DESTROY:{
 			delete app;

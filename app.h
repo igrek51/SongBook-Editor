@@ -3,21 +3,20 @@
 
 #include <iostream>
 #include <sstream>
+#include <windows.h>
 #include "config.h"
-#include "log.h"
+#include "io.h"
 
 using namespace std;
 
 class App {
 private:
     static App* instance;
-	int ctrls_num;
-	HWND hwnd;
 public:
     static App* geti();
 	App(int w, int h, string version, int ctrls = 0);
 	~App();
-	HWND *hctrl;
+    HWND hwnd;
 	HINSTANCE* hInst;
 	int window_w, window_h;
 	string version;
@@ -27,6 +26,7 @@ public:
 	string *argv;
 	int argc;
 	void get_argv();
+
 	bool is_arg(string par);
 	void clear_file(string filename);
 	void log(string l);

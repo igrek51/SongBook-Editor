@@ -16,8 +16,8 @@ SOURCES +=\
     richedit.cpp \
     subclassing.cpp \
     transpose.cpp \
-    wm.cpp \
-    system.cpp
+    system.cpp \
+    events.cpp
 
 DISTFILES += \
     resource.rc
@@ -29,5 +29,6 @@ HEADERS += \
     system.h \
     files.h \
     log.h \
-    io.h
+    io.h \
+    controls.h
 

@@ -1,6 +1,6 @@
 #include "config.h"
 #include "files.h"
-#include "log.h"
+#include "io.h"
 
 Config* Config::instance = NULL;
 
@@ -15,17 +15,21 @@ Config::Config(){
     //Sta³e
     config_filename = "conf.ini";
     log_filename = "log.txt";
+    buttons_fontface = "MS Shell Dlg 2";
     //Zmienne
+    window_w = 600;
+    window_h = 680;
+    program_name = "Igrek SongBook Editor";
     //wczytywane z pliku - wartoœci domyœlne
     songs_dir = ".";
-    fontface = "Calibri";
+    editor_fontface = "Calibri";
 	halfscreen = false;
     log_enabled = true;
     toolbar_show = true;
     autoscroll_scale = false;
     chordsbase_on_startup = false;
-    fontsize1 = 18;
-    fontsize2 = 18;
+    buttons_fontsize = 18;
+    editor_fontsize = 18;
     autoscroll_interval = 500;
 	autoscroll_wait = 35;
 }
@@ -37,9 +41,9 @@ ConfigVariable::ConfigVariable(string name, string value){
 
 
 void Config::load_from_file(){
-    Log::log("Wczytywanie ustawieñ");
+    IO::geti()->log("Wczytywanie ustawieñ");
     if(!file_exists(config_filename)){
-        Log::error("Brak pliku konfiguracyjnego - wczytanie wartoœci domyœlnych");
+        Log::error("Brak pliku konfiguracyjnego - ³adowanie wartoœci domyœlnych");
         return;
     }
     vector<ConfigVariable*>* variables = get_config_variables(config_filename);
@@ -114,7 +118,7 @@ string Config::get_config_string(vector<ConfigVariable*>* variables, string name
             return variables->at(i).value;
         }
     }
-    Log::error("Nie znaleziono zmiennej w pliku konfiguracyjnym: "+name);
+    IO::geti()->error("Nie znaleziono zmiennej w pliku konfiguracyjnym: "+name);
     return "";
 }
 

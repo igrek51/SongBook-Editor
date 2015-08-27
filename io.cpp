@@ -2,6 +2,7 @@
 #include "config.h"
 #include "system.h"
 #include "files.h"
+#include "controls.h"
 #include <fstream>
 #include <sstream>
 #include <ctime>
@@ -18,19 +19,21 @@ IO* IO::geti(){
 IO::IO(){
     last_echo = "";
     clear_log();
+    System::geti()->get_args();
 }
 
 
 void IO::clear_log(){
-    clear_file(Config::log_filename);
+    clear_file(Config::geti()->log_filename);
 }
 
 void IO::log(string l){
+    if(!Config::geti()->log_enabled) return;
     fstream plik;
-    plik.open(Config::log_filename.c_str(), fstream::out|fstream::app);
+    plik.open(Config::geti()->log_filename.c_str(), fstream::out|fstream::app);
     if(!plik.good()){
         plik.close();
-        message_box("B³¹d", "B³¹d zapisu do pliku dziennika: "+Config::log_filename);
+        message_box("B³¹d", "B³¹d zapisu do pliku dziennika: "+Config::geti()->log_filename);
         return;
     }
     plik<<get_time()<<" - "<<l<<endl;
@@ -67,14 +70,7 @@ void IO::echo(string s){
 		ss<<s<<" ("<<repeated_echo<<")";
 		s=ss.str();
 	}
-
-
-
-	SetWindowText(hctrl[1],s.c_str());
-	UpdateWindow(hwnd);
-
-
-
+    System::geti()->set_text("statusbar", s.c_str());
 	log(s);
 }
 
@@ -85,75 +81,33 @@ void IO::echo(int e){
 }
 
 
-
-void App::get_argv(){
-	string arg=GetCommandLine();
-	if(arg.length()==0){
-		argc=0;
-		argv=NULL;
-	}else{
-		int arglen = arg.length();
-		bool cudzyslow=false;
-		//usuwanie podwójnych spacji
-		for(int i=0; i<arglen-1; i++){
-			if(arg[i]=='\"') cudzyslow=!cudzyslow;
-			if(arg[i]==' '&&arg[i+1]==' '&&!cudzyslow){
-				arg.erase(i,1);
-				arglen--;
-				i--;
-			}
-		}
-		//usuwanie spacji z pocz¹tku
-		if(arg[0]==' ') arg.erase(0,1);
-		//usuwanie spacji z koñca
-		if(arg[arg.length()-1]==' ') arg.erase(arg.length()-1,1);
-		//policzenie parametrów
-		cudzyslow=false;
-		argc=1;
-		for(unsigned int i=0; i<arg.length(); i++){
-			if(arg[i]=='\"') cudzyslow=!cudzyslow;
-			if(arg[i]==' '&&!cudzyslow) argc++;
-		}
-		argv = new string [argc];
-		if(argc==1){
-			argv[0]=arg;
-		}else{
-			int spaces=0;
-			cudzyslow=0;
-			for(int i=0; i<argc; i++) argv[i]="";
-			for(unsigned int i=0; i<arg.length(); i++){
-				if(arg[i]=='\"') cudzyslow=!cudzyslow;
-				if(arg[i]==' '&&!cudzyslow){
-					spaces++;
-				}else{
-					argv[spaces]+=arg[i];
-				}
-			}
-		}
-	}
-	//odciêcie cudzys³owów
-	for(int i=0; i<argc; i++){
-		if(argv[i][0]=='\"'&&argv[i][argv[i].length()-1]=='\"'){
-			argv[i] = argv[i].substr(1,argv[i].length()-2);
-		}
-	}
-	ss_clear(ss);
-	ss<<"Parametry ["<<argc<<"]: ";
-	for(int i=0; i<argc; i++){
-		ss<<argv[i];
-		if(i<argc-1) ss<<"; ";
+void IO::get_args_from(string args_text){
+    args.clear();
+    bool cudzyslow = false;
+    for(int i=0; i<(int)args_text.length(); i++){
+        if(args_text[i]=='\"') cudzyslow = !cudzyslow;
+        if(args_text[i]==' ' && !cudzyslow && i>0){
+            args.push_back(args_text.substr(0, i));
+            args_text = args_text.substr(i+1);
+            i = -1;
+        }
+    }
+    args.push_back(args_text);
+    stringstream ss;
+	ss<<"Parametry uruchomienia ("<<args.size()<<"): ";
+	for(int i=0; i<args.size(); i++){
+		ss<<args.at(i);
+		if(i<args.size()-1) ss<<", ";
 	}
 	log(ss.str());
 }
 
-bool App::is_arg(string par){
-	for(int i=1; i<argc; i++){
-		if(argv[i]==par) return true;
+bool IO::is_arg(string parametr){
+	for(int i=1; i<args.size(); i++){
+		if(args.at(i)==parametr) return true;
 	}
 	return false;
 }
-
-
 
 
 string get_time(){

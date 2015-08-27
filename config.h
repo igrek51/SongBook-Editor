@@ -21,16 +21,21 @@ public:
     //  Sta³e
     string config_filename;
     string log_filename;
+    string program_name;
+    string buttons_fontface;
     //  Zmienne
+    int window_w;
+    int window_h;
+    //z pliku konfiguracyjnego
     string songs_dir;
-    string fontface;
+    string editor_fontface;
     bool halfscreen;
     bool log_enabled;
     bool toolbar_show;
     bool autoscroll_scale;
     bool chordsbase_on_startup;
-    int fontsize1;
-    int fontsize2;
+    int buttons_fontsize;
+    int editor_fontsize;
     int autoscroll_interval;
 	int autoscroll_wait;
 };

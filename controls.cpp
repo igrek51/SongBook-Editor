@@ -1,20 +1,99 @@
+#include "controls.h"
+#include "io.h"
 #include "app.h"
-#include <commctrl.h>
 
-HWND App::create_button(string text, int x, int y, int w, int h, int button_nr){
-	return CreateWindowEx(0,WC_BUTTON,text.c_str(),WS_CHILD|WS_VISIBLE,x,y,w,h,hwnd,(HMENU)button_nr,*hInst,0);
+Controls* Controls::instance = NULL;
+
+Controls* Controls::geti(){
+    if(instance == NULL){
+        instance = new Controls();
+    }
+    return instance;
 }
 
-HWND App::create_edit(string text, int x, int y, int w, int h, int add_style){
-	return CreateWindowEx(WS_EX_CLIENTEDGE,WC_EDIT,text.c_str(),WS_CHILD|WS_VISIBLE|ES_AUTOHSCROLL|add_style,x,y,w,h,hwnd,0,*hInst,0);
+Controls::~Controls(){
+    for(unsigned int i=0; i<controls.size(); i++){
+        delete controls.at(i);
+    }
+    controls.clear();
 }
 
-HWND App::create_static(string text, int x, int y, int w, int h, int add_style){
-	return CreateWindowEx(0,WC_STATIC,text.c_str(),WS_CHILD|WS_VISIBLE|add_style,x,y,w,h,hwnd,0,*hInst,0);
+
+Control::Control(HWND handle, string name){
+    this->handle = handle;
+    this->name = name;
+    wndproc_old = NULL;
+}
+
+Control::~Control(){
+    //  TODO
+    un_subclass(i);
+    if(hctrl[i]!=NULL) DestroyWindow(hctrl[i]);
+
+}
+
+
+HWND Controls::find(string name){
+    if(name.length()==0) return NULL;
+    for(unsigned int i=0; i<controls.size(); i++){
+        if(controls.at(i)->name == name){
+            return controls.at(i)->handle;
+        }
+    }
+    IO::geti()->error("Nie odnaleziono kontrolki o nazwie: "+name);
+    return NULL;
+}
+
+void Controls::create_button(string text, int x, int y, int w, int h, string name){
+    int button_nr = controls.size() + 1;
+    HWND handle = CreateWindowEx(0, WC_BUTTON, text.c_str(), WS_CHILD|WS_VISIBLE, x, y, w, h, App::geti()->hwnd, (HMENU)button_nr, *App::geti()->hInst, 0);
+    controls.push_back(new Control(handle, name));
+}
+
+void Controls::create_button_multiline(string text, int x, int y, int w, int h, string name){
+    int button_nr = controls.size() + 1;
+    HWND handle = CreateWindowEx(0, WC_BUTTON, text.c_str(), WS_CHILD|WS_VISIBLE|BS_MULTILINE, x, y, w, h, App::geti()->hwnd, (HMENU)button_nr, *App::geti()->hInst, 0);
+    controls.push_back(new Control(handle, name));
+}
+
+void Controls::create_edit(string text, int x, int y, int w, int h, string name){
+	HWND handle = CreateWindowEx(WS_EX_CLIENTEDGE, WC_EDIT, text.c_str(), WS_CHILD|WS_VISIBLE|ES_AUTOHSCROLL, x, y, w, h, App::geti()->hwnd, 0, *App::geti()->hInst, 0);
+    controls.push_back(new Control(handle, name));
+}
+
+void Controls::create_edit_center(string text, int x, int y, int w, int h, string name){
+	HWND handle = CreateWindowEx(WS_EX_CLIENTEDGE, WC_EDIT, text.c_str(), WS_CHILD|WS_VISIBLE|ES_AUTOHSCROLL|ES_CENTER, x, y, w, h, App::geti()->hwnd, 0, *App::geti()->hInst, 0);
+    controls.push_back(new Control(handle, name));
+}
+
+void Controls::create_static(string text, int x, int y, int w, int h, string name){
+	HWND handle = CreateWindowEx(0, WC_STATIC, text.c_str(), WS_CHILD|WS_VISIBLE, x, y, w, h, App::geti()->hwnd, 0, *App::geti()->hInst, 0);
+    controls.push_back(new Control(handle, name));
+}
+
+void Controls::create_static_center(string text, int x, int y, int w, int h, string name){
+	HWND handle = CreateWindowEx(0, WC_STATIC, text.c_str(), WS_CHILD|WS_VISIBLE|SS_CENTER|SS_CENTERIMAGE, x, y, w, h, App::geti()->hwnd, 0, *App::geti()->hInst, 0);
+    controls.push_back(new Control(handle, name));
+}
+
+void Controls::create_groupbox(string text, int x, int y, int w, int h){
+    HWND handle = CreateWindowEx(0, WC_BUTTON, text.c_str(), WS_CHILD|WS_VISIBLE|BS_GROUPBOX, x, y, w, h, App::geti()->hwnd, 0, *App::geti()->hInst, 0);
+    controls.push_back(new Control(handle, name));
+}
+
+
+bool Controls::is_button(int button_nr, string name){
+    if(button_nr>=1 && button_nr<=controls.size()){
+        if(controls.at(button_nr-1)->name == name) return true;
+        return false;
+    }
+    IO::geti()->error("Nie odnaleziono kontrolki o numerze: "+button_nr);
+    return false;
 }
 
 void App::button_click(WPARAM wParam){
-	if(wParam==1){ //nowy
+    //  TODO
+	if(is_button(wParam,"nowy")){ //nowy
 		new_file();
 	}
 	if(wParam==12){ //wczytaj
@@ -50,6 +129,6 @@ void App::button_click(WPARAM wParam){
 	}
 	if(wParam==16){ //schowanie paska
 		if(fullscreen_on) fullscreen_set(false);
-    else pasek_switch();
+        else pasek_switch();
 	}
 }

@@ -44,8 +44,6 @@ vector<string>* get_all_lines(string filename){
 
 
 
-
-
 void App::new_file(){
 	SetWindowText(hctrl[2],"");
 	refresh_text();

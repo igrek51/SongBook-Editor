@@ -1,5 +1,7 @@
 #include "system.h"
+#include "io.h"
 #include <windows.h>
+#include <commctrl.h>
 
 System* System::instance = NULL;
 
@@ -19,4 +21,13 @@ bool System::dir_exists(string name){
 
 void System::message_box(string title, string message){
     MessageBox(NULL, message.c_str(), title.c_str(), MB_OK|MB_ICONINFORMATION);
+}
+
+void System::get_args(){
+    IO::geti()->get_args_from(GetCommandLine());
+}
+
+void System::set_text(string control_name, string text){
+    SetWindowText(Controls::geti()->find(control_name), text.c_str());
+	//UpdateWindow(hwnd);
 }
