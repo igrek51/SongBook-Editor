@@ -58,7 +58,7 @@ string get_chord(int chord_nr){
 
 void App::transpose(int transponuj){
 	if(transponuj==0) return;
-	transposed += transponuj;
+	Config::geti()->transposed += transponuj;
 	char *str = load_text();
 	string trans="";
 	int nawias=0;
@@ -82,7 +82,7 @@ void App::transpose(int transponuj){
 		if(nawias==1){
 			ch_next=str[i+1];
 			//dwuznakowy
-			ss_clear(ss);
+			stringstream ss;
 			ss<<ch<<ch_next;
 			chord_nr=get_nr_chord(ss.str());
 			if(chord_nr!=0){
@@ -116,14 +116,14 @@ void App::transpose(int transponuj){
 		}
 		trans+=ch;
 	}
-	SetWindowText(hctrl[2],trans.c_str());
+	SetWindowText(Controls::geti()->find("editor"),trans.c_str());
 	refresh_text();
 	delete[] str;
-	ss_clear(ss);
-	ss<<"Transpozycja akordów: ";
-	if(transposed>0) ss<<"+";
-	ss<<transposed;
-	echo(ss.str());
+	stringstream ss2;
+	ss2<<"Transpozycja akordów: ";
+	if(Config::geti()->transposed>0) ss2<<"+";
+	ss2<<Config::geti()->transposed;
+	IO::geti()->echo(ss2.str());
 }
 
 string App::transpose_string(string in, int t){
@@ -140,7 +140,7 @@ string App::transpose_string(string in, int t){
 		}
 		ch_next=in[i+1];
 		//dwuznakowy
-		ss_clear(ss);
+		stringstream ss;
 		ss<<ch<<ch_next;
 		chord_nr=get_nr_chord(ss.str());
 		if(chord_nr!=0){
