@@ -2,7 +2,7 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-void App::event_create(HWND *window){
+void App::event_init(HWND *window){
 	main_window = *window;
 	//parametry
 	System::geti()->get_args();
@@ -19,11 +19,6 @@ void App::event_create(HWND *window){
 	set_workdir();
 	//ustawienia
     Config::geti()->load_from_file();
-	transposed = 0;
-	autoscroll = false;
-	opened_file = "";
-	for(int i=0; i<9; i++) tekst_wstaw[i]="";
-    file_to_open = "";
 	//log
 	IO::geti()->clear_log();
 	IO::geti()->log("Hello World...");
@@ -65,7 +60,7 @@ void App::event_create(HWND *window){
     Controls::geti()->create_button("Analizuj", x_paint, y_paint, buttonw, 20, "analyze");
     x_paint+=buttonw;
 
-    Controls::geti()->create_button("^", w-control_h, 0, 20, control_h, "toolbar_hide");
+    Controls::geti()->create_button("^", w-control_h, 0, 20, control_h, "toolbar_toggle");
 	//edytor
 	if(LoadLibrary("RICHED32.DLL")==NULL){
 		IO::geti()->error("B³¹d: brak biblioteki RICHED32.DLL");
@@ -77,66 +72,93 @@ void App::event_create(HWND *window){
     Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
     Controls::geti()->set_text("autoscroll_wait", Config::geti()->autoscroll_wait);
 	//drag & drop
-	DragAcceptFiles(hwnd,true);
-	SetWindowText(hctrl[2],"");
+	DragAcceptFiles(main_window, true);
+	set_text("editor", "");
 	//wczytanie pliku zadanego parametrem
-	if(argc==2){ //jeden dodatkowy parametr - nazwa pliku do otwarcia
-		open_file(argv[1]);
-	}
-	if(is_arg("--fo")){ //file open
-		for(int i=0; i<argc-1; i++){
-			if(argv[i]=="--fo"){
-				if(argv[i+1].length()<3) break;
-				open_file(argv[i+1]);
-				break;
-			}
-		}
+	if(IO::geti()->args.size()==2){ //jeden dodatkowy parametr - nazwa pliku do otwarcia
+		open_file(IO::geti()->args.at(1));
 	}
 	update_title();
 	//czcionki
-	fontsize=config_fontsize1;
-    fontface=config_fontface;
-	for(int i=0; i<ctrls_num; i++){
-		if(i==2) continue;
-		change_font(hctrl[i]);
-	}
-	fontsize=config_fontsize2;
-	change_font(hctrl[2]);
-	SetFocus(hctrl[2]);
+    for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
+        string fontface = Config::geti()->buttons_fontface;
+        int fontsize = Config::geti()->buttons_fontsize;
+        if(Controls::geti()->controls.at(i)->name == "editor"){
+            fontface = Config::geti()->editor_fontface;
+            fontsize = Config::geti()->editor_fontsize;
+        }
+        set_font(Controls::geti()->controls.at(i)->handle, fontface, fontsize);
+    }
+	SetFocus(Controls::geti()->find("editor"));
 	//subclassing
-	subclass(0);
-	subclass(2);
-	subclass(9);
-	subclass(10);
-	subclass(19);
-	subclass(20);
-	subclass(22);
+    for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
+        subclass(Controls::geti()->controls.at(i));
+    }
 	//pasek schowany przy starcie
-	pasek_shown = true;
-	fullscreen_on = false;
-	if(Config::toolbar_show==0){
+	if(!Config::geti()->toolbar_show){
 		pasek_switch(0);
 	}
 	//okno na po³owie ekranu
-	if(config_halfscreen==1){
+	if(Config::geti()->halfscreen==1){
 		HDC screen = GetDC(GetDesktopWindow());
 		int screen_w = GetDeviceCaps(screen, HORZRES);
 		int screen_h = GetDeviceCaps(screen, VERTRES);
 		DeleteDC(screen);
-		SetWindowPos(hwnd,HWND_TOP,0,0,screen_w/2,screen_h-30,0);
+		SetWindowPos(main_window, HWND_TOP, 0, 0, screen_w/2, screen_h-30, 0);
     }
     //baza akordów na start (jeœli nie by³ otwierany wybrany plik)
-    if(config_chordsbase_on_startup==1 && argc<2){
+    if(Config::geti()->config_chordsbase_on_startup && IO::geti()->args.size()<=1){
         chordsbase();
     }
-	echo("wersja "+version);
+	IO::geti()->echo("wersja "+version);
 }
 
-void App::event_command(WPARAM wParam){
-	button_click(wParam);
+void App::event_button(WPARAM wParam){
+    //  TODO
+    /*
+    string name = get_button_name(wParam);
+	if(name == "nowy"){ //nowy
+		new_file();
+	}
+	if(wParam==12){ //wczytaj
+		char *str2 = new char[512];
+		GetWindowText(hctrl[0],str2,512);
+		if(strlen(str2)==0){
+			echo("Podaj nazwê pliku");
+		}else{
+			open_file(str2);
+		}
+		delete[] str2;
+	}
+	if(wParam==2){ //zapisz
+		save_file();
+	}
+    if(wParam==3){ //analizuj
+		int licznik=0;
+		while(skanuj()) licznik++;
+		if(licznik==0) echo("Brak zmian");
+		else echo("Wprowadzono zmiany");
+	}
+	if(wParam==7){ //zamieñ
+		zamien();
+	}
+	if(wParam==13){ //znajdŸ
+		znajdz();
+	}
+    if(wParam==9){ //baza akordów
+        chordsbase();
+	}
+	if(wParam==14){ //autoscroll
+		autoscroll_switch();
+	}
+	if(wParam==16){ //schowanie paska
+		if(fullscreen_on) fullscreen_set(false);
+        else pasek_switch();
+	}
+    */
 }
 
-void App::event_dropfiles(char *filename){
+void App::event_dropfiles(string filename){
 	if(file_exists(filename)){
 		open_file(filename);
 		SetFocus(hctrl[2]);
@@ -144,51 +166,49 @@ void App::event_dropfiles(char *filename){
 		new_file();
 		opened_file = filename;
 		if(opened_file[opened_file.length()-1]!='\\') opened_file+="\\";
-		SetWindowText(hctrl[0],opened_file.c_str());
-		SetFocus(hctrl[0]);
-		ss_clear(ss);
-		ss<<"Nowy plik w folderze: \""<<filename<<"\"";
-		echo(ss.str());
+        Controls::geti()->set_text("cmd", opened_file);
+		SetFocus(Controls::geti()->find("cmd"));
+		IO::geti()->echo("Nowy plik w folderze: \""+filename+"\"");
 	}else{
-		ss_clear(ss);
-		ss<<"! B³¹d: nieprawid³owa œcie¿ka: \""<<filename<<"\"";
-		echo(ss.str());
+		IO::geti()->error("nieprawid³owa œcie¿ka: \""+filename+"\"");
 	}
-	SetForegroundWindow(hwnd);
+	SetForegroundWindow(main_window);
 }
 
 void App::event_resize(){
     int control_h = 22;
 	RECT wnd_rect;
-	GetClientRect(hwnd, &wnd_rect);
-	window_w = wnd_rect.right-wnd_rect.left;
-	window_h = wnd_rect.bottom-wnd_rect.top;
-	if(pasek_shown){
-        SetWindowPos(hctrl[2],HWND_TOP,0,control_h*4,window_w,window_h-control_h*4,0);
+	GetClientRect(main_window, &wnd_rect);
+	int w = wnd_rect.right-wnd_rect.left;
+	int h = wnd_rect.bottom-wnd_rect.top;
+    Config::geti()->window_w = w;
+    Config::geti()->window_h = h;
+	if(Config::geti()->toolbar_show){
+        SetWindowPos(Controls::geti()->find("editor"),HWND_TOP,0,control_h*4,w,h-control_h*4,0);
 	}else{
-        SetWindowPos(hctrl[2],HWND_TOP,0,control_h,window_w,window_h-control_h,0);
+        SetWindowPos(Controls::geti()->find("editor"),HWND_TOP,0,control_h,w,h-control_h,0);
 	}
-    SetWindowPos(hctrl[1],HWND_TOP,0,0,window_w-20,control_h,SWP_NOMOVE);
-    SetWindowPos(hctrl[0],HWND_TOP,0,0,window_w,control_h,SWP_NOMOVE);
-	SetWindowPos(hctrl[22],HWND_TOP,window_w-20,0,0,0,SWP_NOSIZE);
+    SetWindowPos(Controls::geti()->find("statusbar"),HWND_TOP,0,0,w-20,control_h,SWP_NOMOVE);
+    SetWindowPos(Controls::geti()->find("cmd"),HWND_TOP,0,0,w,control_h,SWP_NOMOVE);
+	SetWindowPos(Controls::geti()->find("toolbar_toggle"),HWND_TOP,w-20,0,0,0,SWP_NOSIZE);
     //resize panelu - 1. rz¹d
-    SetWindowPos(hctrl[3],HWND_TOP,window_w*0/7,control_h*2,window_w/7,control_h,0);
-    SetWindowPos(hctrl[16],HWND_TOP,window_w*1/7,control_h*2,window_w/7,control_h,0);
-    SetWindowPos(hctrl[4],HWND_TOP,window_w*2/7,control_h*2,window_w/7,control_h,0);
-    SetWindowPos(hctrl[13],HWND_TOP,window_w*3/7,control_h*2,window_w/7,control_h,0);
-    SetWindowPos(hctrl[19],HWND_TOP,window_w*4/7,control_h*2,window_w/7,control_h,0);
-    SetWindowPos(hctrl[20],HWND_TOP,window_w*5/7,control_h*2,window_w/7,control_h,0);
-    SetWindowPos(hctrl[18],HWND_TOP,window_w*6/7,control_h*2,window_w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("new"),HWND_TOP,w*0/7,control_h*2,w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("load"),HWND_TOP,w*1/7,control_h*2,w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("save"),HWND_TOP,w*2/7,control_h*2,w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("base"),HWND_TOP,w*3/7,control_h*2,w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("autoscroll_interval"),HWND_TOP,w*4/7,control_h*2,w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("autoscroll_wait"),HWND_TOP,w*5/7,control_h*2,w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("autoscroll"),HWND_TOP,w*6/7,control_h*2,w/7,control_h,0);
 	//2. rz¹d
-    SetWindowPos(hctrl[9],HWND_TOP,window_w*0/7,control_h*3,window_w*2/7,control_h,0);
-    SetWindowPos(hctrl[10],HWND_TOP,window_w*2/7,control_h*3,window_w*2/7,control_h,0);
-    SetWindowPos(hctrl[11],HWND_TOP,window_w*4/7,control_h*3,window_w/7,control_h,0);
-    SetWindowPos(hctrl[17],HWND_TOP,window_w*5/7,control_h*3,window_w/7,control_h,0);
-    SetWindowPos(hctrl[5],HWND_TOP,window_w*6/7,control_h*3,window_w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("find_edit"),HWND_TOP,w*0/7,control_h*3,w*2/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("replace_edit"),HWND_TOP,w*2/7,control_h*3,w*2/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("find"),HWND_TOP,w*5/7,control_h*3,w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("replace"),HWND_TOP,w*4/7,control_h*3,w/7,control_h,0);
+    SetWindowPos(Controls::geti()->find("analyze"),HWND_TOP,w*6/7,control_h*3,w/7,control_h,0);
 }
 
 void App::event_screensave(){
-	log("Screensaver stop");
+	IO::geti()->log("Screensaver stop");
 	mouse_event(MOUSEEVENTF_MOVE,1,0,0,0);
 	mouse_event(MOUSEEVENTF_MOVE,-1,0,0,0);
 }
@@ -197,34 +217,31 @@ void App::event_timer(){
 	autoscroll_exec();
 }
 
-void App::event_syskeydown(WPARAM wParam){
-	if(wParam==VK_F10){
-		wm_keydown(wParam);
-	}
-}
-
 void App::event_appcommand(WPARAM wParam, LPARAM lParam){
     if(wParam==69){
         char newc = (char)lParam;
         if(newc==0){ //koniec przesy³ania nazwy pliku
-            ss_clear(ss);
+            stringstream ss;
             ss<<"Otwieranie pliku z zewnêtrznego polecenia: "<<file_to_open;
-            log(ss.str());
+            IO::geti()->log(ss.str());
             open_file(file_to_open);
             file_to_open = "";
-            SetForegroundWindow(hwnd);
+            SetForegroundWindow(main_window);
             return;
         }
         file_to_open += newc;
-        //string line = read_file_line("please_open");
-        //system("del please_open");
-        //set foreground
     }
+}
+
+void App::event_syskeydown(WPARAM wParam){
+	if(wParam==VK_F10){
+		event_keydown(wParam);
+	}
 }
 
 void App::event_keydown(WPARAM wParam){
 	if(wParam==VK_RETURN||wParam==VK_SPACE||wParam==VK_ESCAPE){
-		SetFocus(hctrl[2]);
+		SetFocus(Controls::geti()->find("editor"));
 	}
 	if(wParam==VK_F1){
 		set_scroll(0);
@@ -241,14 +258,14 @@ void App::event_keydown(WPARAM wParam){
 	}else if(wParam==VK_F8){
 		if(autoscroll){
 			autoscroll_off();
-			echo("Autoscroll wy³¹czony");
+			IO::geti()->echo("Autoscroll wy³¹czony");
 		}else{
 			autoscroll_nowait();
 		}
 	}else if(wParam==VK_F9){
 		pasek_switch();
 	}else if(wParam==VK_F11){
-		fullscreen_set(!fullscreen_on);
+		fullscreen_set(!Config::geti()->fullscreen_on);
 	}
 	if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
 		if(wParam=='A'){
@@ -258,14 +275,14 @@ void App::event_keydown(WPARAM wParam){
 		}else if(wParam=='R'){
 			refresh_text();
 		}else if(wParam=='F'){
-			SetFocus(hctrl[9]);
+			SetFocus(Controls::geti()->find("find_edit"));
 		}else if(wParam==VK_ADD){ // +
 			change_font_size(+1);
 		}else if(wParam==VK_SUBTRACT){ // -
 			change_font_size(-1);
 		}else if(wParam==VK_OEM_3){ // `
-			SetFocus(hctrl[0]);
-			SendMessage(hctrl[0], EM_SETSEL, 0, -1);
+			SetFocus(Controls::geti()->find("cmd"));
+			SendMessage(Controls::geti()->find("cmd"), EM_SETSEL, 0, -1);
 		}else if(wParam==VK_LEFT){
 			transpose(-1);
 		}else if(wParam==VK_RIGHT){

@@ -1,14 +1,6 @@
 #include "app.h"
 #include <richedit.h>
 
-void App::change_font(HWND hwdp){
-    string fontface2 = "MS Shell Dlg 2";
-    if(hwdp==hctrl[2]) fontface2 = fontface;
-    HFONT hFont=CreateFont(fontsize,0,0,0,FW_NORMAL,0,0,0,ANSI_CHARSET,0,0,0,0,fontface2.c_str());
-	SendMessage(hwdp,WM_SETFONT,(WPARAM)hFont,true);
-	if(hwdp==hctrl[2]) refresh_text();
-}
-
 void App::change_font_size(int change){
 	fontsize+=change;
 	if(fontsize<1) fontsize=1;

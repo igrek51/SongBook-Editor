@@ -1,7 +1,7 @@
 #include "app.h"
 #include <richedit.h>
 
-LRESULT CALLBACK App::subclass_wndproc_new(HWND hwdp, UINT message, WPARAM wParam, LPARAM lParam){
+LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	//rozpoznanie numeru kontrolki
 	int ctrl=-1;
 	for(int i=0; i<ctrls_num; i++){
@@ -198,11 +198,21 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwdp, UINT message, WPARAM wPara
 	return CallWindowProc(wndproc_old[ctrl], hwdp, message, wParam, lParam);
 }
 
-void App::subclass(int ctrl){
-	wndproc_old[ctrl] = (WNDPROC) SetWindowLong(hctrl[ctrl],GWL_WNDPROC,(LONG)wndproc_new);
+void App::subclass(Control* kontrolka){
+    if(kontrolka==NULL) return;
+    kontrolka->wndproc_old = (WNDPROC) SetWindowLong(kontrolka->handle, GWL_WNDPROC, (LONG)wndproc_new);
 }
 
-void App::un_subclass(int ctrl){
-	if(wndproc_old[ctrl]==NULL) return;
-	SetWindowLong(hctrl[ctrl],GWL_WNDPROC,(LONG)wndproc_old[ctrl]);
+void App::subclass(string name){
+    subclass(Controls::geti()->find_control(name));
+}
+
+void App::un_subclass(Control* kontrolka){
+    if(kontrolka==NULL) return;
+	if(kontrolka->wndproc_old==NULL) return;
+	SetWindowLong(kontrolka->handle, GWL_WNDPROC, (LONG)kontrolka->wndproc_old);
+}
+
+void App::un_subclass(string name){
+    un_subclass(Controls::geti()->find_control(name));
 }

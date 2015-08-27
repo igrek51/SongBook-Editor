@@ -21,6 +21,12 @@ Config::Config(){
     window_w = 600;
     window_h = 680;
     control_height = 22;
+    transposed = 0;
+	autoscroll = false;
+    fullscreen_on = false;
+	opened_file = "";
+    file_to_open = "";
+	for(int i=0; i<9; i++) tekst_wstaw[i]="";
     //wczytywane z pliku - wartoœci domyœlne
     songs_dir = ".";
     editor_fontface = "Calibri";

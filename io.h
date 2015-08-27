@@ -2,6 +2,7 @@
 #define IO_H
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 using namespace std;
@@ -23,6 +24,8 @@ public:
     int repeated_echo;
     void echo(string s);
     void echo(int e);
+    //  Message Box
+    void message_box(string title, string message);
     //  ARGUMENTY URUCHOMIENIA
     vector<string> args;
     void get_args_from(string args_text);

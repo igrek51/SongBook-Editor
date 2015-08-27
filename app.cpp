@@ -10,9 +10,9 @@ App* App::geti(){
     return instance;
 }
 
-
 App::App(){
-    version = VERSION+" (win)";
+    version = VERSION;
+    version += " (win)";
     instancja2 = NULL;
 }
 

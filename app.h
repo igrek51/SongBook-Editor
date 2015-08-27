@@ -5,9 +5,10 @@
 #include <sstream>
 #include <windows.h>
 #include "config.h"
+#include "controls.h"
+#include "files.h"
 #include "io.h"
 #include "system.h"
-#include "controls.h"
 
 using namespace std;
 
@@ -23,50 +24,25 @@ public:
 	HINSTANCE* hInst;
 	string version;
     void check_instance(string classname);
-	//io
-	string *argv;
-	int argc;
-	void get_argv();
-
-	bool is_arg(string par);
-	void clear_file(string filename);
-	void log(string l);
-	void echo(string s);
-	void echo(int e);
-
-	void load_config();
-	bool file_exists(string name);
-	bool dir_exists(string name);
-	void message(string m);
-	void ss_clear(stringstream &sstream);
-	stringstream ss;
-	//WM
-	void wm_create(HWND *window);
-	void wm_command(WPARAM wParam);
-	void wm_dropfiles(char *filename);
-	void wm_resize();
-	void wm_screensave();
-	void wm_keydown(WPARAM wParam);
-	void wm_syskeydown(WPARAM wParam);
-	void wm_timer();
-    void wm_appcommand(WPARAM wParam, LPARAM lParam);
-	//controls
-	HWND create_button(string text, int x, int y, int w, int h, int button_nr);
-	HWND create_edit(string text, int x, int y, int w, int h, int add_style);
-	HWND create_static(string text, int x, int y, int w, int h, int add_style);
-	void button_click(WPARAM wParam);
-	//cmd
+	//  EVENTS
+	void event_init(HWND *window);
+	void event_button(WPARAM wParam);
+	void event_dropfiles(string filename);
+	void event_resize();
+	void event_screensave();
+    void event_timer();
+    void event_appcommand(WPARAM wParam, LPARAM lParam);
+    void event_syskeydown(WPARAM wParam);
+	void event_keydown(WPARAM wParam);
+	//  CMD
 	string last_cmd, param;
 	void exec_cmd();
 	void exec_cmd(string str2);
-	//pliki
-	string opened_file;
+	//  Pliki
 	void new_file();
 	void open_file(string filename);
 	void save_file();
-    void save_file_line(string filename, string line);
-    string read_file_line(string filename);
-	//edycja
+	//  edycja
 	bool skanuj();
 	void usun_akordy();
 	void usun_wersje();
@@ -75,17 +51,12 @@ public:
 	bool znajdz_w(char *str, unsigned int start, unsigned int end, char *wzor);
 	void wstaw_tekst(int nrt);
 	void zapisz_tekst(int nrt);
-	string tekst_wstaw[9];
 	void dodaj_nawias();
 	void dodaj_alternatywne();
-	//formatowanie tekstu
-	void change_font(HWND hwdp);
-	void change_font_size(int change);
-	int fontsize;
-	string fontface;
+	//  formatowanie tekstu
 	void format_text(char *str);
 	void refresh_text();
-	//richedit
+	//  richedit
 	unsigned int str_size;
 	char* load_text();
 	void save_text(char *str);
@@ -103,33 +74,28 @@ public:
 	void insert_char(char *&str, unsigned int &str_size, int pos, char c);
 	void select_all();
 	void copy_text();
-	//transpozycja
+	//  transpozycja
 	void transpose(int transponuj);
-	int transposed;
 	string transpose_string(string in, int t);
-	//autoscroll
-	bool autoscroll;
-	int autoscroll_interval, autoscroll_wait, autoscroll_count;
+	//  autoscroll
 	void autoscroll_exec();
 	void autoscroll_on();
 	void autoscroll_nowait(int change=0);
 	void autoscroll_off();
 	void autoscroll_switch();
-	//subclassing
-	WNDPROC windowProc, wndproc_new, *wndproc_old;
+	//  subclassing
+	WNDPROC windowProc, wndproc_new;
 	LRESULT CALLBACK subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-	void subclass(int ctrl);
-	void un_subclass(int ctrl);
-	//program - inne funkcje
+    void subclass(Control* kontrolka);
+    void subclass(string name);
+    void un_subclass(Control* kontrolka);
+    void un_subclass(string name);
+	//  program - inne funkcje
 	void update_title();
-	bool pasek_shown;
 	void pasek_switch(int change=2);
-	bool fullscreen_on;
 	void fullscreen_set(bool full);
 	void window_duplicate();
-	void set_workdir();
     void quick_replace();
-    string file_to_open;
     void chordsbase();
 };
 

@@ -6,6 +6,13 @@
 
 using namespace std;
 
+class ConfigVariable {
+public:
+    ConfigVariable(string name, string value);
+    string name;
+    string value;
+};
+
 class Config {
 private:
 	static Config* instance;
@@ -27,6 +34,13 @@ public:
     int window_w;
     int window_h;
     int control_height;
+    int transposed;
+    int autoscroll_count;
+	bool autoscroll;
+    bool fullscreen_on;
+    string opened_file; //atkualnie otwarty plik
+    string file_to_open; //plik do otwarcia - polecenie z innej instancji
+    string tekst_wstaw[9]; //schowki na akordy do wklejenia
     //  z pliku konfiguracyjnego
     string songs_dir;
     string editor_fontface;
@@ -39,13 +53,6 @@ public:
     int editor_fontsize;
     int autoscroll_interval;
 	int autoscroll_wait;
-};
-
-class ConfigVariable {
-public:
-    ConfigVariable(string name, string value);
-    string name;
-    string value;
 };
 
 #endif

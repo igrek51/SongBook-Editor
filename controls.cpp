@@ -1,4 +1,6 @@
 #include "controls.h"
+#include <commctrl.h>
+#include <richedit.h>
 
 Controls* Controls::instance = NULL;
 
@@ -42,8 +44,20 @@ HWND Controls::find(string name){
     return NULL;
 }
 
+Control* Controls::find_control(string name){
+    if(name.length()==0) return NULL;
+    for(unsigned int i=0; i<controls.size(); i++){
+        if(controls.at(i)->name == name){
+            return controls.at(i);
+        }
+    }
+    IO::geti()->error("Nie odnaleziono kontrolki o nazwie: "+name);
+    return NULL;
+}
+
 string Controls::get_button_name(int button_nr){
-    if(button_nr>=1 && button_nr<=controls.size()){ //jeœli numer jest poprawny
+    //jeœli numer jest poprawny
+    if(button_nr>=1 && button_nr<=controls.size()){
         return controls.at(button_nr-1)->name;
     }
     IO::geti()->error("Nie odnaleziono kontrolki o numerze: "+button_nr);
@@ -99,45 +113,16 @@ void Controls::set_text(string control_name, int number){
     set_text(control_name, ss.str());
 }
 
-void App::button_click(WPARAM wParam){
+void Controls::set_font(HWND kontrolka, string fontface, int fontsize){
+    if(kontrolka==NULL) return;
+    HFONT hFont = CreateFont(fontsize, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, 0, fontface.c_str());
+    //HFONT hFont_old = SendMessage(kontrolka, WM_GETFONT, 0, 0);
+	SendMessage(kontrolka, WM_SETFONT, (WPARAM)hFont, true);
+    //usuniêcie starej czcionki
     //  TODO
-    string name = get_button_name(wParam);
-	if(name == "nowy"){ //nowy
-		new_file();
-	}
-	if(wParam==12){ //wczytaj
-		char *str2 = new char[512];
-		GetWindowText(hctrl[0],str2,512);
-		if(strlen(str2)==0){
-			echo("Podaj nazwê pliku");
-		}else{
-			open_file(str2);
-		}
-		delete[] str2;
-	}
-	if(wParam==2){ //zapisz
-		save_file();
-	}
-    if(wParam==3){ //analizuj
-		int licznik=0;
-		while(skanuj()) licznik++;
-		if(licznik==0) echo("Brak zmian");
-		else echo("Wprowadzono zmiany");
-	}
-	if(wParam==7){ //zamieñ
-		zamien();
-	}
-	if(wParam==13){ //znajdŸ
-		znajdz();
-	}
-    if(wParam==9){ //baza akordów
-        chordsbase();
-	}
-	if(wParam==14){ //autoscroll
-		autoscroll_switch();
-	}
-	if(wParam==16){ //schowanie paska
-		if(fullscreen_on) fullscreen_set(false);
-        else pasek_switch();
-	}
+	//if(hwdp==hctrl[2]) refresh_text();
+}
+
+void Controls::set_font(string name, string fontface, int fontsize){
+    set_font(find(name), fontface, fontsize)
 }

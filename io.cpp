@@ -82,6 +82,11 @@ void IO::echo(int e){
 }
 
 
+void IO::message_box(string title, string message){
+    System::geti()->message_box(title, message);
+}
+
+
 void IO::get_args_from(string args_text){
     args.clear();
     bool cudzyslow = false;

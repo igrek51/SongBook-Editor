@@ -28,12 +28,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	windowClass.lpszClassName = Config::geti()->program_name.c_str();
 	windowClass.lpszMenuName  = NULL;
 	if(!RegisterClass(&windowClass)){
-		System::geti()->message_box("B³¹d krytyczny!", "RegisterClass failed");
+		IO::geti()->message_box("B³¹d krytyczny!", "RegisterClass failed");
 		return 0;
 	}
 	HWND window = CreateWindowEx(0, Config::geti()->program_name.c_str(), Config::geti()->program_name.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, Config::geti()->window_w+16, Config::geti()->window_h+38, NULL, NULL, hInstance, NULL);
 	if(!window){
-		System::geti()->message_box("B³¹d krytyczny!", "window NULL pointer");
+		IO::geti()->message_box("B³¹d krytyczny!", "window NULL pointer");
 		return 0;
 	}
 	ShowWindow(window, nCmdShow);
@@ -49,7 +49,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
 	switch(message){
 		case WM_CREATE:{
-			app->event_create(&hwnd);
+			app->event_init(&hwnd);
 		}break;
 		case WM_COMMAND:{
 			app->event_button(wParam);
