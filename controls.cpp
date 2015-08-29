@@ -147,6 +147,20 @@ int Controls::get_int(string control_name){
     return atoi(content.c_str());
 }
 
+void Controls::select_all(string control_name){
+    Control* kontrolka = find_control(control_name);
+    if(kontrolka==NULL) return;
+    if(kontrolka->handle==NULL) return;
+    SendMessage(kontrolka->handle, EM_SETSEL, 0, -1);
+}
+
+void Controls::set_focus(string control_name){
+    Control* kontrolka = find_control(control_name);
+    if(kontrolka==NULL) return;
+    if(kontrolka->handle==NULL) return;
+    SetFocus(kontrolka->handle);
+}
+
 
 void Controls::resize(string control_name, int x, int y, int w, int h){
     Control* kontrolka = find_control(control_name);

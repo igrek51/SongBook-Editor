@@ -35,6 +35,13 @@ public:
     void event_appcommand(WPARAM wParam, LPARAM lParam);
     void event_syskeydown(WPARAM wParam);
 	void event_keydown(WPARAM wParam);
+    //  subclassing
+	WNDPROC windowProc, wndproc_new;
+	LRESULT CALLBACK subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+    void subclass(Control* kontrolka);
+    void subclass(string name);
+    void un_subclass(Control* kontrolka);
+    void un_subclass(string name);
 	//  CMD
 	string last_cmd;
 	void exec_cmd();
@@ -51,7 +58,7 @@ public:
 	void zapisz_tekst(int nrt);
 	void dodaj_nawias();
 	void dodaj_alternatywne();
-	//  Editor
+	//  Edytor
     void change_font_size(int change);
 	void format_text(string* str);
 	void refresh_text();
@@ -61,32 +68,20 @@ public:
 	void set_selected(unsigned int sel_start, unsigned int sel_end, string* str);
 	bool get_selected_1(unsigned int &sel_start, unsigned int &sel_end);
 	void set_selected_1(unsigned int sel_start, unsigned int sel_end);
+    string get_selected_text();
 	int get_scroll();
 	void set_scroll(int scroll_pos);
 	void change_scroll(int c);
 	unsigned int last_sel_start, last_sel_end;
 	int last_scroll;
-	char string_char(string* str, int pos);
-    void string_char_set(string* str, int pos, char c);
-	void string_delete(string*& str, int &pos);
-	void string_insert(string*& str, int pos, char c);
 	void select_all();
 	void copy_text();
-	//  transpozycja
-	void transpose(int transponuj);
 	//  autoscroll
 	void autoscroll_exec();
 	void autoscroll_on();
 	void autoscroll_nowait(int change=0);
 	void autoscroll_off();
 	void autoscroll_switch();
-	//  subclassing
-	WNDPROC windowProc, wndproc_new;
-	LRESULT CALLBACK subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-    void subclass(Control* kontrolka);
-    void subclass(string name);
-    void un_subclass(Control* kontrolka);
-    void un_subclass(string name);
 	//  program - inne funkcje
     void new_file();
 	void open_file(string filename);
@@ -97,6 +92,7 @@ public:
 	void fullscreen_set(bool full);
     void quick_replace();
     void chordsbase();
+    void transpose(int transponuj);
 };
 
 #endif // APP_H

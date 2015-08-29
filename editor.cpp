@@ -1,4 +1,5 @@
 #include "app.h"
+#include "strings.h"
 #include <richedit.h>
 
 string* App::load_text(){
@@ -16,32 +17,9 @@ string* App::load_text(){
 void App::save_text(string* str){
 	SetWindowText(Controls::geti()->find("editor"), str->c_str());
 	format_text(str);
-	//SetFocus(hctrl[2]);
 	set_selected_1(last_sel_start, last_sel_end);
 	delete str;
 	set_scroll(last_scroll);
-}
-
-char App::string_char(string* str, int pos){
-	if(pos<0 || pos>=(int)str->length()) return 0;
-	return str->at(pos);
-}
-
-void App::string_char_set(string* str, int pos, char c){
-    if(pos<0 || pos>=(int)str->length()) return;
-	str->at(pos) = c;
-}
-
-void App::string_delete(string*& str, int &pos){
-	if(pos<0 || pos>=(int)str->length()) return;
-    str->erase(pos, 1);
-	pos--;
-	//if(pos<0) pos=0;
-}
-
-void App::string_insert(string*& str, int pos, char c){
-	if(pos<0 || pos>(int)str->length()) return;
-    str->insert(str->begin()+pos, c);
 }
 
 bool App::get_selected(unsigned int &sel_start, unsigned int &sel_end, string* str){
@@ -98,9 +76,18 @@ bool App::get_selected_1(unsigned int &sel_start, unsigned int &sel_end){
 
 void App::set_selected_1(unsigned int sel_start, unsigned int sel_end){
 	CHARRANGE ch;
-	ch.cpMin=sel_start;
-	ch.cpMax=sel_end;
+	ch.cpMin = sel_start;
+	ch.cpMax = sel_end;
 	SendMessage(Controls::geti()->find("editor"), EM_EXSETSEL, 0, (LPARAM)&ch);
+}
+
+string App::get_selected_text(){
+    int str_size = GetWindowTextLength(Controls::geti()->find("editor"));
+    char* selected = new char [str_size];
+	SendMessage(Controls::geti()->find("editor"), EM_GETSELTEXT, 0, (LPARAM)selected);
+    string result = selected;
+    delete[] selected;
+    return result;
 }
 
 int App::get_scroll(){
@@ -138,21 +125,17 @@ void App::select_all(){
 }
 
 void App::copy_text(){
-	unsigned int str_size = GetWindowTextLength(Controls::geti()->find("editor"));
-	char *selected = new char [str_size];
-	SendMessage(Controls::geti()->find("editor"), EM_GETSELTEXT, 0, (LPARAM)selected);
-	if(strlen(selected)==0){
-		delete[] selected;
+	string selected = trim_1crlf(get_selected_text());
+    if(selected.length()==0){
 		return;
 	}
-	const size_t len = strlen(selected) + 1;
-	HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
-	memcpy(GlobalLock(hMem), selected, len);
+	const size_t len = selected.length() + 1;
+	HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
+	memcpy(GlobalLock(hMem), selected.c_str(), len);
 	GlobalUnlock(hMem);
 	OpenClipboard(0);
 	EmptyClipboard();
 	SetClipboardData(CF_TEXT, hMem);
 	CloseClipboard();
-	delete[] selected;
 	IO::geti()->echo("Skopiowano zaznaczony tekst");
 }

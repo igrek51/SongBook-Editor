@@ -42,6 +42,8 @@ public:
     void set_text(string control_name, int number);
     string get_text(string control_name);
     int get_int(string control_name);
+    void select_all(string control_name);
+    void set_focus(string control_name);
     //  Zmiana rozmiaru
     void resize(string control_name, int x, int y, int w=-1, int h=-1);
     //  Zmiana czcionki

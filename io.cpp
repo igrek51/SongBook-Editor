@@ -2,6 +2,7 @@
 #include "config.h"
 #include "files.h"
 #include "controls.h"
+#include "strings.h"
 #include <fstream>
 #include <ctime>
 #include <windows.h>
@@ -119,11 +120,7 @@ void IO::get_args(){
 void IO::get_args_from(string args_text){
     args.clear();
     //uciêcie spacji na koñcu
-    if(args_text.length()>0){
-        if(args_text[args_text.length()-1]==' '){
-            args_text = args_text.substr(0, args_text.length()-1);
-        }
-    }
+    args_text = trim_spaces(args_text);
     bool cudzyslow = false;
     for(int i=0; i<(int)args_text.length(); i++){
         if(args_text[i]=='\"') cudzyslow = !cudzyslow;

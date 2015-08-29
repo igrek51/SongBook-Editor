@@ -1,4 +1,5 @@
 #include "app.h"
+#include "strings.h"
 #include <richedit.h>
 
 void App::format_text(string* str){
@@ -7,7 +8,7 @@ void App::format_text(string* str){
 	get_selected_1(temp_sel_start, temp_sel_end);
 	temp_scroll = get_scroll();
 	SendMessage(Controls::geti()->find("editor"), EM_HIDESELECTION, 1, 0);
-	SetFocus(Controls::geti()->find("cmd"));
+	Controls::geti()->set_focus("cmd");
 	//t³o
 	COLORREF color = RGB(0,0,0);
 	SendMessage(Controls::geti()->find("editor"), EM_SETBKGNDCOLOR, 0, (LPARAM)((COLORREF)color));
@@ -70,7 +71,7 @@ void App::format_text(string* str){
 		}
 	}
 	//przywrócenie zaznaczenia
-	SetFocus(Controls::geti()->find("editor"));
+	Controls::geti()->set_focus("editor");
 	SendMessage(Controls::geti()->find("editor"), EM_HIDESELECTION, 0, 0);
 	set_selected_1(temp_sel_start, temp_sel_end);
 	set_scroll(temp_scroll);

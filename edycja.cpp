@@ -1,4 +1,5 @@
 #include "app.h"
+#include "strings.h"
 #include <richedit.h>
 
 bool App::skanuj(){
@@ -244,20 +245,6 @@ void App::zamien(){
 	}
 }
 
-char to_lowercase(char in){
-	if(in>='A' && in<='Z') return in-'A'+'a';
-	if(in=='¥') return '¹';
-	if(in=='¯') return '¿';
-	if(in=='Œ') return 'œ';
-	if(in=='') return 'Ÿ';
-	if(in=='Ê') return 'ê';
-	if(in=='Æ') return 'æ';
-	if(in=='Ñ') return 'ñ';
-	if(in=='Ó') return 'ó';
-	if(in=='£') return '³';
-	return in;
-}
-
 bool App::znajdz_w(string* str, unsigned int start, unsigned int end, string wzor){
 	for(int i=start; i<=(int)end-(int)wzor.length(); i++){
 		//szukanie wzorca
@@ -271,7 +258,7 @@ bool App::znajdz_w(string* str, unsigned int start, unsigned int end, string wzo
 		if(found){
 			IO::geti()->echo("Znaleziono fragment");
 			set_selected(i, i+wzor.length(), str);
-			SetFocus(Controls::geti()->find("find_edit"));
+			Controls::geti()->set_focus("find_edit");
 			delete str;
 			SendMessage(Controls::geti()->find("editor"), EM_SCROLLCARET, 0, 0);
 			return true;
@@ -323,18 +310,15 @@ void App::wstaw_tekst(int nrt){
 
 void App::zapisz_tekst(int nrt){
 	if(nrt<1 || nrt>9) return;
-	int str_size = GetWindowTextLength(Controls::geti()->find("editor"));
-	char *selected = new char [str_size];
-	SendMessage(Controls::geti()->find("editor"), EM_GETSELTEXT, 0, (LPARAM)selected);
-	if(strlen(selected)==0){
+    string selected = get_selected_text();
+    selected = trim_1crlf(selected);
+	if(selected.length()==0){
 		IO::geti()->error("Nie zaznaczono tekstu do zapisania");
-		delete[] selected;
 		return;
 	}
 	Config::geti()->tekst_wstaw[nrt-1] = selected;
 	stringstream ss;
 	ss<<"Zapisano tekst nr "<<nrt<<": "<<selected;
-	delete[] selected;
 	IO::geti()->echo(ss.str());
 }
 

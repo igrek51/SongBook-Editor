@@ -20,7 +20,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 		switch(message){
 			case WM_CHAR:{
 				if(wParam==VK_ESCAPE){
-					SetFocus(Controls::geti()->find("editor"));
+					Controls::geti()->set_focus("editor");
 					return 0;
 				}
 				if(wParam==VK_RETURN){
@@ -34,8 +34,10 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 				if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-					CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
-					return 0; //przechwycenie
+                    if(wParam!='A'){
+                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
+                        return 0; //przechwycenie
+                    }
 				}
 				if(wParam==VK_UP){
                     Controls::geti()->set_text("cmd", last_cmd);
@@ -151,7 +153,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 				if(wParam==VK_TAB){
-					SetFocus(Controls::geti()->find("replace_edit"));
+					Controls::geti()->set_focus("replace_edit");
 					return 0;
 				}
 			}break;
@@ -176,7 +178,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 				if(wParam==VK_TAB){
-					SetFocus(Controls::geti()->find("find_edit"));
+					Controls::geti()->set_focus("find_edit");
 					return 0;
 				}
 			}break;

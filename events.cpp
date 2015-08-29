@@ -60,7 +60,7 @@ void App::event_init(HWND *window){
     Controls::geti()->set_text("autoscroll_wait", Config::geti()->autoscroll_wait);
 	//czcionki
     controls_fonts_set();
-	SetFocus(Controls::geti()->find("editor"));
+	Controls::geti()->set_focus("editor");
 	//subclassing
     IO::geti()->log("Subclassing...");
     for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
@@ -102,7 +102,7 @@ void App::event_button(WPARAM wParam){
     if(!(wParam>=1 && wParam<=Controls::geti()->controls.size())) return;
     string name = Controls::geti()->get_button_name(wParam);
     if(name.length()==0) return;
-	if(name == "nowy"){ //nowy
+	if(name == "new"){ //nowy
 		new_file();
 	}else if(name == "load"){ //wczytaj
 		char *str2 = new char[512];
@@ -134,7 +134,7 @@ void App::event_button(WPARAM wParam){
 void App::event_dropfiles(string filename){
 	if(file_exists(filename)){
 		open_file(filename);
-		SetFocus(Controls::geti()->find("editor"));
+		Controls::geti()->set_focus("editor");
 	}else if(dir_exists(filename)){
 		new_file();
 		Config::geti()->opened_file = filename;
@@ -142,7 +142,7 @@ void App::event_dropfiles(string filename){
             Config::geti()->opened_file+="\\";
         }
         Controls::geti()->set_text("cmd", Config::geti()->opened_file);
-		SetFocus(Controls::geti()->find("cmd"));
+		Controls::geti()->set_focus("cmd");
 		IO::geti()->echo("Nowy plik w folderze: \""+filename+"\"");
 	}else{
 		IO::geti()->error("nieprawid³owa œcie¿ka: \""+filename+"\"");
@@ -220,7 +220,7 @@ void App::event_syskeydown(WPARAM wParam){
 
 void App::event_keydown(WPARAM wParam){
 	if(wParam==VK_ESCAPE){
-		SetFocus(Controls::geti()->find("editor"));
+		Controls::geti()->set_focus("editor");
 	}
 	if(wParam==VK_F1){
 		set_scroll(0);
@@ -254,14 +254,14 @@ void App::event_keydown(WPARAM wParam){
 		}else if(wParam=='R'){
 			refresh_text();
 		}else if(wParam=='F'){
-			SetFocus(Controls::geti()->find("find_edit"));
+			Controls::geti()->set_focus("find_edit");
 		}else if(wParam==VK_ADD){ // +
 			change_font_size(+1);
 		}else if(wParam==VK_SUBTRACT){ // -
 			change_font_size(-1);
 		}else if(wParam==VK_OEM_3){ // `
-			SetFocus(Controls::geti()->find("cmd"));
-			SendMessage(Controls::geti()->find("cmd"), EM_SETSEL, 0, -1);
+            Controls::geti()->set_focus("cmd");
+            Controls::geti()->select_all("cmd");
 		}else if(wParam==VK_LEFT){
 			transpose(-1);
 		}else if(wParam==VK_RIGHT){

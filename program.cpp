@@ -1,4 +1,5 @@
 #include "app.h"
+#include "strings.h"
 #include <richedit.h>
 #include <fstream>
 
@@ -69,35 +70,18 @@ void App::fullscreen_set(bool full){
 }
 
 void App::quick_replace(){
-	string* str = load_text();
-	char *selected = new char [str->length()];
-	SendMessage(Controls::geti()->find("editor"), EM_GETSELTEXT, 0, (LPARAM)selected);
-	char c;
-    while(strlen(selected)>0){
-        c = selected[0];
-        if(c==' '||c=='\n'||c=='\r'){
-            selected++;
-            continue;
-        }
-        c = selected[strlen(selected)-1];
-        if(c==' '||c=='\n'||c=='\r'){
-            selected[strlen(selected)-1]=0;
-            continue;
-        }
-        break;
-    }
-    if(strlen(selected)==0){
-        IO::geti()->error("B³¹d: Pusty tekst do zamiany.");
-        delete[] selected;
-        delete str;
+    string selected = get_selected_text();
+	selected = trim_spaces(trim_1crlf(selected));
+    if(selected.length()==0){
+        IO::geti()->error("Pusty tekst do zamiany.");
         return;
     }
-    set_selected(last_sel_end, last_sel_end, str);
+    get_selected_1(last_sel_start, last_sel_end);
+    set_selected_1(last_sel_end, last_sel_end); //brak zaznaczenia - replace obejmuje ca³oœæ
     Controls::geti()->set_text("find_edit", selected);
     Controls::geti()->set_text("replace_edit", selected);
-    SetFocus(Controls::geti()->find("replace_edit"));
-    delete[] selected;
-	delete str;
+    Controls::geti()->select_all("replace_edit");
+    Controls::geti()->set_focus("replace_edit");
 }
 
 void App::chordsbase(){
@@ -111,6 +95,11 @@ void App::chordsbase(){
 void App::new_file(){
 	SetWindowText(Controls::geti()->find("editor"), "");
 	refresh_text();
+    //usuniêcie nazwy samego pliku
+    while(Config::geti()->opened_file.length()>0 && Config::geti()->opened_file[Config::geti()->opened_file.length()-1]!='\\'){
+        Config::geti()->opened_file = Config::geti()->opened_file.substr(0, Config::geti()->opened_file.length()-1);
+    }
+    Controls::i()->set_text("cmd", Config::geti()->opened_file);
 	Config::geti()->opened_file = "";
 	update_title();
 	IO::geti()->echo("Nowy plik");

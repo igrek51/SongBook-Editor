@@ -16,7 +16,8 @@ SOURCES +=\
     subclassing.cpp \
     events.cpp \
     music.cpp \
-    editor.cpp
+    editor.cpp \
+    strings.cpp
 
 DISTFILES += \
     resource.rc
@@ -29,5 +30,6 @@ HEADERS += \
     log.h \
     io.h \
     controls.h \
-    music.h
+    music.h \
+    strings.h
 
