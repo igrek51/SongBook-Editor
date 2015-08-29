@@ -2,7 +2,7 @@
 #include "strings.h"
 #include <richedit.h>
 
-bool App::skanuj(){
+bool App::skanuj_1(){
 	bool changed = false;
 	string* str = load_text();
 	int nawias = 0;

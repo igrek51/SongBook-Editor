@@ -26,6 +26,20 @@ void App::controls_fonts_set(){
     }
 }
 
+void App::change_font_size(int change){
+	Config::geti()->editor_fontsize += change;
+	if(Config::geti()->editor_fontsize<1) Config::geti()->editor_fontsize=1;
+	Controls::geti()->set_font("editor", Config::geti()->editor_fontface, Config::geti()->editor_fontsize);
+    stringstream ss;
+	ss<<"Rozmiar czcionki: "<<Config::geti()->editor_fontsize;
+	if(Config::geti()->autoscroll_scaling){
+		Config::geti()->autoscroll_interval = Config::geti()->autoscroll_interval * (Config::geti()->editor_fontsize-2*change)/(Config::geti()->editor_fontsize-change);
+        Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
+		ss<<", Interwa³ autoscrolla: "<<Config::geti()->autoscroll_interval<<" ms";
+	}
+	IO::geti()->echo(ss.str());
+}
+
 void App::toolbar_switch(int change){
     if(change==1){
         Config::geti()->toolbar_show = true;
@@ -69,6 +83,13 @@ void App::fullscreen_set(bool full){
 	}
 }
 
+void App::chordsbase(){
+    IO::geti()->log("Otwieranie bazy akordów...");
+    if(Config::geti()->songs_dir.length()>0){
+        ShellExecute(0, "open", Config::geti()->songs_dir.c_str(), "", "", SW_SHOW);
+    }
+}
+
 void App::quick_replace(){
     string selected = get_selected_text();
 	selected = trim_spaces(trim_1crlf(selected));
@@ -84,20 +105,13 @@ void App::quick_replace(){
     Controls::geti()->set_focus("replace_edit");
 }
 
-void App::chordsbase(){
-    IO::geti()->log("Otwieranie bazy akordów...");
-    if(Config::geti()->songs_dir.length()>0){
-        ShellExecute(0, "open", Config::geti()->songs_dir.c_str(), "", "", SW_SHOW);
-    }
-}
-
 
 void App::new_file(){
 	SetWindowText(Controls::geti()->find("editor"), "");
 	refresh_text();
     //usuniêcie nazwy samego pliku
     while(Config::geti()->opened_file.length()>0 && Config::geti()->opened_file[Config::geti()->opened_file.length()-1]!='\\'){
-        Config::geti()->opened_file = Config::geti()->opened_file.substr(0, Config::geti()->opened_file.length()-1);
+        Config::geti()->opened_file = string_cutfromend(Config::geti()->opened_file, 1);
     }
     Controls::i()->set_text("cmd", Config::geti()->opened_file);
 	Config::geti()->opened_file = "";
@@ -105,26 +119,11 @@ void App::new_file(){
 	IO::geti()->echo("Nowy plik");
 }
 
-void App::open_file(string filename){
-	if(!file_exists(filename)){
-		IO::geti()->error("plik \""+filename+"\" nie istnieje");
-		return;
-	}
-	fstream plik;
-	plik.open(filename.c_str(),fstream::in|fstream::binary);
-	if(!plik.good()){
-		IO::geti()->error("B³¹d otwarcia pliku");
-		plik.close();
-		return;
-	}
-	plik.seekg(0,plik.end);
-	unsigned int fsize = plik.tellg();
-	char *file_content = new char [fsize+1];
-	file_content[fsize]=0;
-	plik.seekg(0,plik.beg);
-	plik.read(file_content,fsize);
-	plik.close();
-	SetWindowText(Controls::geti()->find("editor"),file_content);
+void App::open_chords_file(string filename){
+	char *file_content = open_file(filename);
+    if(file_content==NULL) return;
+	SetWindowText(Controls::geti()->find("editor"), file_content);
+    delete[] file_content;
 	set_selected_1(0, 0);
 	SendMessage(Controls::geti()->find("editor"), EM_SCROLLCARET, 0, 0);
 	Config::geti()->opened_file = filename;
@@ -138,7 +137,7 @@ void App::open_file(string filename){
 	autoscroll_off();
 }
 
-void App::save_file(){
+void App::save_chords_file(){
     string new_filename = Controls::geti()->get_text("cmd");
 	if(new_filename.length()==0){
 		IO::geti()->error("Podaj nazwê pliku!");
@@ -170,7 +169,7 @@ void App::save_file(){
 
 void App::analyze(){
     int licznik = 0;
-    while(skanuj()) licznik++;
+    while(skanuj_1()) licznik++;
     if(licznik==0) IO::geti()->echo("Brak zmian");
     else IO::geti()->echo("Wprowadzono zmiany");
 }
@@ -185,19 +184,5 @@ void App::transpose(int transponuj){
 	ss<<"Transpozycja akordów: ";
 	if(Config::geti()->transposed>0) ss<<"+";
 	ss<<Config::geti()->transposed;
-	IO::geti()->echo(ss.str());
-}
-
-void App::change_font_size(int change){
-	Config::geti()->editor_fontsize += change;
-	if(Config::geti()->editor_fontsize<1) Config::geti()->editor_fontsize=1;
-	Controls::geti()->set_font("editor", Config::geti()->editor_fontface, Config::geti()->editor_fontsize);
-    stringstream ss;
-	ss<<"Rozmiar czcionki: "<<Config::geti()->editor_fontsize;
-	if(Config::geti()->autoscroll_scaling){
-		Config::geti()->autoscroll_interval = Config::geti()->autoscroll_interval * (Config::geti()->editor_fontsize-2*change)/(Config::geti()->editor_fontsize-change);
-        Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
-		ss<<", Interwa³ autoscrolla: "<<Config::geti()->autoscroll_interval<<" ms";
-	}
 	IO::geti()->echo(ss.str());
 }

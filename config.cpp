@@ -1,6 +1,7 @@
 #include "config.h"
 #include "files.h"
 #include "io.h"
+#include "strings.h"
 #include <cstdlib>
 
 Config* Config::instance = NULL;
@@ -111,15 +112,8 @@ vector<ConfigVariable*>* Config::get_config_variables(string filename){
         //szukanie znaku =
         for(unsigned int j=1; j<lines->at(i).length(); j++){
             if(lines->at(i)[j] == '='){
-                string name = lines->at(i).substr(0, j);
-                string value = lines->at(i).substr(j+1);
-                //obciêcie spacji na pocz¹tku i na koñcu
-                if(name.length()>0 && name[name.length()-1] == ' '){
-                    name = name.substr(0, name.length()-1);
-                }
-                if(value.length()>0 && value[0] == ' '){
-                    value = value.substr(1);
-                }
+                string name = trim_spaces(lines->at(i).substr(0, j));
+                string value = trim_spaces(lines->at(i).substr(j+1));
                 variables->push_back(new ConfigVariable(name, value));
                 break;
             }

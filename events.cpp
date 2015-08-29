@@ -87,7 +87,7 @@ void App::event_init(HWND *window){
 	Controls::geti()->set_text("editor", "");
 	//wczytanie pliku zadanego parametrem
 	if(IO::geti()->args.size()==2){ //jeden dodatkowy parametr - nazwa pliku do otwarcia
-		open_file(IO::geti()->args.at(1));
+		open_chords_file(IO::geti()->args.at(1));
 	}
 	update_title();
     //baza akordów na start (jeœli nie by³ otwierany wybrany plik)
@@ -105,16 +105,14 @@ void App::event_button(WPARAM wParam){
 	if(name == "new"){ //nowy
 		new_file();
 	}else if(name == "load"){ //wczytaj
-		char *str2 = new char[512];
-		GetWindowText(Controls::geti()->find("cmd"), str2, 512);
-		if(strlen(str2)==0){
+        string str2 = Controls::geti()->get_text("cmd");
+		if(str2.length()==0){
 			IO::geti()->echo("Podaj nazwê pliku.");
 		}else{
-			open_file(str2);
+			open_chords_file(str2);
 		}
-		delete[] str2;
 	}else if(name == "save"){ //zapisz
-		save_file();
+		save_chords_file();
 	}else if(name == "analyze"){ //analizuj
 		analyze();
 	}else if(name == "replace"){ //zamieñ
@@ -133,7 +131,7 @@ void App::event_button(WPARAM wParam){
 
 void App::event_dropfiles(string filename){
 	if(file_exists(filename)){
-		open_file(filename);
+		open_chords_file(filename);
 		Controls::geti()->set_focus("editor");
 	}else if(dir_exists(filename)){
 		new_file();
@@ -203,7 +201,7 @@ void App::event_appcommand(WPARAM wParam, LPARAM lParam){
             stringstream ss;
             ss<<"Otwieranie pliku z zewnêtrznego polecenia: "<<Config::geti()->file_to_open;
             IO::geti()->log(ss.str());
-            open_file(Config::geti()->file_to_open);
+            open_chords_file(Config::geti()->file_to_open);
             Config::geti()->file_to_open = "";
             SetForegroundWindow(main_window);
             return;
@@ -250,7 +248,7 @@ void App::event_keydown(WPARAM wParam){
 		if(wParam=='A'){
 			select_all();
 		}else if(wParam=='S'){
-			save_file();
+			save_chords_file();
 		}else if(wParam=='R'){
 			refresh_text();
 		}else if(wParam=='F'){

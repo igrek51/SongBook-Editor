@@ -1,4 +1,5 @@
 #include "files.h"
+#include "io.h"
 #include <fstream>
 #include <windows.h>
 
@@ -48,4 +49,26 @@ vector<string>* get_all_lines(string filename){
     }while(!plik.eof());
     plik.close();
     return lines;
+}
+
+char* open_file(string filename){
+    if(!file_exists(filename)){
+		IO::geti()->error("plik \""+filename+"\" nie istnieje");
+		return NULL;
+	}
+	fstream plik;
+	plik.open(filename.c_str(), fstream::in|fstream::binary);
+	if(!plik.good()){
+		IO::geti()->error("B³¹d otwarcia pliku");
+		plik.close();
+		return NULL;
+	}
+	plik.seekg(0, plik.end);
+	unsigned int fsize = plik.tellg();
+	char *file_content = new char [fsize+1];
+	file_content[fsize] = 0;
+	plik.seekg(0, plik.beg);
+	plik.read(file_content, fsize);
+	plik.close();
+    return file_content;
 }

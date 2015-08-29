@@ -150,14 +150,14 @@ bool IO::is_arg(string parametr){
 
 void IO::set_workdir(){
     if(args.size()==0) return;
-    int last_slash=0;
-	for(int i=(int)args.at(0).length()-1; i>=0; i--){
+    int last_slash = -1;
+	for(int i=(int)args.at(0).length()-1; i>=0; i--){ //szukaj od koñca
         if(args.at(0)[i]=='\\' || args.at(0)[i]=='/'){
             last_slash = i;
             break;
         }
 	}
-	if(last_slash==0) return; //nie by³o slasha (lub by³ na pocz¹tku - LINUX!!!)
+	if(last_slash==-1) return; //nie by³o slasha
 	string workdir = args.at(0).substr(0, last_slash);
 	SetCurrentDirectory(workdir.c_str());
 	log("Katalog roboczy: "+workdir);

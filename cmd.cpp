@@ -46,7 +46,7 @@ void App::exec_cmd(string cmd){
 	}else if(cmd1=="opened_file"||cmd1=="o"){
         Controls::geti()->set_text("cmd", Config::geti()->opened_file);
 	}else if(cmd1=="reload"){
-		open_file(Config::geti()->opened_file);
+		open_chords_file(Config::geti()->opened_file);
 	}else if(cmd1=="font++"){
 		change_font_size(+1);
 	}else if(cmd1=="font--"){

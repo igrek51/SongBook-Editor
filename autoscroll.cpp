@@ -21,8 +21,8 @@ void App::autoscroll_exec(){
 		IO::geti()->echo("Autoscroll zakoñczony - koniec pliku");
 		return;
 	}
-	//last_scroll=GetScrollPos(hctrl[2],SB_VERT);
 	SendMessage(Controls::geti()->find("editor"), EM_SETSCROLLPOS, 0, (LPARAM)&mypoint);
+	//last_scroll=GetScrollPos(hctrl[2],SB_VERT);
 	//SendMessage(hctrl[2], EM_LINESCROLL, 0, 1);
 	//SendMessage(hctrl[2], WM_VSCROLL, 1, 0);
 	//int scroll2=GetScrollPos(hctrl[2],SB_VERT);

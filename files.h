@@ -10,5 +10,6 @@ void clear_file(string filename);
 bool file_exists(string name);
 bool dir_exists(string name);
 vector<string>* get_all_lines(string filename);
+char* open_file(string filename);
 
 #endif

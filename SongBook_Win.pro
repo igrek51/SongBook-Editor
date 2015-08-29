@@ -10,7 +10,6 @@ SOURCES +=\
     controls.cpp \
     edycja.cpp \
     files.cpp \
-    format.cpp \
     io.cpp \
     program.cpp \
     subclassing.cpp \

@@ -23,6 +23,13 @@ void string_insert(string*& str, int pos, char c){
 }
 
 
+string string_cutfromend(string s, int from_end){
+    if(s.length() < from_end) from_end = s.length();
+    s = s.substr(0, s.length()-from_end);
+    return s;
+}
+
+
 string trim_spaces(string s){
     //obciêcie spacji na koñcu
     while(s.length() > 0  && s[s.length()-1] == ' '){
