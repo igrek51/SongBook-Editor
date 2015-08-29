@@ -4,7 +4,6 @@
 
 void App::event_init(HWND *window){
 	main_window = *window;
-    IO::geti()->log("Hello World...");
     //parametry
 	IO::geti()->get_args();
 	//katalog roboczy
@@ -12,7 +11,12 @@ void App::event_init(HWND *window){
 	//ustawienia
     Config::geti()->load_from_file();
 	//log
-    if(!Config::geti()->log_enabled) IO::geti()->delete_log();
+    if(Config::geti()->log_enabled){
+        IO::geti()->clear_log();
+        IO::geti()->log("Hello World...");
+        IO::geti()->log_args();
+        IO::geti()->log("Wczytano ustawienia z pliku: "+Config::geti()->config_filename);
+    }
     //jeœli aplikacja jest ju¿ uruchomiona
     if(IO::geti()->args.size()==2 && instancja2!=NULL){//jeden dodatkowy parametr - nazwa pliku do otwarcia
         IO::geti()->log("Wysy³anie pliku do otwartej instancji aplikacji...");

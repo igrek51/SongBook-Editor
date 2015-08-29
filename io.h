@@ -33,6 +33,7 @@ public:
     vector<string> args;
     void get_args();
     void get_args_from(string args_text);
+    void log_args();
     bool is_arg(string parametr);
     void set_workdir();
 };

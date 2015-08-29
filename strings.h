@@ -14,6 +14,7 @@ string string_cutfromend(string s, unsigned int from_end = 1);
 
 string trim_spaces(string s);
 string trim_1crlf(string s);
+string trim_quotes(string s);
 
 char to_lowercase(char in);
 

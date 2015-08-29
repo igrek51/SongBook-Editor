@@ -24,7 +24,6 @@ IO::IO(){
     instance = this;
     last_echo = "";
     repeated_echo = 0;
-    clear_log();
 }
 
 
@@ -66,7 +65,7 @@ void IO::log(string s, int l){
 }
 
 void IO::error(string l, bool show_output){
-    if(show_output){
+    if(show_output && Controls::geti()->exists("statusbar")){
         echo("[B£¥D!] - "+l);
     }else{
         log("[B£¥D!] - "+l);
@@ -130,7 +129,10 @@ void IO::get_args_from(string args_text){
             i = -1;
         }
     }
-    args.push_back(args_text);
+    if(args_text.length()>0) args.push_back(args_text);
+}
+
+void IO::log_args(){
     stringstream ss;
 	ss<<"Parametry uruchomienia ("<<args.size()<<"): ";
 	for(unsigned int i=0; i<args.size(); i++){
@@ -150,17 +152,20 @@ bool IO::is_arg(string parametr){
 
 void IO::set_workdir(){
     if(args.size()==0) return;
+    string arg0 = trim_quotes(args.at(0));
     int last_slash = -1;
-	for(int i=(int)args.at(0).length()-1; i>=0; i--){ //szukaj od koñca
-        if(args.at(0)[i]=='\\' || args.at(0)[i]=='/'){
+	for(int i=(int)arg0.length()-1; i>=0; i--){ //szukaj od koñca
+        if(arg0[i]=='\\' || arg0[i]=='/'){
             last_slash = i;
             break;
         }
 	}
 	if(last_slash==-1) return; //nie by³o slasha
-	string workdir = args.at(0).substr(0, last_slash);
-	SetCurrentDirectory(workdir.c_str());
-	log("Katalog roboczy: "+workdir);
+	string workdir = arg0.substr(0, last_slash);
+    if(SetCurrentDirectory(workdir.c_str())==0){
+        message_box("B³¹d", "B³¹d zmiany katalogu roboczego na: "+workdir);
+    }
+	//log("Katalog roboczy: "+workdir);
 }
 
 

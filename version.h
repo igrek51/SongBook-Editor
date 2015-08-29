@@ -1,7 +1,7 @@
-// -- 19:21:11, 29.08.2015 -- (ymake v1.5.80) --
+// -- 19:55:00, 29.08.2015 -- (ymake v1.5.80) --
 #ifndef VERSION_H
 #define VERSION_H
 
-#define VERSION "2.6.78"
+#define VERSION "2.6.86"
 
 #endif

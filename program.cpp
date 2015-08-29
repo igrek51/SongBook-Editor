@@ -120,7 +120,7 @@ void App::new_file(){
 }
 
 void App::open_chords_file(string filename){
-	char *file_content = open_file(filename);
+	char *file_content = open_file(trim_quotes(filename));
     if(file_content==NULL) return;
 	SetWindowText(Controls::geti()->find("editor"), file_content);
     delete[] file_content;

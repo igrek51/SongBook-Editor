@@ -60,7 +60,7 @@ ConfigVariable::ConfigVariable(string name, string value){
 
 void Config::load_from_file(){
     if(!file_exists(config_filename)){
-        IO::geti()->error("Brak pliku konfiguracyjnego - ³adowanie wartoœci domyœlnych");
+        IO::geti()->message_box("B³¹d", "Brak pliku konfiguracyjnego - ³adowanie wartoœci domyœlnych");
         return;
     }
     vector<ConfigVariable*>* variables = get_config_variables(config_filename);
@@ -81,7 +81,6 @@ void Config::load_from_file(){
         delete variables->at(i);
     }
     variables->clear();
-    IO::geti()->log("Wczytano ustawienia z pliku: "+config_filename);
 }
 
 vector<string>* Config::get_config_lines(string filename){
