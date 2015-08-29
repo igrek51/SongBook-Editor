@@ -51,6 +51,7 @@ vector<string>* get_all_lines(string filename){
     return lines;
 }
 
+
 char* open_file(string filename){
     if(!file_exists(filename)){
 		IO::geti()->error("plik \""+filename+"\" nie istnieje");
@@ -71,4 +72,17 @@ char* open_file(string filename){
 	plik.read(file_content, fsize);
 	plik.close();
     return file_content;
+}
+
+bool save_file(string filename, string content){
+    fstream plik;
+	plik.open(filename.c_str(), fstream::out|fstream::binary);
+	if(!plik.good()){
+		IO::geti()->error("B³¹d œcie¿ki pliku");
+		plik.close();
+		return false;
+	}
+	plik.write(content.c_str(), content.length());
+	plik.close();
+    return true;
 }

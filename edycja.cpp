@@ -230,7 +230,7 @@ void App::zamien(){
 		nowy += string_char(str, i);
 	}
 	delete str;
-	SetWindowText(Controls::geti()->find("editor"), nowy.c_str());
+	Controls::geti()->set_text("editor", nowy);
 	refresh_text();
 	if(licznik==0){
 		IO::geti()->echo("Nie znaleziono wyst¹pieñ.");
@@ -379,7 +379,7 @@ void App::dodaj_alternatywne(){
 		}
 		nowy += ch;
 	}
-	SetWindowText(Controls::geti()->find("editor"), nowy.c_str());
+	Controls::geti()->set_text("editor", nowy);
 	refresh_text();
 	delete str;
 	IO::geti()->echo("Dodano alternatywn¹ wersjê akordów");

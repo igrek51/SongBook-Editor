@@ -38,7 +38,7 @@ public:
     void create_static_center(string text, int x, int y, int w, int h, string name = "");
     void create_groupbox(string text, int x, int y, int w, int h);
     //  Zawartoœæ
-    void set_text(string control_name, string text);
+    void set_text(string control_name, string text = "");
     void set_text(string control_name, int number);
     string get_text(string control_name);
     int get_int(string control_name);

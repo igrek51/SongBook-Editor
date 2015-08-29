@@ -15,7 +15,7 @@ string* App::load_text(){
 }
 
 void App::save_text(string* str){
-	SetWindowText(Controls::geti()->find("editor"), str->c_str());
+	Controls::geti()->set_text("editor", *str);
 	format_text(str);
 	set_selected_1(last_sel_start, last_sel_end);
 	delete str;

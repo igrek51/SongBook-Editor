@@ -23,7 +23,7 @@ void string_insert(string*& str, int pos, char c){
 }
 
 
-string string_cutfromend(string s, int from_end){
+string string_cutfromend(string s, unsigned int from_end){
     if(s.length() < from_end) from_end = s.length();
     s = s.substr(0, s.length()-from_end);
     return s;

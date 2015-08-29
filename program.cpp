@@ -107,7 +107,7 @@ void App::quick_replace(){
 
 
 void App::new_file(){
-	SetWindowText(Controls::geti()->find("editor"), "");
+    Controls::geti()->set_text("editor", "");
 	refresh_text();
     //usuniêcie nazwy samego pliku
     while(Config::geti()->opened_file.length()>0 && Config::geti()->opened_file[Config::geti()->opened_file.length()-1]!='\\'){
@@ -144,21 +144,16 @@ void App::save_chords_file(){
 		return;
 	}
 	Config::geti()->opened_file = new_filename;
-	fstream plik;
-	plik.open(Config::geti()->opened_file.c_str(), fstream::out|fstream::binary);
-	if(!plik.good()){
-		IO::geti()->error("B³¹d œcie¿ki pliku");
-		plik.close();
-		return;
-	}
-	string* str2 = load_text();
-	plik.write(str2->c_str(), str2->length());
-	plik.close();
-	delete str2;
+	string* str = load_text();
+    if(!save_file(Config::geti()->opened_file, *str)){
+        delete str;
+        return;
+    }
+	delete str;
 	update_title();
 	stringstream ss;
 	ss<<"Zapisano plik";
-	if(Config::geti()->transposed%12!=0){
+	if(Config::geti()->transposed%12 != 0){
 		ss<<" (Zapis w nowej tonacji: ";
 		if(Config::geti()->transposed>0) ss<<"+";
 		ss<<Config::geti()->transposed;
@@ -177,8 +172,10 @@ void App::analyze(){
 void App::transpose(int transponuj){
 	if(transponuj==0) return;
 	Config::geti()->transposed += transponuj;
-    string trans = transpose_string(*load_text(), transponuj);
-	SetWindowText(Controls::geti()->find("editor"), trans.c_str());
+    string* str = load_text();
+    string trans = transpose_string(*str, transponuj);
+    delete str;
+	Controls::geti()->set_text("editor", trans);
 	refresh_text();
 	stringstream ss;
 	ss<<"Transpozycja akordów: ";
