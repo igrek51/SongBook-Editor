@@ -12,6 +12,10 @@ Controls* Controls::geti(){
     return instance;
 }
 
+Controls* Controls::i(){
+    return geti();
+}
+
 Controls::~Controls(){
     for(unsigned int i=0; i<controls.size(); i++){
         delete controls.at(i);
@@ -141,6 +145,17 @@ int Controls::get_int(string control_name){
     string content = get_text(control_name);
     if(content.length()==0) return 0;
     return atoi(content.c_str());
+}
+
+
+void Controls::resize(string control_name, int x, int y, int w, int h){
+    Control* kontrolka = find_control(control_name);
+    if(kontrolka==NULL) return;
+    if(kontrolka->handle==NULL) return;
+    unsigned int flag = 0;
+    if(x==-1 && y==-1) flag = SWP_NOMOVE;
+    if(w==-1 && h==-1) flag = SWP_NOSIZE;
+    SetWindowPos(kontrolka->handle, HWND_TOP, x, y, w, h, flag);
 }
 
 

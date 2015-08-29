@@ -12,16 +12,22 @@ Config* Config::geti(){
     return instance;
 }
 
+Config* Config::i(){
+    return geti();
+}
+
 Config::Config(){
     //Sta³e
     config_filename = "conf.ini";
     log_filename = "log.txt";
     buttons_fontface = "MS Shell Dlg 2";
     program_name = "Igrek SongBook Editor";
+    control_height = 22;
+    toolbar_button_width = 20;
+    static_filename_width = 200;
     //Zmienne
     window_w = 600;
     window_h = 680;
-    control_height = 22;
     transposed = 0;
 	autoscroll = false;
     autoscroll_count = 0;

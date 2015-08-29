@@ -19,6 +19,7 @@ private:
     Config();
 public:
     static Config* geti();
+    static Config* i();
     void load_from_file();
     vector<string>* get_config_lines(string filename);
     vector<ConfigVariable*>* get_config_variables(string filename);
@@ -30,10 +31,12 @@ public:
     string log_filename;
     string program_name;
     string buttons_fontface;
+    int control_height;
+    int toolbar_button_width;
+    int static_filename_width;
     //  Zmienne
     int window_w;
     int window_h;
-    int control_height;
     int transposed;
     int autoscroll_count;
 	bool autoscroll;

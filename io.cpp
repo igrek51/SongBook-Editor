@@ -15,6 +15,10 @@ IO* IO::geti(){
     return instance;
 }
 
+IO* IO::i(){
+    return geti();
+}
+
 IO::IO(){
     last_echo = "";
     repeated_echo = 0;
@@ -61,14 +65,14 @@ void IO::log(string s, int l){
 
 void IO::error(string l, bool show_output){
     if(show_output){
-        echo("[ B£¥D ! ] - "+l);
+        echo("[B£¥D!] - "+l);
     }else{
-        log("[ B£¥D ! ] - "+l);
+        log("[B£¥D!] - "+l);
     }
 }
 
 void IO::critical_error(string l){
-    log("[ B£¥D KRYTYCZNY ! ] - "+l);
+    log("[B£¥D KRYTYCZNY!] - "+l);
     message_box("B³¹d krytyczny", l);
 }
 

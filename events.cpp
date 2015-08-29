@@ -32,8 +32,8 @@ void App::event_init(HWND *window){
     int y_paint=40;
     int w = Config::geti()->window_w;
     int h = Config::geti()->window_h;
-    Controls::geti()->create_static_center("", 0, 0, w-20, h, "statusbar");
-    Controls::geti()->create_edit("", 0, control_h, w, control_h, "cmd");
+    Controls::geti()->create_static_center("", 0, 0, 0, 0, "statusbar");
+    Controls::geti()->create_edit("", 0, 0, 0, 0, "cmd");
 
     Controls::geti()->create_button("Nowy", x_paint, y_paint, buttonw, 20, "new");
     x_paint+=buttonw;
@@ -63,7 +63,7 @@ void App::event_init(HWND *window){
     Controls::geti()->create_button("Analizuj", x_paint, y_paint, buttonw, 20, "analyze");
     x_paint+=buttonw;
 
-    Controls::geti()->create_button("^", w-control_h, 0, 20, control_h, "toolbar_toggle");
+    Controls::geti()->create_button("^", w-20, 0, 20, control_h, "toolbar_toggle");
 	//edytor
     IO::geti()->log("Tworzenie edytora tekstu...");
 	if(LoadLibrary("RICHED32.DLL")==NULL){
@@ -171,35 +171,37 @@ void App::event_dropfiles(string filename){
 
 void App::event_resize(){
     IO::geti()->log("Resize okna - Odœwie¿anie uk³adu kontrolek...");
-    int control_h = 22;
+    int ch = Config::geti()->control_height;
+    int toolbar_b_w = Config::geti()->toolbar_button_width;
 	RECT wnd_rect;
 	GetClientRect(main_window, &wnd_rect);
 	int w = wnd_rect.right-wnd_rect.left;
 	int h = wnd_rect.bottom-wnd_rect.top;
     Config::geti()->window_w = w;
     Config::geti()->window_h = h;
+    //rozmieszczenie kontrolek
 	if(Config::geti()->toolbar_show){
-        SetWindowPos(Controls::geti()->find("editor"),HWND_TOP,0,control_h*4,w,h-control_h*4,0);
+        Controls::i()->resize("editor", 0,ch*3,w,h-ch*4);
 	}else{
-        SetWindowPos(Controls::geti()->find("editor"),HWND_TOP,0,control_h,w,h-control_h,0);
+        Controls::i()->resize("editor", 0,0,w,h-ch);
 	}
-    SetWindowPos(Controls::geti()->find("statusbar"),HWND_TOP,0,0,w-20,control_h,SWP_NOMOVE);
-    SetWindowPos(Controls::geti()->find("cmd"),HWND_TOP,0,0,w,control_h,SWP_NOMOVE);
-	SetWindowPos(Controls::geti()->find("toolbar_toggle"),HWND_TOP,w-20,0,0,0,SWP_NOSIZE);
+    Controls::i()->resize("cmd", 0,0,w,ch);
+    Controls::i()->resize("statusbar", 0,h-ch,w-toolbar_b_w,ch);
+    Controls::i()->resize("toolbar_toggle", w-toolbar_b_w,h-ch,toolbar_b_w,ch);
     //resize panelu - 1. rz¹d
-    SetWindowPos(Controls::geti()->find("new"),HWND_TOP,w*0/7,control_h*2,w/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("load"),HWND_TOP,w*1/7,control_h*2,w/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("save"),HWND_TOP,w*2/7,control_h*2,w/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("base"),HWND_TOP,w*3/7,control_h*2,w/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("autoscroll_interval"),HWND_TOP,w*4/7,control_h*2,w/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("autoscroll_wait"),HWND_TOP,w*5/7,control_h*2,w/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("autoscroll"),HWND_TOP,w*6/7,control_h*2,w/7,control_h,0);
+    Controls::i()->resize("new", w*0/7,ch*1,w/7,ch);
+    Controls::i()->resize("load", w*1/7,ch*1,w/7,ch);
+    Controls::i()->resize("save", w*2/7,ch*1,w/7,ch);
+    Controls::i()->resize("base", w*3/7,ch*1,w/7,ch);
+    Controls::i()->resize("autoscroll_interval", w*4/7,ch*1,w/7,ch);
+    Controls::i()->resize("autoscroll_wait", w*5/7,ch*1,w/7,ch);
+    Controls::i()->resize("autoscroll", w*6/7,ch*1,w/7,ch);
 	//2. rz¹d
-    SetWindowPos(Controls::geti()->find("find_edit"),HWND_TOP,w*0/7,control_h*3,w*2/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("replace_edit"),HWND_TOP,w*2/7,control_h*3,w*2/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("find"),HWND_TOP,w*5/7,control_h*3,w/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("replace"),HWND_TOP,w*4/7,control_h*3,w/7,control_h,0);
-    SetWindowPos(Controls::geti()->find("analyze"),HWND_TOP,w*6/7,control_h*3,w/7,control_h,0);
+    Controls::i()->resize("find_edit", w*0/7,ch*2,w*2/7,ch);
+    Controls::i()->resize("replace_edit", w*2/7,ch*2,w*2/7,ch);
+    Controls::i()->resize("find", w*5/7,ch*2,w/7,ch);
+    Controls::i()->resize("replace", w*4/7,ch*2,w/7,ch);
+    Controls::i()->resize("analyze", w*6/7,ch*2,w/7,ch);
 }
 
 void App::event_screensave(){

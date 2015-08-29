@@ -21,6 +21,7 @@ private:
 	static Controls* instance;
 public:
     static Controls* geti();
+    static Controls* i();
     ~Controls();
     vector<Control*> controls;
     //  Wyszukiwanie kontrolek
@@ -41,6 +42,8 @@ public:
     void set_text(string control_name, int number);
     string get_text(string control_name);
     int get_int(string control_name);
+    //  Zmiana rozmiaru
+    void resize(string control_name, int x, int y, int w=-1, int h=-1);
     //  Zmiana czcionki
     void set_font(HWND kontrolka, string fontface, int fontsize);
     void set_font(string name, string fontface, int fontsize);

@@ -13,6 +13,7 @@ private:
     IO();
 public:
     static IO* geti();
+    static IO* i();
     //  LOG
     void clear_log();
     void delete_log();

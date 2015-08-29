@@ -326,12 +326,12 @@ void App::zapisz_tekst(int nrt){
 }
 
 void App::dodaj_nawias(){
-	string *str = load_text();
+	string* str = load_text();
 	unsigned int sel_start, sel_end;
 	get_selected(sel_start, sel_end, str);
 	if(sel_start==sel_end){
 		IO::geti()->error("Nie zaznaczono ¿adnego fragmentu");
-		delete[] str;
+		delete str;
 		return;
 	}
 	string_insert(str, sel_end, ']');
