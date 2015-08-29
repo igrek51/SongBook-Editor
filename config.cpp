@@ -26,7 +26,7 @@ Config::Config(){
     replace_edit_placeholder = "Zamieñ...";
     control_height = 22;
     toolbar_button_width = 20;
-    static_filename_width = 200;
+    static_filename_width = 40;
     //Zmienne
     window_w = 600;
     window_h = 680;

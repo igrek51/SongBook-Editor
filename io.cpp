@@ -20,6 +20,7 @@ IO* IO::i(){
 }
 
 IO::IO(){
+    instance = this;
     last_echo = "";
     repeated_echo = 0;
     clear_log();

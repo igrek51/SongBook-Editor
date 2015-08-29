@@ -27,6 +27,7 @@ void App::event_init(HWND *window){
 	//kontrolki
     IO::geti()->log("Tworzenie kontrolek...");
     Controls::geti()->create_static_center("", 0, 0, 0, 0, "statusbar");
+    Controls::geti()->create_static_center("Plik:", 0, 0, 0, 0, "filename");
     Controls::geti()->create_edit("", 0, 0, 0, 0, "cmd");
 
     Controls::geti()->create_button("Nowy", 0, 0, 0, 0, "new");
@@ -165,7 +166,8 @@ void App::event_resize(){
 	}else{
         Controls::i()->resize("editor", 0,0,w,h-ch);
 	}
-    Controls::i()->resize("cmd", 0,0,w,ch);
+    Controls::i()->resize("filename", 0,0,Config::geti()->static_filename_width,ch);
+    Controls::i()->resize("cmd", Config::geti()->static_filename_width,0,w-Config::geti()->static_filename_width,ch);
     Controls::i()->resize("statusbar", 0,h-ch,w-toolbar_b_w,ch);
     Controls::i()->resize("toolbar_toggle", w-toolbar_b_w,h-ch,toolbar_b_w,ch);
     //resize panelu - 1. rz¹d

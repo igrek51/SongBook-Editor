@@ -10,6 +10,10 @@ App* App::geti(){
     return instance;
 }
 
+App* App::i(){
+    return geti();
+}
+
 App::App(){
     version = VERSION;
     version += " (win)";

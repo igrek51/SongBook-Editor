@@ -18,6 +18,7 @@ private:
     App();
 public:
     static App* geti();
+    static App* i();
 	~App();
     HWND main_window;
     HWND instancja2;
