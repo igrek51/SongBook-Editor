@@ -2,11 +2,10 @@
 #include <richedit.h>
 
 void App::format_text(string* str){
-	IO::geti()->log("Formatowanie edytora...");
+	IO::geti()->log("Formatowanie tekstu edytora...");
 	unsigned int temp_sel_start, temp_sel_end, temp_scroll;
 	get_selected_1(temp_sel_start, temp_sel_end);
 	temp_scroll = get_scroll();
-	str_size = GetWindowTextLength(Controls::geti()->find("editor"));
 	SendMessage(Controls::geti()->find("editor"), EM_HIDESELECTION, 1, 0);
 	SetFocus(Controls::geti()->find("cmd"));
 	//t³o
@@ -78,7 +77,7 @@ void App::format_text(string* str){
 }
 
 void App::refresh_text(){
-	str_size = GetWindowTextLength(Controls::geti()->find("editor"));
+	unsigned int str_size = GetWindowTextLength(Controls::geti()->find("editor"));
 	char *str = new char[str_size+1];
 	str[str_size]=0;
 	GetWindowText(Controls::geti()->find("editor"), str, str_size+1);

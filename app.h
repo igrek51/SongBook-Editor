@@ -46,15 +46,12 @@ public:
 	void usun_wersje();
 	void zamien();
 	void znajdz();
-	bool znajdz_w(char *str, unsigned int start, unsigned int end, char *wzor);
+	bool znajdz_w(string* str, unsigned int start, unsigned int end, string wzor);
 	void wstaw_tekst(int nrt);
 	void zapisz_tekst(int nrt);
 	void dodaj_nawias();
 	void dodaj_alternatywne();
 	//  Editor
-
-    unsigned int str_size;
-
     void change_font_size(int change);
 	void format_text(string* str);
 	void refresh_text();
@@ -70,6 +67,7 @@ public:
 	unsigned int last_sel_start, last_sel_end;
 	int last_scroll;
 	char string_char(string* str, int pos);
+    void string_char_set(string* str, int pos, char c);
 	void string_delete(string*& str, int &pos);
 	void string_insert(string*& str, int pos, char c);
 	void select_all();

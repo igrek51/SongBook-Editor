@@ -87,7 +87,7 @@ void App::quick_replace(){
         break;
     }
     if(strlen(selected)==0){
-        IO::geti()->echo("! B³¹d: Pusty tekst do zamiany.");
+        IO::geti()->error("B³¹d: Pusty tekst do zamiany.");
         delete[] selected;
         delete str;
         return;
@@ -164,7 +164,7 @@ void App::save_file(){
 		return;
 	}
 	string* str2 = load_text();
-	plik.write(str2->c_str(),str_size);
+	plik.write(str2->c_str(), str2->length());
 	plik.close();
 	delete str2;
 	update_title();

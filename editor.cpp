@@ -2,7 +2,7 @@
 #include <richedit.h>
 
 string* App::load_text(){
-	str_size = GetWindowTextLength(Controls::geti()->find("editor"));
+	int str_size = GetWindowTextLength(Controls::geti()->find("editor"));
 	char *str = new char[str_size+1];
 	str[str_size]=0;
 	GetWindowText(Controls::geti()->find("editor"), str, str_size+1);
@@ -27,6 +27,11 @@ char App::string_char(string* str, int pos){
 	return str->at(pos);
 }
 
+void App::string_char_set(string* str, int pos, char c){
+    if(pos<0 || pos>=(int)str->length()) return;
+	str->at(pos) = c;
+}
+
 void App::string_delete(string*& str, int &pos){
 	if(pos<0 || pos>=(int)str->length()) return;
     str->erase(pos, 1);
@@ -47,21 +52,21 @@ bool App::get_selected(unsigned int &sel_start, unsigned int &sel_end, string* s
 	sel_start = ch.cpMin;
 	sel_end = ch.cpMax;
 	//SendMessage(hctrl[2], EM_GETSEL, (WPARAM)&sel_start, (LPARAM)&sel_end);
-	str_size = GetWindowTextLength(Controls::geti()->find("editor"));
-	for(unsigned int i=0; i<sel_end&&i<str_size-1; i++){
+	unsigned int str_size = GetWindowTextLength(Controls::geti()->find("editor"));
+	for(unsigned int i=0; i<sel_end && i<str_size-1; i++){
 		if(str->at(i)=='\r' && str->at(i+1)=='\n'){
 			sel_end++;
 			if(i<sel_start) sel_start++;
 		}
 	}
-	if(sel_start<0) sel_start=0;
-	if(sel_end>str_size) sel_end=str_size;
+	if(sel_start<0) sel_start = 0;
+	if(sel_end>str_size) sel_end = str_size;
 	if(sel_start>=sel_end) return false;
 	return true;
 }
 
 void App::set_selected(unsigned int sel_start, unsigned int sel_end, string* str){
-	str_size = GetWindowTextLength(Controls::geti()->find("editor"));
+	unsigned int str_size = GetWindowTextLength(Controls::geti()->find("editor"));
 	if(sel_start<0) sel_start=0;
 	if(sel_end>str_size) sel_end=str_size;
 	if(sel_end<sel_start) sel_end=sel_start;
@@ -133,7 +138,7 @@ void App::select_all(){
 }
 
 void App::copy_text(){
-	str_size = GetWindowTextLength(Controls::geti()->find("editor"));
+	unsigned int str_size = GetWindowTextLength(Controls::geti()->find("editor"));
 	char *selected = new char [str_size];
 	SendMessage(Controls::geti()->find("editor"), EM_GETSELTEXT, 0, (LPARAM)selected);
 	if(strlen(selected)==0){
