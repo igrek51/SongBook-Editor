@@ -16,7 +16,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
     }
     string nazwa = kontrolka->name;
 	//nowe procedury kontrolek
-	if(nazwa=="cmd"){ //wiersz poleceñ
+	if(nazwa=="filename_edit"){ //wiersz poleceñ
 		switch(message){
 			case WM_CHAR:{
 				if(wParam==VK_ESCAPE){
@@ -40,12 +40,12 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
                     }
 				}
 				if(wParam==VK_UP){
-                    Controls::geti()->set_text("cmd", last_cmd);
-					SendMessage(Controls::geti()->find("cmd"), EM_SETSEL, last_cmd.length(), last_cmd.length());
+                    Controls::geti()->set_text("filename_edit", last_cmd);
+					SendMessage(Controls::geti()->find("filename_edit"), EM_SETSEL, last_cmd.length(), last_cmd.length());
 					return 0;
 				}
 				if(wParam==VK_DOWN){
-					Controls::geti()->set_text("cmd", "");
+					Controls::geti()->set_text("filename_edit", "");
 					return 0;
 				}
 			}break;

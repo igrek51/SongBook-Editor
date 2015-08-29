@@ -1,12 +1,12 @@
 #include "app.h"
 
 void App::exec_cmd(){
-    string input_cmd = Controls::geti()->get_text("cmd");
+    string input_cmd = Controls::geti()->get_text("filename_edit");
 	if(input_cmd.length()==0){
-        Controls::geti()->set_text("cmd", last_cmd);
+        Controls::geti()->set_text("filename_edit", last_cmd);
 		return;
 	}
-    Controls::geti()->set_text("cmd", "");
+    Controls::geti()->set_text("filename_edit", "");
 	exec_cmd(input_cmd);
 	last_cmd = input_cmd;
 }
@@ -44,7 +44,7 @@ void App::exec_cmd(string cmd){
 	}else if(cmd1=="exit"){
 		DestroyWindow(main_window);
 	}else if(cmd1=="opened_file"||cmd1=="o"){
-        Controls::geti()->set_text("cmd", Config::geti()->opened_file);
+        Controls::geti()->set_text("filename_edit", Config::geti()->opened_file);
 	}else if(cmd1=="reload"){
 		open_chords_file(Config::geti()->opened_file);
 	}else if(cmd1=="font++"){
@@ -57,7 +57,7 @@ void App::exec_cmd(string cmd){
 		autoscroll_off();
 	}else if(cmd1=="siema"){
 		IO::geti()->message_box("Wiadomoœæ","No siema :)");
-        Controls::geti()->set_focus("cmd");
+        Controls::geti()->set_focus("filename_edit");
 	}else if(cmd1=="new"){
 		new_file();
     }else if(cmd1=="format"){
@@ -102,7 +102,7 @@ void App::exec_cmd(string cmd){
         ss<<"transpose [shift] - transponuj tonacjê akordów"<<endl;
         ss<<"transpose 0 - przywróæ oryginaln¹ tonacjê"<<endl;
 		IO::geti()->message_box("Info",ss.str());
-		Controls::geti()->set_focus("cmd");
+		Controls::geti()->set_focus("filename_edit");
 	}else if(cmd1=="fontface"){
 		if(cmd2.length()>0){
 			Config::geti()->editor_fontface = cmd2;

@@ -148,7 +148,7 @@ void App::format_text(string* str){
 	get_selected_1(temp_sel_start, temp_sel_end);
 	temp_scroll = get_scroll();
 	SendMessage(Controls::geti()->find("editor"), EM_HIDESELECTION, 1, 0);
-	Controls::geti()->set_focus("cmd");
+	Controls::geti()->set_focus("filename_edit");
 	//t³o
 	COLORREF color = RGB(0,0,0);
 	SendMessage(Controls::geti()->find("editor"), EM_SETBKGNDCOLOR, 0, (LPARAM)((COLORREF)color));

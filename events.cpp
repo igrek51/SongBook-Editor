@@ -28,7 +28,7 @@ void App::event_init(HWND *window){
     IO::geti()->log("Tworzenie kontrolek...");
     Controls::geti()->create_static_center("", 0, 0, 0, 0, "statusbar");
     Controls::geti()->create_static_center("Plik:", 0, 0, 0, 0, "filename");
-    Controls::geti()->create_edit("", 0, 0, 0, 0, "cmd");
+    Controls::geti()->create_edit("", 0, 0, 0, 0, "filename_edit");
 
     Controls::geti()->create_button("Nowy", 0, 0, 0, 0, "new");
     Controls::geti()->create_button("Wczytaj", 0, 0, 0, 0, "load");
@@ -105,7 +105,7 @@ void App::event_button(WPARAM wParam){
 	if(name == "new"){ //nowy
 		new_file();
 	}else if(name == "load"){ //wczytaj
-        string str2 = Controls::geti()->get_text("cmd");
+        string str2 = Controls::geti()->get_text("filename_edit");
 		if(str2.length()==0){
 			IO::geti()->echo("Podaj nazwê pliku.");
 		}else{
@@ -139,8 +139,8 @@ void App::event_dropfiles(string filename){
         if(Config::geti()->opened_file[Config::geti()->opened_file.length()-1]!='\\'){
             Config::geti()->opened_file+="\\";
         }
-        Controls::geti()->set_text("cmd", Config::geti()->opened_file);
-		Controls::geti()->set_focus("cmd");
+        Controls::geti()->set_text("filename_edit", Config::geti()->opened_file);
+		Controls::geti()->set_focus("filename_edit");
 		IO::geti()->echo("Nowy plik w folderze: \""+filename+"\"");
 	}else{
 		IO::geti()->error("nieprawid³owa œcie¿ka: \""+filename+"\"");
@@ -165,7 +165,7 @@ void App::event_resize(){
         Controls::i()->resize("editor", 0,0,w,h-ch);
 	}
     Controls::i()->resize("filename", 0,0,Config::geti()->static_filename_width,ch);
-    Controls::i()->resize("cmd", Config::geti()->static_filename_width,0,w-Config::geti()->static_filename_width,ch);
+    Controls::i()->resize("filename_edit", Config::geti()->static_filename_width,0,w-Config::geti()->static_filename_width,ch);
     Controls::i()->resize("statusbar", 0,h-ch,w-toolbar_b_w,ch);
     Controls::i()->resize("toolbar_toggle", w-toolbar_b_w,h-ch,toolbar_b_w,ch);
     //resize panelu - 1. rz¹d
@@ -258,8 +258,8 @@ void App::event_keydown(WPARAM wParam){
 		}else if(wParam==VK_SUBTRACT){ // -
 			change_font_size(-1);
 		}else if(wParam==VK_OEM_3){ // `
-            Controls::geti()->set_focus("cmd");
-            Controls::geti()->select_all("cmd");
+            Controls::geti()->set_focus("filename_edit");
+            Controls::geti()->select_all("filename_edit");
 		}else if(wParam==VK_LEFT){
 			transpose(-1);
 		}else if(wParam==VK_RIGHT){

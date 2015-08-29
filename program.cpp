@@ -113,7 +113,7 @@ void App::new_file(){
     while(Config::geti()->opened_file.length()>0 && Config::geti()->opened_file[Config::geti()->opened_file.length()-1]!='\\'){
         Config::geti()->opened_file = string_cutfromend(Config::geti()->opened_file, 1);
     }
-    Controls::i()->set_text("cmd", Config::geti()->opened_file);
+    Controls::i()->set_text("filename_edit", Config::geti()->opened_file);
 	Config::geti()->opened_file = "";
 	update_title();
 	IO::geti()->echo("Nowy plik");
@@ -130,7 +130,7 @@ void App::open_chords_file(string filename){
 	stringstream ss;
 	ss<<"Odczytano plik: "<<filename;
 	IO::geti()->echo(ss.str());
-    Controls::geti()->set_text("cmd", filename);
+    Controls::geti()->set_text("filename_edit", filename);
 	refresh_text();
 	update_title();
 	Config::geti()->transposed = 0;
@@ -138,7 +138,7 @@ void App::open_chords_file(string filename){
 }
 
 void App::save_chords_file(){
-    string new_filename = Controls::geti()->get_text("cmd");
+    string new_filename = Controls::geti()->get_text("filename_edit");
 	if(new_filename.length()==0){
 		IO::geti()->error("Podaj nazwê pliku!");
 		return;
