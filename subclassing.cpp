@@ -132,14 +132,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 			}break;
 		}
 	}
-	if(nazwa=="toolbar_toggle"){ //ukrycie paska
-		switch(message){
-			case WM_KEYDOWN:{
-				CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
-				return 0;
-			}break;
-		}
-	}
 	if(nazwa=="find_edit"){ //szukany ci¹g znaków
 		switch(message){
 			case WM_SETFOCUS:{
@@ -213,6 +205,15 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					autoscroll_on();
 					return 0;
 				}
+			}break;
+		}
+	}
+    //buttony - przekazanie skrótów klawiszowych
+    if(nazwa=="new"||nazwa=="load"||nazwa=="save"||nazwa=="base"||nazwa=="find"||nazwa=="replace"||nazwa=="analyze"||nazwa=="autoscroll"||nazwa=="toolbar_toggle"){
+		switch(message){
+			case WM_KEYDOWN:{
+				CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
+				return 0;
 			}break;
 		}
 	}

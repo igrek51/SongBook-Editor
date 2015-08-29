@@ -257,7 +257,7 @@ char to_lowercase(char in){
 }
 
 bool App::znajdz_w(string* str, unsigned int start, unsigned int end, string wzor){
-	for(unsigned int i=start; i<=end-wzor.length(); i++){
+	for(int i=start; i<=(int)end-(int)wzor.length(); i++){
 		//szukanie wzorca
 		bool found = true;
 		for(unsigned int j=0; j<wzor.length(); j++){
@@ -285,10 +285,20 @@ void App::znajdz(){
 		return;
 	}
 	string *str = load_text();
+    if(str->length()==0){
+        delete str;
+        return;
+    }
 	get_selected(last_sel_start, last_sel_end, str);
-	if(znajdz_w(str, last_sel_start+1, str->length(), wzor)) return;
+    if(znajdz_w(str, last_sel_start+1, str->length(), wzor)){
+        delete str;
+        return;
+    }
 	if(last_sel_start+1+wzor.length() > str->length()) last_sel_start = str->length()-1-wzor.length();
-	if(znajdz_w(str, 0, last_sel_start+1+wzor.length(), wzor)) return;
+    if(znajdz_w(str, 0, last_sel_start+1+wzor.length(), wzor)){
+        delete str;
+        return;
+    }
 	delete str;
 	IO::geti()->echo("Nie znaleziono fragmentu");
 }
