@@ -8,7 +8,6 @@
 #include "controls.h"
 #include "files.h"
 #include "io.h"
-#include "system.h"
 #include "music.h"
 
 using namespace std;

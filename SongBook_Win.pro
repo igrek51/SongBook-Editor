@@ -14,7 +14,6 @@ SOURCES +=\
     io.cpp \
     program.cpp \
     subclassing.cpp \
-    system.cpp \
     events.cpp \
     music.cpp \
     editor.cpp
@@ -26,7 +25,6 @@ HEADERS += \
     app.h \
     version.h \
     config.h \
-    system.h \
     files.h \
     log.h \
     io.h \

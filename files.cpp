@@ -1,6 +1,6 @@
 #include "files.h"
-#include "system.h"
 #include <fstream>
+#include <windows.h>
 
 void clear_file(string filename){
 	fstream plik;
@@ -20,7 +20,10 @@ bool file_exists(string name){
 }
 
 bool dir_exists(string name){
-    return System::geti()->dir_exists(name);
+    DWORD ftyp = GetFileAttributesA(name.c_str());
+    if(ftyp==INVALID_FILE_ATTRIBUTES) return false;
+    if(ftyp&FILE_ATTRIBUTE_DIRECTORY) return true;
+    return false;
 }
 
 vector<string>* get_all_lines(string filename){

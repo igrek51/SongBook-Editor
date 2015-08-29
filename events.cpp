@@ -6,7 +6,7 @@ void App::event_init(HWND *window){
 	main_window = *window;
     IO::geti()->log("Hello World...");
     //parametry
-	System::geti()->get_args();
+	IO::geti()->get_args();
 	//katalog roboczy
 	IO::geti()->set_workdir();
 	//ustawienia

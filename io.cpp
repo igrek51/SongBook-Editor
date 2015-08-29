@@ -1,10 +1,10 @@
 #include "io.h"
 #include "config.h"
-#include "system.h"
 #include "files.h"
 #include "controls.h"
 #include <fstream>
 #include <ctime>
+#include <windows.h>
 
 IO* IO::instance = NULL;
 
@@ -103,9 +103,17 @@ void IO::echo(int e){
 
 
 void IO::message_box(string title, string message){
-    System::geti()->message_box(title, message);
+    if(message.length()==0){
+        message = title;
+        title = "Wiadomoœæ";
+    }
+    MessageBox(NULL, message.c_str(), title.c_str(), MB_OK|MB_ICONINFORMATION);
 }
 
+
+void IO::get_args(){
+    get_args_from(GetCommandLine());
+}
 
 void IO::get_args_from(string args_text){
     args.clear();

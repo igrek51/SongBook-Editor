@@ -28,9 +28,10 @@ public:
     void echo(string s);
     void echo(int e);
     //  Message Box
-    void message_box(string title, string message);
+    void message_box(string title, string message = "");
     //  ARGUMENTY URUCHOMIENIA
     vector<string> args;
+    void get_args();
     void get_args_from(string args_text);
     bool is_arg(string parametr);
     void set_workdir();

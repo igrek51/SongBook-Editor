@@ -187,11 +187,13 @@ void App::usun_wersje(){
 
 void App::zamien(){
     string find_edit = Controls::geti()->get_text("find_edit");
+    if(find_edit == Config::i()->find_edit_placeholder) find_edit = "";
 	if(find_edit.length()==0){
 		IO::geti()->error("Szukany ciag jest pusty");
 		return;
 	}
     string replace_edit = Controls::geti()->get_text("replace_edit");
+    if(replace_edit == Config::i()->replace_edit_placeholder) replace_edit = "";
 	string* str = load_text();
 	string nowy = "";
 	int licznik = 0;
@@ -280,6 +282,7 @@ bool App::znajdz_w(string* str, unsigned int start, unsigned int end, string wzo
 
 void App::znajdz(){
     string wzor = Controls::geti()->get_text("find_edit");
+    if(wzor == Config::i()->find_edit_placeholder) wzor = "";
 	if(wzor.length()==0){
 		IO::geti()->error("Szukany ciag jest pusty");
 		return;
