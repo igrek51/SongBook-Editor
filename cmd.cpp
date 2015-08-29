@@ -19,7 +19,7 @@ void App::exec_cmd(string cmd){
     for(unsigned int i=0; i<=cmd.length(); i++){
         if(i==cmd.length() || cmd[i]==' '){
             if(i-start>0 && start<cmd.length()){
-                cmds.push_back(cmd.substr(start,i-start));
+                cmds.push_back(cmd.substr(start, i-start));
             }
             start = i+1;
         }

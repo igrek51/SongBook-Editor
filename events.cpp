@@ -113,6 +113,7 @@ void App::event_init(HWND *window){
     if(Config::geti()->chordsbase_on_startup && IO::geti()->args.size()<=1){
         chordsbase();
     }
+    refresh_text();
 	IO::geti()->echo("wersja "+version);
 }
 
@@ -169,7 +170,7 @@ void App::event_dropfiles(string filename){
 }
 
 void App::event_resize(){
-    IO::geti()->log("Resize - Odœwie¿anie uk³adu kontrolek...");
+    IO::geti()->log("Resize okna - Odœwie¿anie uk³adu kontrolek...");
     int control_h = 22;
 	RECT wnd_rect;
 	GetClientRect(main_window, &wnd_rect);

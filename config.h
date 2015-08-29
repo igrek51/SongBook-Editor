@@ -16,9 +16,9 @@ public:
 class Config {
 private:
 	static Config* instance;
+    Config();
 public:
     static Config* geti();
-	Config();
     void load_from_file();
     vector<string>* get_config_lines(string filename);
     vector<ConfigVariable*>* get_config_variables(string filename);

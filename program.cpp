@@ -61,14 +61,16 @@ void App::fullscreen_set(bool full){
 	Config::geti()->fullscreen_on = full;
 	if(Config::geti()->fullscreen_on){
 		ShowWindow(main_window, SW_MAXIMIZE);
+        IO::geti()->log("Fullscreen w³¹czony.");
 	}else{
 		ShowWindow(main_window, SW_RESTORE);
+        IO::geti()->log("Fullscreen wy³¹czony.");
 	}
 }
 
 void App::quick_replace(){
-	char *str = load_text();
-	char *selected = new char [str_size];
+	string* str = load_text();
+	char *selected = new char [str->length()];
 	SendMessage(Controls::geti()->find("editor"), EM_GETSELTEXT, 0, (LPARAM)selected);
 	char c;
     while(strlen(selected)>0){
@@ -87,15 +89,15 @@ void App::quick_replace(){
     if(strlen(selected)==0){
         IO::geti()->echo("! B³¹d: Pusty tekst do zamiany.");
         delete[] selected;
-        delete[] str;
+        delete str;
         return;
     }
-    set_selected(last_sel_end,last_sel_end,str);
+    set_selected(last_sel_end, last_sel_end, str);
     Controls::geti()->set_text("find_edit", selected);
     Controls::geti()->set_text("replace_edit", selected);
     SetFocus(Controls::geti()->find("replace_edit"));
     delete[] selected;
-	delete[] str;
+	delete str;
 }
 
 void App::chordsbase(){
@@ -109,7 +111,7 @@ void App::chordsbase(){
 void App::new_file(){
 	SetWindowText(Controls::geti()->find("editor"), "");
 	refresh_text();
-	Config::geti()->opened_file="";
+	Config::geti()->opened_file = "";
 	update_title();
 	IO::geti()->echo("Nowy plik");
 }
@@ -134,7 +136,7 @@ void App::open_file(string filename){
 	plik.read(file_content,fsize);
 	plik.close();
 	SetWindowText(Controls::geti()->find("editor"),file_content);
-	set_selected(0,0,file_content);
+	set_selected_1(0, 0);
 	SendMessage(Controls::geti()->find("editor"), EM_SCROLLCARET, 0, 0);
 	Config::geti()->opened_file = filename;
 	stringstream ss;
@@ -161,10 +163,10 @@ void App::save_file(){
 		plik.close();
 		return;
 	}
-	char *str2 = load_text();
-	plik.write(str2,str_size);
+	string* str2 = load_text();
+	plik.write(str2->c_str(),str_size);
 	plik.close();
-	delete[] str2;
+	delete str2;
 	update_title();
 	stringstream ss;
 	ss<<"Zapisano plik";
@@ -182,4 +184,31 @@ void App::analyze(){
     while(skanuj()) licznik++;
     if(licznik==0) IO::geti()->echo("Brak zmian");
     else IO::geti()->echo("Wprowadzono zmiany");
+}
+
+void App::transpose(int transponuj){
+	if(transponuj==0) return;
+	Config::geti()->transposed += transponuj;
+    string trans = transpose_string(*load_text(), transponuj);
+	SetWindowText(Controls::geti()->find("editor"), trans.c_str());
+	refresh_text();
+	stringstream ss;
+	ss<<"Transpozycja akordów: ";
+	if(Config::geti()->transposed>0) ss<<"+";
+	ss<<Config::geti()->transposed;
+	IO::geti()->echo(ss.str());
+}
+
+void App::change_font_size(int change){
+	Config::geti()->editor_fontsize += change;
+	if(Config::geti()->editor_fontsize<1) Config::geti()->editor_fontsize=1;
+	Controls::geti()->set_font("editor", Config::geti()->editor_fontface, Config::geti()->editor_fontsize);
+    stringstream ss;
+	ss<<"Rozmiar czcionki: "<<Config::geti()->editor_fontsize;
+	if(Config::geti()->autoscroll_scaling){
+		Config::geti()->autoscroll_interval = Config::geti()->autoscroll_interval * (Config::geti()->editor_fontsize-2*change)/(Config::geti()->editor_fontsize-change);
+        Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
+		ss<<", Interwa³ autoscrolla: "<<Config::geti()->autoscroll_interval<<" ms";
+	}
+	IO::geti()->echo(ss.str());
 }

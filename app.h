@@ -9,15 +9,16 @@
 #include "files.h"
 #include "io.h"
 #include "system.h"
+#include "music.h"
 
 using namespace std;
 
 class App {
 private:
     static App* instance;
+    App();
 public:
     static App* geti();
-	App();
 	~App();
     HWND main_window;
     HWND instancja2;
@@ -38,10 +39,6 @@ public:
 	string last_cmd;
 	void exec_cmd();
 	void exec_cmd(string cmd);
-	//  Pliki
-	void new_file();
-	void open_file(string filename);
-	void save_file();
 	//  edycja
     void analyze();
 	bool skanuj();
@@ -54,16 +51,17 @@ public:
 	void zapisz_tekst(int nrt);
 	void dodaj_nawias();
 	void dodaj_alternatywne();
-	//  formatowanie tekstu
+	//  Editor
+
+    unsigned int str_size;
+
     void change_font_size(int change);
-	void format_text(char *str);
+	void format_text(string* str);
 	void refresh_text();
-	//  richedit
-	unsigned int str_size;
-	char* load_text();
-	void save_text(char *str);
-	bool get_selected(unsigned int &sel_start, unsigned int &sel_end, char *str);
-	void set_selected(unsigned int sel_start, unsigned int sel_end, char *str);
+    string* load_text();
+    void save_text(string* str);
+	bool get_selected(unsigned int &sel_start, unsigned int &sel_end, string* str);
+	void set_selected(unsigned int sel_start, unsigned int sel_end, string* str);
 	bool get_selected_1(unsigned int &sel_start, unsigned int &sel_end);
 	void set_selected_1(unsigned int sel_start, unsigned int sel_end);
 	int get_scroll();
@@ -71,14 +69,13 @@ public:
 	void change_scroll(int c);
 	unsigned int last_sel_start, last_sel_end;
 	int last_scroll;
-	char get_str_c(char *str, unsigned int str_size, int pos);
-	void del_char(char *&str, unsigned int &str_size, int &pos);
-	void insert_char(char *&str, unsigned int &str_size, int pos, char c);
+	char string_char(string* str, int pos);
+	void string_delete(string*& str, int &pos);
+	void string_insert(string*& str, int pos, char c);
 	void select_all();
 	void copy_text();
 	//  transpozycja
 	void transpose(int transponuj);
-	string transpose_string(string in, int t);
 	//  autoscroll
 	void autoscroll_exec();
 	void autoscroll_on();
@@ -93,6 +90,9 @@ public:
     void un_subclass(Control* kontrolka);
     void un_subclass(string name);
 	//  program - inne funkcje
+    void new_file();
+	void open_file(string filename);
+	void save_file();
 	void update_title();
     void controls_fonts_set();
 	void toolbar_switch(int change=2);

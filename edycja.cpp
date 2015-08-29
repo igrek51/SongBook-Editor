@@ -2,14 +2,13 @@
 #include <richedit.h>
 
 bool App::skanuj(){
-    /*
-	bool changed=false;
-	char *str = load_text();
-	int nawias=0;
+	bool changed = false;
+	string* str = load_text();
+	int nawias = 0;
 	//analiza pliku
-	for(int i=0; (unsigned int)i<str_size; i++){
+	for(int i=0; (unsigned int)i<str->length(); i++){
 		//dwa puste nawiasy []
-		if(get_str_c(str,str_size,i)=='['&&get_str_c(str,str_size,i+1)==']'){
+		if(string_char(str, i)=='[' && string_char(str, i+1)==']'){
 			del_char(str,str_size,i);
 			i++;
 			del_char(str,str_size,i);
@@ -17,7 +16,7 @@ bool App::skanuj(){
 			changed=true; continue;
 		}
 		//nadmierny nawias [ (zamiast ])
-		if(get_str_c(str,str_size,i)=='['){
+		if(string_char(str, i)=='['){
 			if(nawias==0){
 				nawias=1;
 			}else{
@@ -28,7 +27,7 @@ bool App::skanuj(){
 			}
 		}
 		//nadmierny nawias ]
-		if(get_str_c(str,str_size,i)==']'){
+		if(string_char(str, i)==']'){
 			if(nawias==1){
 				nawias=0;
 			}else{
@@ -38,7 +37,7 @@ bool App::skanuj(){
 				changed=true; continue;
 			}
 		}
-		if(get_str_c(str,str_size,i)==' '){
+		if(string_char(str, i)==' '){
 			//spacje na pocz¹tku wiersza
 			if(i==0||get_str_c(str,str_size,i-1)=='\n'){
 				del_char(str,str_size,i);
@@ -54,44 +53,44 @@ bool App::skanuj(){
 		}
 		//ostatni enter
 		if(i==(int)str_size-2){
-			if(get_str_c(str,str_size,i)=='\r'&&get_str_c(str,str_size,i+1)=='\n'){
+			if(string_char(str, i)=='\r' && string_char(str, i+1)=='\n'){
 				del_char(str,str_size,i);
 				log("Analiza: ostatni enter");
 				changed=true; continue;
 			}
 		}
-		if(i==(int)str_size-1&&get_str_c(str,str_size,i)=='\n'){
+		if(i==(int)str_size-1&&string_char(str, i)=='\n'){
 			del_char(str,str_size,i);
 			log("Analiza: ostatni enter LF");
 			changed=true; continue;
 		}
 		//pierwszy enter
-		if(i==0&&(get_str_c(str,str_size,i)=='\r'||get_str_c(str,str_size,i)=='\n')){
+		if(i==0&&(string_char(str, i)=='\r' || string_char(str, i)=='\n')){
 			del_char(str,str_size,i);
 			log("Analiza: pierwszy enter");
 			changed=true; continue;
 		}
 		//podwójne spacje
-		if(nawias==0&&get_str_c(str,str_size,i)==' '&&get_str_c(str,str_size,i+1)==' '){
+		if(nawias==0 && string_char(str, i)==' ' && string_char(str, i+1)==' '){
 			del_char(str,str_size,i);
 			log("Analiza: podwójne spacje");
 			changed=true; continue;
 		}
 		//po nawiasie [ nie ma spacji
-		if(get_str_c(str,str_size,i-1)=='['&&get_str_c(str,str_size,i)==' '){
+		if(string_char(str, i-1)=='[' && string_char(str, i)==' '){
 			del_char(str,str_size,i);
 			log("Analiza: spacja po nawiasie [");
 			changed=true; continue;
 		}
 		//przed nawiasem ] nie ma spacji
-		if(get_str_c(str,str_size,i)==' '&&get_str_c(str,str_size,i+1)==']'){
+		if(string_char(str, i)==' ' && string_char(str, i+1)==']'){
 			del_char(str,str_size,i);
 			log("Analiza: spacja przed nawiasem ]");
 			changed=true; continue;
 		}
 		//spacja lub enter przed nawiasem [
-		if(get_str_c(str,str_size,i)=='['&&i>0){
-			if(get_str_c(str,str_size,i-1)!='\n'&&get_str_c(str,str_size,i-1)!=' '){
+		if(string_char(str, i)=='[' && i>0){
+			if(string_char(str, i-1)!='\n' && string_char(str, i-1)!=' '){
 				insert_char(str, str_size, i, ' ');
 				i++;
 				log("Analiza: brak spacji lub entera przed nawiasem");
@@ -99,14 +98,14 @@ bool App::skanuj(){
 			}
 		}
 		//tab na spacjê
-		if(get_str_c(str,str_size,i)=='\t'){
+		if(string_char(str, i)=='\t'){
 			str[i]=' ';
 			log("Analiza: tabulator zamiast spacji");
 			changed=true; continue;
 		}
 		//fis -> f#
 		if(nawias==1){
-			if(get_str_c(str,str_size,i)=='i'&&get_str_c(str,str_size,i+1)=='s'){
+			if(string_char(str, i)=='i' && string_char(str, i+1)=='s'){
 				str[i+1]='#';
 				del_char(str,str_size,i);
 				log("Analiza: konwersja \"is\" na \"#\"");
@@ -115,7 +114,7 @@ bool App::skanuj(){
 		}
 		//samo \n (bez \r)
 		if(i>0){
-			if(get_str_c(str,str_size,i)=='\n'&&get_str_c(str,str_size,i-1)!='\r'){
+			if(string_char(str, i)=='\n' && string_char(str, i-1)!='\r'){
 				insert_char(str, str_size, i, '\r');
 				i++;
 				changed=true; continue;
@@ -123,7 +122,7 @@ bool App::skanuj(){
 		}
 		//samo \r (bez \n)
 		if(i>0){
-			if(get_str_c(str,str_size,i-1)=='\r'&&get_str_c(str,str_size,i)!='\n'){
+			if(string_char(str, i-1)=='\r' && string_char(str, i)!='\n'){
 				insert_char(str, str_size, i, '\n');
 				i++;
 				changed=true; continue;
@@ -137,8 +136,6 @@ bool App::skanuj(){
 	}
 	save_text(str);
 	return changed;
-    */
-    return false;
 }
 
 void App::usun_akordy(){

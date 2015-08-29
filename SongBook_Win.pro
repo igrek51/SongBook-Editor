@@ -13,11 +13,11 @@ SOURCES +=\
     format.cpp \
     io.cpp \
     program.cpp \
-    richedit.cpp \
     subclassing.cpp \
-    transpose.cpp \
     system.cpp \
-    events.cpp
+    events.cpp \
+    music.cpp \
+    editor.cpp
 
 DISTFILES += \
     resource.rc
@@ -30,5 +30,6 @@ HEADERS += \
     files.h \
     log.h \
     io.h \
-    controls.h
+    controls.h \
+    music.h
 
