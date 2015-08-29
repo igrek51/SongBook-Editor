@@ -31,6 +31,8 @@ public:
     string log_filename;
     string program_name;
     string buttons_fontface;
+    string find_edit_placeholder;
+    string replace_edit_placeholder;
     int control_height;
     int toolbar_button_width;
     int static_filename_width;

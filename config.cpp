@@ -22,6 +22,8 @@ Config::Config(){
     log_filename = "log.txt";
     buttons_fontface = "MS Shell Dlg 2";
     program_name = "Igrek SongBook Editor";
+    find_edit_placeholder = "Szukaj...";
+    replace_edit_placeholder = "Zamieñ...";
     control_height = 22;
     toolbar_button_width = 20;
     static_filename_width = 200;

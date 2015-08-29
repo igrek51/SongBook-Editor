@@ -143,8 +143,16 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 	if(nazwa=="find_edit"){ //szukany ci¹g znaków
 		switch(message){
 			case WM_SETFOCUS:{
+                if(Controls::i()->get_text("find_edit")==Config::i()->find_edit_placeholder){
+                    Controls::i()->set_text("find_edit", "");
+                }
 				IO::geti()->echo("(Szukany ci¹g znaków)");
 			}break;
+            case WM_KILLFOCUS:{
+                if(Controls::i()->get_text("find_edit").length()==0){
+                    Controls::i()->set_text("find_edit", Config::i()->find_edit_placeholder);
+                }
+            }break;
 			case WM_CHAR:{
 				if(wParam==VK_RETURN){
 					znajdz();
@@ -160,8 +168,16 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 	if(nazwa=="replace_edit"){ //tekst do zamiany
 		switch(message){
 			case WM_SETFOCUS:{
+            if(Controls::i()->get_text("replace_edit")==Config::i()->replace_edit_placeholder){
+                Controls::i()->set_text("replace_edit", "");
+            }
 				IO::geti()->echo("(Tekst po zamianie)");
 			}break;
+            case WM_KILLFOCUS:{
+                if(Controls::i()->get_text("replace_edit").length()==0){
+                    Controls::i()->set_text("replace_edit", Config::i()->replace_edit_placeholder);
+                }
+            }break;
 			case WM_CHAR:{
 				if(wParam==VK_RETURN){
 					zamien();

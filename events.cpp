@@ -26,51 +26,32 @@ void App::event_init(HWND *window){
     }
 	//kontrolki
     IO::geti()->log("Tworzenie kontrolek...");
-    int buttonw = Config::geti()->window_w/7;
-    int control_h = Config::geti()->control_height;
-    int x_paint=0;
-    int y_paint=40;
-    int w = Config::geti()->window_w;
-    int h = Config::geti()->window_h;
     Controls::geti()->create_static_center("", 0, 0, 0, 0, "statusbar");
     Controls::geti()->create_edit("", 0, 0, 0, 0, "cmd");
 
-    Controls::geti()->create_button("Nowy", x_paint, y_paint, buttonw, 20, "new");
-    x_paint+=buttonw;
-    Controls::geti()->create_button("Wczytaj", x_paint, y_paint, buttonw, 20, "load");
-    x_paint+=buttonw;
-    Controls::geti()->create_button("Zapisz", x_paint, y_paint, buttonw, 20, "save");
-    x_paint+=buttonw;
-    Controls::geti()->create_button("Baza akordów", x_paint, y_paint, buttonw, 20, "base");
-    x_paint+=buttonw;
+    Controls::geti()->create_button("Nowy", 0, 0, 0, 0, "new");
+    Controls::geti()->create_button("Wczytaj", 0, 0, 0, 0, "load");
+    Controls::geti()->create_button("Zapisz", 0, 0, 0, 0, "save");
+    Controls::geti()->create_button("Baza akordów", 0, 0, 0, 0, "base");
 
-    Controls::geti()->create_edit_center("", x_paint, y_paint, buttonw, 20, "autoscroll_interval");
-    x_paint+=buttonw;
-    Controls::geti()->create_edit_center("", x_paint, y_paint, buttonw, 20, "autoscroll_wait");
-    x_paint+=buttonw;
-    Controls::geti()->create_button("Autoscroll: off", x_paint, y_paint, buttonw, 20, "autoscroll");
-    x_paint+=buttonw;
+    Controls::geti()->create_edit_center("", 0, 0, 0, 0, "autoscroll_interval");
+    Controls::geti()->create_edit_center("", 0, 0, 0, 0, "autoscroll_wait");
+    Controls::geti()->create_button("Autoscroll: off", 0, 0, 0, 0, "autoscroll");
 
-    x_paint = 0; y_paint+=20;
-    Controls::geti()->create_edit_center("", x_paint, y_paint, buttonw*2, 20, "find_edit");
-    x_paint+=buttonw*2;
-    Controls::geti()->create_edit_center("", x_paint, y_paint, buttonw*2, 20, "replace_edit");
-    x_paint+=buttonw*2;
-    Controls::geti()->create_button("ZnajdŸ", x_paint, y_paint, buttonw, 20, "find");
-    x_paint+=buttonw;
-    Controls::geti()->create_button("Zamieñ", x_paint, y_paint, buttonw, 20, "replace");
-    x_paint+=buttonw;
-    Controls::geti()->create_button("Analizuj", x_paint, y_paint, buttonw, 20, "analyze");
-    x_paint+=buttonw;
+    Controls::geti()->create_edit_center(Config::i()->find_edit_placeholder, 0, 0, 0, 0, "find_edit");
+    Controls::geti()->create_edit_center(Config::i()->replace_edit_placeholder, 0, 0, 0, 0, "replace_edit");
+    Controls::geti()->create_button("ZnajdŸ", 0, 0, 0, 0, "find");
+    Controls::geti()->create_button("Zamieñ", 0, 0, 0, 0, "replace");
+    Controls::geti()->create_button("Analizuj", 0, 0, 0, 0, "analyze");
 
-    Controls::geti()->create_button("^", w-20, 0, 20, control_h, "toolbar_toggle");
+    Controls::geti()->create_button("^", 0, 0, 0, 0, "toolbar_toggle");
 	//edytor
     IO::geti()->log("Tworzenie edytora tekstu...");
 	if(LoadLibrary("RICHED32.DLL")==NULL){
 		IO::geti()->critical_error("B³¹d: brak biblioteki RICHED32.DLL");
 		return;
 	}
-    HWND editor_handle = CreateWindowEx(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, "", WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL, 0, 80, w, h-80, main_window, (HMENU)100, *hInst, 0);
+    HWND editor_handle = CreateWindowEx(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, "", WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL, 0, 0, 0, 0, main_window, (HMENU)100, *hInst, 0);
     Controls::geti()->controls.push_back(new Control(editor_handle, "editor"));
 	//autoscroll edits
     IO::geti()->log("Wype³nianie kontrolek, zmiana czcionek...");
@@ -97,9 +78,8 @@ void App::event_init(HWND *window){
 		DeleteDC(screen);
 		SetWindowPos(main_window, HWND_TOP, -8, 0, screen_w/2, screen_h-34, 0);
         //  TODO
-    }else{
-        event_resize();
     }
+    event_resize();
     //drag & drop
     IO::geti()->log("Uaktywanianie funkcji drag & drop...");
 	DragAcceptFiles(main_window, true);
