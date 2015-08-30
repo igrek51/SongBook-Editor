@@ -65,32 +65,68 @@ void App::event_init(HWND *window){
     Controls::geti()->controls.push_back(new Control(editor_handle, "editor"));
     //tworzenie menu
     IO::geti()->log("Tworzenie menu...");
-    Menu* menu_1 = new Menu();
-    menu_1->add_option("Nowy", "new");
-    menu_1->add_separator();
-    menu_1->add_option("Baza akordów", "base");
-    menu_1->add_separator();
-    menu_1->add_option("Otwórz", "open");
-    menu_1->add_option("Zapisz", "save");
-    menu_1->add_separator();
-    menu_1->add_option("Zamknij", "close");
-    Menu* menu_2 = new Menu();
-    menu_2->add_option("Szukaj", "find");
-    menu_2->add_option("Zamieñ", "replace");
-    menu_2->add_separator();
-    menu_2->add_option("Analizuj", "analyze");
-    Menu* menu_3 = new Menu();
-    menu_3->add_option("Wy³¹cz", "autoscroll_off");
-    menu_3->add_option("Autoscroll z opóŸnieniem", "autoscroll_1");
-    menu_3->add_option("Autoscroll bez opóŸnienia", "autoscroll_2");
-    menu_3->add_separator();
-    menu_3->add_option("Zwolnij", "autoscroll_slower");
-    menu_3->add_option("Przyspiesz", "autoscroll_faster");
+    Menu* menu_plik = new Menu();
+    menu_plik->add_option("Nowy", "new");
+    menu_plik->add_separator();
+    menu_plik->add_option("Otwórz", "load");
+    menu_plik->add_option("Prze³aduj", "reload");
+    menu_plik->add_option("Zapisz", "save");
+    menu_plik->add_separator();
+    menu_plik->add_option("Baza akordów", "base");
+    menu_plik->add_separator();
+    menu_plik->add_option("Zakoñcz", "exit");
+    Menu* menu_edycja = new Menu();
+    menu_edycja->add_option("Analizuj", "analyze");
+    menu_edycja->add_separator();
+    menu_edycja->add_option("Szukaj", "find");
+    menu_edycja->add_option("Zamieñ", "replace");
+    menu_edycja->add_option("Szybka zamiana", "quick_replace");
+    menu_edycja->add_separator();
+    menu_edycja->add_option("Usuñ akordy", "remove_chords");
+    menu_edycja->add_option("Usuñ dodatkowe wersje", "remove_alt");
+    Menu* menu_widok = new Menu();
+    menu_widok->add_option("Zwiêksz czcionkê", "font++");
+    menu_widok->add_option("Zmniejsz czcionkê", "font--");
+    menu_widok->add_separator();
+    menu_widok->add_option("Formatuj tekst", "format_text");
+    menu_widok->add_option("Przewiñ na pocz¹tek", "scroll_to_begin");
+    menu_widok->add_option("Przewiñ na koniec", "scroll_to_end");
+    menu_widok->add_separator();
+    menu_widok->add_option("Pe³ny ekran", "fullscreen");
+    Menu* menu_autoscroll = new Menu();
+    menu_autoscroll->add_option("W³¹cz z opóŸnieniem", "autoscroll_wait");
+    menu_autoscroll->add_option("W³¹cz bez opóŸnienia", "autoscroll_nowait");
+    menu_autoscroll->add_option("Wy³¹cz", "autoscroll_off");
+    menu_autoscroll->add_separator();
+    menu_autoscroll->add_option("Zwolnij przewijanie", "autoscroll_slower");
+    menu_autoscroll->add_option("Przyspiesz przewijanie", "autoscroll_faster");
+    Menu* menu_transpozycja = new Menu();
+    menu_transpozycja->add_option("Transponuj 5 pó³tonów w górê", "transpose+5");
+    menu_transpozycja->add_option("Transponuj 1 pó³ton w górê", "transpose++");
+    menu_transpozycja->add_separator();
+    menu_transpozycja->add_option("Transponuj 1 pó³ton w dó³", "transpose--");
+    menu_transpozycja->add_option("Transponuj 5 pó³tonów w dó³", "transpose-5");
+    menu_transpozycja->add_separator();
+    menu_transpozycja->add_option("Oryginalna tonacja", "transpose0");
+    menu_transpozycja->add_separator();
+    menu_transpozycja->add_option("Dodaj alternatywn¹ tonacjê", "alt");
+    Menu* menu_ustawienia = new Menu();
+    menu_ustawienia->add_option("Plik konfiguracyjny", "config");
+    menu_ustawienia->add_option("Wiersz poleceñ", "cmd_toggle");
+    menu_ustawienia->add_option("Dziennik zdarzeñ", "log");
+    Menu* menu_pomoc = new Menu();
+    menu_pomoc->add_option("Polecenia i skróty klawiszowe", "help");
+    menu_pomoc->add_option("O programie", "info");
+    //g³ówny pasek menu
     Menu* menu_bar = new Menu();
-    menu_bar->add_menu(menu_1, "Plik");
-    menu_bar->add_menu(menu_2, "Edycja");
-    menu_bar->add_menu(menu_3, "Autoscroll");
-    menu_bar->add_option("Rozwiñ", "toolbar_show");
+    menu_bar->add_menu(menu_plik, "Plik");
+    menu_bar->add_menu(menu_edycja, "Edycja");
+    menu_bar->add_menu(menu_widok, "Widok");
+    menu_bar->add_option("Pasek narzêdzi", "toolbar_toggle");
+    menu_bar->add_menu(menu_autoscroll, "Autoscroll");
+    menu_bar->add_menu(menu_transpozycja, "Transpozycja");
+    menu_bar->add_menu(menu_ustawienia, "Ustawienia");
+    menu_bar->add_menu(menu_pomoc, "Pomoc");
     SetMenu(main_window, menu_bar->handle);
     //autoscroll edits
     IO::geti()->log("Wype³nianie kontrolek, zmiana czcionek...");
@@ -147,6 +183,9 @@ void App::event_button(WPARAM wParam){
 	if(name == "new"){ //nowy
 		new_file();
 	}else if(name == "load"){ //wczytaj
+        if(!Config::geti()->toolbar_show){
+            toolbar_switch(1);
+        }
         string str2 = Controls::geti()->get_text("filename_edit");
 		if(str2.length()==0){
 			IO::geti()->echo("Podaj nazwê pliku.");
@@ -154,18 +193,92 @@ void App::event_button(WPARAM wParam){
 			open_chords_file(str2);
 		}
 	}else if(name == "save"){ //zapisz
+        if(!Config::geti()->toolbar_show){
+            toolbar_switch(1);
+        }
 		save_chords_file();
 	}else if(name == "analyze"){ //analizuj
 		analyze();
 	}else if(name == "replace"){ //zamieñ
+        if(!Config::geti()->toolbar_show){
+            toolbar_switch(1);
+            return;
+        }
 		zamien();
 	}else if(name == "find"){ //znajdŸ
+        if(!Config::geti()->toolbar_show){
+            toolbar_switch(1);
+            return;
+        }
 		znajdz();
 	}else if(name == "base"){ //baza akordów
         chordsbase();
 	}else if(name == "autoscroll"){ //autoscroll
 		autoscroll_switch();
-	}else{
+	}else if(name == "reload"){
+        if(!Config::geti()->toolbar_show){
+            toolbar_switch(1);
+        }
+        open_chords_file(Config::geti()->opened_file);
+    }else if(name == "config"){
+        ShellExecute(0,"open",Config::geti()->config_filename.c_str(),"",0,SW_SHOW);
+    }else if(name == "quick_replace"){
+        quick_replace();
+    }else if(name == "remove_chords"){
+        usun_akordy();
+    }else if(name == "remove_alt"){
+        usun_wersje();
+    }else if(name == "font++"){
+        change_font_size(+1);
+    }else if(name == "font--"){
+        change_font_size(-1);
+    }else if(name == "format_text"){
+        refresh_text();
+    }else if(name == "fullscreen"){
+        fullscreen_toggle();
+    }else if(name == "autoscroll_wait"){
+        autoscroll_on();
+    }else if(name == "autoscroll_nowait"){
+        autoscroll_nowait();
+    }else if(name == "autoscroll_off"){
+        autoscroll_off();
+        IO::geti()->echo("Autoscroll wy³¹czony");
+    }else if(name == "autoscroll_slower"){
+        autoscroll_nowait(+Config::geti()->autoscroll_interval*0.25);
+    }else if(name == "autoscroll_faster"){
+        autoscroll_nowait(-Config::geti()->autoscroll_interval*0.2);
+    }else if(name == "transpose+5"){
+        transpose(+5);
+    }else if(name == "transpose++"){
+        transpose(+1);
+    }else if(name == "transpose--"){
+        transpose(-1);
+    }else if(name == "transpose-5"){
+        transpose(-5);
+    }else if(name == "transpose0"){
+        transpose(-Config::geti()->transposed);
+    }else if(name == "alt"){
+        dodaj_alternatywne();
+    }else if(name == "log"){
+        ShellExecute(0, "open", Config::geti()->log_filename.c_str(), "", 0, SW_SHOW);
+    }else if(name == "help"){
+        show_help();
+    }else if(name == "info"){
+        stringstream ss;
+        ss<<Config::geti()->program_name<<endl;
+        ss<<"wersja "<<version<<endl;
+        IO::geti()->message_box("O programie",ss.str());
+    }else if(name == "cmd_toggle"){
+        cmd_switch();
+    }else if(name == "toolbar_toggle"){
+        toolbar_switch();
+    }else if(name == "scroll_to_begin"){
+        set_scroll(0);
+    }else if(name == "scroll_to_end"){
+        SendMessage(Controls::geti()->find("editor"), WM_VSCROLL, SB_BOTTOM, 0);
+    }else if(name == "exit"){
+        DestroyWindow(main_window);
+    }else{
         IO::geti()->error("Zdarzenie nie zosta³o obs³u¿one: "+name);
     }
 }
@@ -300,7 +413,7 @@ void App::event_keydown(WPARAM wParam){
 	}else if(wParam==VK_F9){
 		toolbar_switch();
 	}else if(wParam==VK_F11){
-		fullscreen_set(!Config::geti()->fullscreen_on);
+        fullscreen_toggle();
 	}
 	if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
 		if(wParam=='A'){
@@ -310,6 +423,9 @@ void App::event_keydown(WPARAM wParam){
 		}else if(wParam=='R'){
 			refresh_text();
 		}else if(wParam=='F'){
+            if(!Config::geti()->toolbar_show){
+                toolbar_switch(1);
+            }
 			Controls::geti()->set_focus("find_edit");
 		}else if(wParam==VK_ADD){ // +
 			change_font_size(+1);

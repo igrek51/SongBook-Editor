@@ -46,6 +46,7 @@ public:
 	string last_cmd;
 	void exec_cmd();
 	void exec_cmd(string cmd);
+    void show_help();
 	//  Edytor
     string* load_text();
     void save_text(string* str);
@@ -88,6 +89,7 @@ public:
     void toolbar_switch(int change = 2);
     void cmd_switch(int change = 2);
     void fullscreen_set(bool full);
+    void fullscreen_toggle();
     void chordsbase();
     void quick_replace();
     void new_file();

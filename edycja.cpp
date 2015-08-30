@@ -356,7 +356,7 @@ void App::dodaj_alternatywne(){
 		if(ch==']'){
 			if(akord.length()>0){
 				 nowy += " | ";
-				 nowy += transpose_string(akord, Config::geti()->transposed);
+				 nowy += transpose_chords(akord, Config::geti()->transposed);
 			}
 			akord = "";
 			nawias = 0;
@@ -379,8 +379,8 @@ void App::dodaj_alternatywne(){
 		}
 		nowy += ch;
 	}
+    delete str;
 	Controls::geti()->set_text("editor", nowy);
 	refresh_text();
-	delete str;
 	IO::geti()->echo("Dodano alternatywn¹ wersjê akordów");
 }

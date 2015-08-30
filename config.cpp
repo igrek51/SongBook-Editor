@@ -27,7 +27,7 @@ Config::Config(){
     replace_edit_placeholder = "Zamieñ...";
     control_height = 22;
     static_filename_width = 40;
-    cmd_outputs_num = 4;
+    cmd_outputs_num = 5;
     cmd_outputs_space = 5;
     //Zmienne
     window_w = 600;

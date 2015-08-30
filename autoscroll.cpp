@@ -2,7 +2,6 @@
 #include <richedit.h>
 
 void App::autoscroll_exec(){
-	IO::geti()->log("Timer...");
 	if(Config::geti()->autoscroll_count==0){
 		KillTimer(main_window, 1);
 		SetTimer(main_window, 1, Config::geti()->autoscroll_interval, (TIMERPROC)NULL);
@@ -32,7 +31,7 @@ void App::autoscroll_on(){
 	ss<<"Autoscroll w³¹czony (opóŸnienie: "<<Config::geti()->autoscroll_wait<<" s, interwa³: "<<Config::geti()->autoscroll_interval<<" ms)";
 	IO::geti()->echo(ss.str());
 	SetTimer(main_window, 1, Config::geti()->autoscroll_wait*1000, (TIMERPROC)NULL);
-	IO::geti()->log("Timer on");
+	IO::geti()->log("Timer autoscrolla w³¹czony");
 }
 
 void App::autoscroll_nowait(int change){
@@ -50,7 +49,7 @@ void App::autoscroll_nowait(int change){
 	stringstream ss;
 	ss<<"Autoscroll w³¹czony (interwa³: "<<Config::geti()->autoscroll_interval<<" ms)";
 	IO::geti()->echo(ss.str());
-	IO::geti()->log("Timer on - nowait");
+	IO::geti()->log("Timer autoscrolla w³¹czony (bez opóŸnienia)");
 	autoscroll_exec();
 }
 
@@ -59,7 +58,7 @@ void App::autoscroll_off(){
 	KillTimer(main_window, 1);
 	Config::geti()->autoscroll = false;
     Controls::geti()->set_text("autoscroll", "Autoscroll: off");
-	IO::geti()->log("Timer off");
+	IO::geti()->log("Timer autoscrolla wy³¹czony");
 }
 
 void App::autoscroll_switch(){

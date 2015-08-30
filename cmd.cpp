@@ -37,7 +37,7 @@ void App::exec_cmd(string cmd){
             Controls::geti()->set_text("autoscroll_wait", Config::geti()->autoscroll_wait);
             controls_fonts_set();
         }else{
-            ShellExecute(0,"open","conf.ini","",0,SW_SHOW);
+            ShellExecute(0,"open",Config::geti()->config_filename.c_str(),"",0,SW_SHOW);
         }
 	}else if(cmd1=="dir"){
 		ShellExecute(0, "open", ".", "", 0, SW_SHOW);
@@ -67,41 +67,7 @@ void App::exec_cmd(string cmd){
     }else if(cmd1=="remove_alt"){
         usun_wersje();
     }else if(cmd1=="help"){
-		ss_clear(ss);
-		ss<<"Skróty klawiszowe:"<<endl;
-		ss<<"F1: przewiñ na pocz¹tek"<<endl;
-		ss<<"F2: przewiñ w górê"<<endl;
-		ss<<"F3: przewiñ w dó³"<<endl;
-		ss<<"F4: dodaj nawiasy []"<<endl;
-		ss<<"F5: zmniejsz szybkoœæ przewijania"<<endl;
-		ss<<"F6: zwiêksz szybkoœæ przewijania"<<endl;
-		ss<<"F7: uruchom autoscroll"<<endl;
-		ss<<"F8: uruchom autoscroll bez opóŸnienia"<<endl;
-		ss<<"F9: poka¿ / schowaj pasek przycisków"<<endl;
-		ss<<"F11: pe³ny ekran"<<endl;
-		ss<<"Ctrl + [`]: wiersz poleceñ"<<endl;
-		ss<<"Ctrl + [+]: zwiêksz czcionkê"<<endl;
-		ss<<"Ctrl + [-]: zmniejsz czcionkê"<<endl;
-		ss<<"Ctrl + [lewo]: transponuj akordy -1"<<endl;
-		ss<<"Ctrl + [prawo]: transponuj akordy +1"<<endl;
-		ss<<"Ctrl + [T]: szybka zamiana tekstu"<<endl;
-		ss<<"Ctrl + [0]: przywróc oryginaln¹ tonacjê"<<endl;
-		ss<<"Ctrl + [1-9]: zapisz zaznaczony tekst do wstawienia"<<endl;
-		ss<<"Alt + [1-9]: wstaw zapisany tekst"<<endl;
-		ss<<endl<<"Polecenia:"<<endl;
-		ss<<"log - poka¿ dziennik zdarzeñ"<<endl;
-		ss<<"config - otwórz plik konfiguracyjny"<<endl;
-		ss<<"config reload - wczytaj ustawienia"<<endl;
-		ss<<"dir - otwórz folder roboczy"<<endl;
-        ss<<"opened_file, o - wyœwietl nazwê otwartego pliku"<<endl;
-        ss<<"remove_chords - usuñ akordy z zaznaczenia (lub ca³oœci)"<<endl;
-        ss<<"remove_alt - usuñ alternatywne akordy"<<endl;
-		ss<<"fontface [czcionka] - zmieñ czcionkê edytora"<<endl;
-		ss<<"fontsize [rozmiar] - zmieñ rozmiar czcionki edytora"<<endl;
-        ss<<"alt [shift] - dodaj alternatywn¹ tonacjê"<<endl;
-        ss<<"transpose [shift] - transponuj tonacjê akordów"<<endl;
-        ss<<"transpose 0 - przywróæ oryginaln¹ tonacjê"<<endl;
-		IO::geti()->message_box("Info",ss.str());
+        show_help();
 		Controls::geti()->set_focus("cmd");
 	}else if(cmd1=="fontface"){
 		if(cmd2.length()>0){
@@ -148,4 +114,42 @@ void App::exec_cmd(string cmd){
     }else{
 		IO::geti()->error("Nie znaleziono polecenia: "+cmd);
 	}
+}
+
+void App::show_help(){
+    stringstream ss;
+    ss<<"Skróty klawiszowe:"<<endl;
+    ss<<"F1: przewiñ na pocz¹tek"<<endl;
+    ss<<"F2: przewiñ w górê"<<endl;
+    ss<<"F3: przewiñ w dó³"<<endl;
+    ss<<"F4: dodaj nawiasy []"<<endl;
+    ss<<"F5: zmniejsz szybkoœæ przewijania"<<endl;
+    ss<<"F6: zwiêksz szybkoœæ przewijania"<<endl;
+    ss<<"F7: uruchom autoscroll"<<endl;
+    ss<<"F8: uruchom autoscroll bez opóŸnienia"<<endl;
+    ss<<"F9: poka¿ / schowaj pasek przycisków"<<endl;
+    ss<<"F11: pe³ny ekran"<<endl;
+    ss<<"Ctrl + [`]: wiersz poleceñ"<<endl;
+    ss<<"Ctrl + [+]: zwiêksz czcionkê"<<endl;
+    ss<<"Ctrl + [-]: zmniejsz czcionkê"<<endl;
+    ss<<"Ctrl + [lewo]: transponuj akordy -1"<<endl;
+    ss<<"Ctrl + [prawo]: transponuj akordy +1"<<endl;
+    ss<<"Ctrl + [T]: szybka zamiana tekstu"<<endl;
+    ss<<"Ctrl + [0]: przywróc oryginaln¹ tonacjê"<<endl;
+    ss<<"Ctrl + [1-9]: zapisz zaznaczony tekst do wstawienia"<<endl;
+    ss<<"Alt + [1-9]: wstaw zapisany tekst"<<endl;
+    ss<<endl<<"Polecenia:"<<endl;
+    ss<<"log - poka¿ dziennik zdarzeñ"<<endl;
+    ss<<"config - otwórz plik konfiguracyjny"<<endl;
+    ss<<"config reload - wczytaj ustawienia"<<endl;
+    ss<<"dir - otwórz folder roboczy"<<endl;
+    ss<<"opened_file, o - wyœwietl nazwê otwartego pliku"<<endl;
+    ss<<"remove_chords - usuñ akordy z zaznaczenia (lub ca³oœci)"<<endl;
+    ss<<"remove_alt - usuñ alternatywne akordy"<<endl;
+    ss<<"fontface [czcionka] - zmieñ czcionkê edytora"<<endl;
+    ss<<"fontsize [rozmiar] - zmieñ rozmiar czcionki edytora"<<endl;
+    ss<<"alt [shift] - dodaj alternatywn¹ tonacjê"<<endl;
+    ss<<"transpose [shift] - transponuj tonacjê akordów"<<endl;
+    ss<<"transpose 0 - przywróæ oryginaln¹ tonacjê"<<endl;
+    IO::geti()->message_box("Pomoc",ss.str());
 }

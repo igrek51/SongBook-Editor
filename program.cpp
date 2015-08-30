@@ -50,18 +50,18 @@ void App::toolbar_switch(int change){
         Config::geti()->toolbar_show = !Config::geti()->toolbar_show;
     }
     if(Config::geti()->toolbar_show){
-        IO::geti()->log("Ods³anianie paska narzêdzi...");
         for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
             Control* kontrolka = Controls::geti()->controls.at(i);
-            if(kontrolka->name=="cmd_output1") continue;
+            if(kontrolka->name=="cmd") continue;
+            if(string_begins(kontrolka->name, "cmd_output")) continue;
             if(kontrolka->name=="editor") continue;
             ShowWindow(kontrolka->handle, SW_SHOW);
         }
     }else{
-        IO::geti()->log("Ukrywanie paska narzêdzi...");
         for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
             Control* kontrolka = Controls::geti()->controls.at(i);
-            if(kontrolka->name=="cmd_output1") continue;
+            if(kontrolka->name=="cmd") continue;
+            if(string_begins(kontrolka->name, "cmd_output")) continue;
             if(kontrolka->name=="editor") continue;
             ShowWindow(kontrolka->handle,SW_HIDE);
         }
@@ -108,6 +108,13 @@ void App::fullscreen_set(bool full){
 	}
 }
 
+void App::fullscreen_toggle(){
+    if(Config::geti()->toolbar_show && !Config::geti()->fullscreen_on){
+        toolbar_switch(0);
+    }
+    fullscreen_set(!Config::geti()->fullscreen_on);
+}
+
 void App::chordsbase(){
     IO::geti()->log("Otwieranie bazy akordów...");
     if(Config::geti()->songs_dir.length()>0){
@@ -116,6 +123,9 @@ void App::chordsbase(){
 }
 
 void App::quick_replace(){
+    if(!Config::geti()->toolbar_show){
+        toolbar_switch(1);
+    }
     string selected = get_selected_text();
 	selected = trim_spaces(trim_1crlf(selected));
     if(selected.length()==0){

@@ -16,6 +16,8 @@ string trim_spaces(string s);
 string trim_1crlf(string s);
 string trim_quotes(string s);
 
+bool string_begins(string s1, string s2);
+
 char to_lowercase(char in);
 
 #endif

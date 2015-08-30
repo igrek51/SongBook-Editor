@@ -25,15 +25,15 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				}
 			}break;
 			case WM_KEYDOWN:{
-				if(wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F11){
+				if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
 					CallWindowProc(windowProc, hwnd, message, wParam, lParam);
 					return 0;
 				}
-				if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-                    if(wParam!='A'){
-                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
-                        return 0; //przechwycenie
-                    }
+                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
+					if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
+						CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+						return 0; //przechwycenie
+					}
 				}
 			}break;
 		}
@@ -51,15 +51,15 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				}
 			}break;
 			case WM_KEYDOWN:{
-				if(wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F11){
-					CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-					return 0;
-				}
-				if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-                    if(wParam!='A'){
-                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
-                        return 0; //przechwycenie
-                    }
+                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
+                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
+                    return 0;
+                }
+                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
+					if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
+						CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+						return 0; //przechwycenie
+					}
 				}
 				if(wParam==VK_UP){
                     Controls::geti()->set_text("cmd", last_cmd);
@@ -187,6 +187,18 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 			}break;
+            case WM_KEYDOWN:{
+                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
+                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
+                    return 0;
+                }
+                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
+                    if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
+                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+                        return 0; //przechwycenie
+                    }
+                }
+            }
 		}
 	}
 	if(nazwa=="replace_edit"){ //tekst do zamiany
@@ -212,6 +224,18 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 			}break;
+            case WM_KEYDOWN:{
+                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
+                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
+                    return 0;
+                }
+                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
+                    if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
+                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+                        return 0; //przechwycenie
+                    }
+                }
+            }
 		}
 	}
 	if(nazwa=="autoscroll_interval"){ //autoscroll_interval
@@ -225,6 +249,18 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 			}break;
+            case WM_KEYDOWN:{
+                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
+                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
+                    return 0;
+                }
+                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
+                    if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
+                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+                        return 0; //przechwycenie
+                    }
+                }
+            }
 		}
 	}
 	if(nazwa=="autoscroll_wait"){ //autoscroll_wait
@@ -238,6 +274,18 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 			}break;
+            case WM_KEYDOWN:{
+                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
+                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
+                    return 0;
+                }
+                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
+                    if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
+                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+                        return 0; //przechwycenie
+                    }
+                }
+            }
 		}
 	}
     //buttony - przekazanie skrótów klawiszowych
