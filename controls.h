@@ -16,9 +16,19 @@ public:
     WNDPROC wndproc_old;
 };
 
+class Menu {
+public:
+    Menu();
+    HMENU handle;
+    void add_option(string display_text, string option_name);
+    void add_separator();
+    void add_menu(Menu* submenu, string display_text);
+};
+
 class Controls {
 private:
 	static Controls* instance;
+    Controls();
 public:
     static Controls* geti();
     static Controls* i();
@@ -49,6 +59,11 @@ public:
     //  Zmiana czcionki
     void set_font(HWND kontrolka, string fontface, int fontsize);
     void set_font(string name, string fontface, int fontsize);
+    //  Menu
+    int id_counter;
+    vector<string> menu_names;
+    vector<int> menu_ids;
+    string get_menu_name(int menu_id);
 };
 
 #endif

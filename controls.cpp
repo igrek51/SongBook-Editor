@@ -16,6 +16,10 @@ Controls* Controls::i(){
     return geti();
 }
 
+Controls::Controls(){
+    id_counter = 100;
+}
+
 Controls::~Controls(){
     for(unsigned int i=0; i<controls.size(); i++){
         delete controls.at(i);
@@ -185,4 +189,33 @@ void Controls::set_font(HWND kontrolka, string fontface, int fontsize){
 
 void Controls::set_font(string name, string fontface, int fontsize){
     set_font(find(name), fontface, fontsize);
+}
+
+
+Menu::Menu(){
+    handle = CreateMenu();
+}
+
+void Menu::add_option(string display_text, string option_name){
+    AppendMenu(handle, MF_STRING, Controls::geti()->id_counter, display_text.c_str());
+    Controls::geti()->menu_names.push_back(option_name);
+    Controls::geti()->menu_ids.push_back(Controls::geti()->id_counter);
+    Controls::geti()->id_counter++;
+}
+
+void Menu::add_separator(){
+    AppendMenu(handle, MF_SEPARATOR, 0, NULL);
+}
+
+void Menu::add_menu(Menu* submenu, string display_text){
+    AppendMenu(handle, MF_POPUP, (UINT_PTR)submenu->handle, display_text.c_str());
+}
+
+string Controls::get_menu_name(int menu_id){
+    for(unsigned int i=0; i<menu_ids.size(); i++){
+        if(menu_ids.at(i)==menu_id){
+            return menu_names.at(i);
+        }
+    }
+    return "";
 }

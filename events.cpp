@@ -63,45 +63,40 @@ void App::event_init(HWND *window){
 	}
     HWND editor_handle = CreateWindowEx(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, "", WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL, 0, 0, 0, 0, main_window, (HMENU)100, *hInst, 0);
     Controls::geti()->controls.push_back(new Control(editor_handle, "editor"));
-
-    HMENU menu_bar = CreateMenu();
-    HMENU menu1 = CreateMenu();
-    HMENU menu2 = CreateMenu();
-    HMENU menu3 = CreateMenu();
-
-    AppendMenu(menu1, MF_STRING, 1, "Nowy");
-    AppendMenu(menu1, MF_SEPARATOR, 0, NULL);
-    AppendMenu(menu1, MF_STRING, 2, "Baza akordów");
-    AppendMenu(menu1, MF_SEPARATOR, 0, NULL);
-    AppendMenu(menu1, MF_STRING, 3, "Otwórz");
-    AppendMenu(menu1, MF_STRING, 4, "Zapisz");
-    AppendMenu(menu1, MF_SEPARATOR, 0, NULL);
-    AppendMenu(menu1, MF_STRING, 5, "Zamknij");
-
-    AppendMenu(menu2, MF_STRING, 6, "Szukaj");
-    AppendMenu(menu2, MF_STRING, 7, "Zamieñ");
-    AppendMenu(menu2, MF_SEPARATOR, 0, NULL);
-    AppendMenu(menu2, MF_STRING, 8, "Analizuj");
-
-    AppendMenu(menu3, MF_STRING, 9, "Wy³¹cz");
-    AppendMenu(menu3, MF_STRING, 10, "Autoscroll z opóŸnieniem");
-    AppendMenu(menu3, MF_STRING, 11, "Autoscroll bez opóŸnienia");
-    AppendMenu(menu3, MF_SEPARATOR, 0, NULL);
-    AppendMenu(menu3, MF_STRING, 12, "Przyspiesz");
-    AppendMenu(menu3, MF_STRING, 13, "Zwolnij");
-
-    AppendMenu(menu_bar, MF_POPUP, (UINT_PTR)menu1, "Plik");
-    AppendMenu(menu_bar, MF_POPUP, (UINT_PTR)menu2, "Edycja");
-    AppendMenu(menu_bar, MF_POPUP, (UINT_PTR)menu3, "Autoscroll");
-    AppendMenu(menu_bar, MF_STRING, 4, "Rozwiñ");
-    SetMenu(main_window, menu_bar);
-
-
-	//autoscroll edits
+    //tworzenie menu
+    IO::geti()->log("Tworzenie menu...");
+    Menu* menu_1 = new Menu();
+    menu_1->add_option("Nowy", "new");
+    menu_1->add_separator();
+    menu_1->add_option("Baza akordów", "base");
+    menu_1->add_separator();
+    menu_1->add_option("Otwórz", "open");
+    menu_1->add_option("Zapisz", "save");
+    menu_1->add_separator();
+    menu_1->add_option("Zamknij", "close");
+    Menu* menu_2 = new Menu();
+    menu_2->add_option("Szukaj", "find");
+    menu_2->add_option("Zamieñ", "replace");
+    menu_2->add_separator();
+    menu_2->add_option("Analizuj", "analyze");
+    Menu* menu_3 = new Menu();
+    menu_3->add_option("Wy³¹cz", "autoscroll_off");
+    menu_3->add_option("Autoscroll z opóŸnieniem", "autoscroll_1");
+    menu_3->add_option("Autoscroll bez opóŸnienia", "autoscroll_2");
+    menu_3->add_separator();
+    menu_3->add_option("Zwolnij", "autoscroll_slower");
+    menu_3->add_option("Przyspiesz", "autoscroll_faster");
+    Menu* menu_bar = new Menu();
+    menu_bar->add_menu(menu_1, "Plik");
+    menu_bar->add_menu(menu_2, "Edycja");
+    menu_bar->add_menu(menu_3, "Autoscroll");
+    menu_bar->add_option("Rozwiñ", "toolbar_show");
+    SetMenu(main_window, menu_bar->handle);
+    //autoscroll edits
     IO::geti()->log("Wype³nianie kontrolek, zmiana czcionek...");
     Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
     Controls::geti()->set_text("autoscroll_wait", Config::geti()->autoscroll_wait);
-	//czcionki
+    //czcionki
     controls_fonts_set();
 	Controls::geti()->set_focus("editor");
 	//subclassing
@@ -142,8 +137,12 @@ void App::event_init(HWND *window){
 }
 
 void App::event_button(WPARAM wParam){
-    if(!(wParam>=1 && wParam<=Controls::geti()->controls.size())) return;
-    string name = Controls::geti()->get_button_name(wParam);
+    string name = "";
+    if(wParam>=1 && wParam<=Controls::geti()->controls.size()){
+        name = Controls::geti()->get_button_name(wParam);
+    }else{
+        name = Controls::geti()->get_menu_name(wParam);
+    }
     if(name.length()==0) return;
 	if(name == "new"){ //nowy
 		new_file();
@@ -166,7 +165,9 @@ void App::event_button(WPARAM wParam){
         chordsbase();
 	}else if(name == "autoscroll"){ //autoscroll
 		autoscroll_switch();
-	}
+	}else{
+        IO::geti()->error("Zdarzenie nie zosta³o obs³u¿one: "+name);
+    }
 }
 
 void App::event_dropfiles(string filename){
