@@ -46,7 +46,7 @@ Control* Controls::find_control(string name){
             return controls.at(i);
         }
     }
-    if(name=="statusbar"){
+    if(name=="cmd_output1"){
         IO::geti()->critical_error("Nie odnaleziono kontrolki o nazwie: "+name);
     }else{
         IO::geti()->error("Nie odnaleziono kontrolki o nazwie: "+name);

@@ -18,6 +18,7 @@ void App::event_init(HWND *window){
         }
         SendMessage(instancja2, 0x0319, 69, 0);
         IO::geti()->log("Zamykanie zbêdnej instancji aplikacji...");
+        //SendMessage(main_window, WM_DESTROY, 0, 0);
         DestroyWindow(main_window);
         return;
     }
@@ -30,7 +31,6 @@ void App::event_init(HWND *window){
     }
 	//kontrolki
     IO::geti()->log("Tworzenie kontrolek...");
-    Controls::geti()->create_static_center("", 0, 0, 0, 0, "statusbar");
     Controls::geti()->create_static_center("Plik:", 0, 0, 0, 0, "filename");
     Controls::geti()->create_edit("", 0, 0, 0, 0, "filename_edit");
 
@@ -49,7 +49,12 @@ void App::event_init(HWND *window){
     Controls::geti()->create_button("Zamieñ", 0, 0, 0, 0, "replace");
     Controls::geti()->create_button("Analizuj", 0, 0, 0, 0, "analyze");
 
-    Controls::geti()->create_button("^", 0, 0, 0, 0, "toolbar_toggle");
+    for(int i=0; i<Config::geti()->cmd_outputs_num; i++){
+        stringstream ss;
+        ss<<"cmd_output"<<i+1;
+        Controls::geti()->create_static_center("", 0, 0, 0, 0, ss.str());
+    }
+    Controls::geti()->create_edit("", 0, 0, 0, 0, "cmd");
 	//edytor
     IO::geti()->log("Tworzenie edytora tekstu...");
 	if(LoadLibrary("RICHED32.DLL")==NULL){
@@ -58,6 +63,40 @@ void App::event_init(HWND *window){
 	}
     HWND editor_handle = CreateWindowEx(WS_EX_CLIENTEDGE, RICHEDIT_CLASS, "", WS_CHILD|WS_VISIBLE|WS_VSCROLL|ES_MULTILINE|ES_DISABLENOSCROLL, 0, 0, 0, 0, main_window, (HMENU)100, *hInst, 0);
     Controls::geti()->controls.push_back(new Control(editor_handle, "editor"));
+
+    HMENU menu_bar = CreateMenu();
+    HMENU menu1 = CreateMenu();
+    HMENU menu2 = CreateMenu();
+    HMENU menu3 = CreateMenu();
+
+    AppendMenu(menu1, MF_STRING, 1, "Nowy");
+    AppendMenu(menu1, MF_SEPARATOR, 0, NULL);
+    AppendMenu(menu1, MF_STRING, 2, "Baza akordów");
+    AppendMenu(menu1, MF_SEPARATOR, 0, NULL);
+    AppendMenu(menu1, MF_STRING, 3, "Otwórz");
+    AppendMenu(menu1, MF_STRING, 4, "Zapisz");
+    AppendMenu(menu1, MF_SEPARATOR, 0, NULL);
+    AppendMenu(menu1, MF_STRING, 5, "Zamknij");
+
+    AppendMenu(menu2, MF_STRING, 6, "Szukaj");
+    AppendMenu(menu2, MF_STRING, 7, "Zamieñ");
+    AppendMenu(menu2, MF_SEPARATOR, 0, NULL);
+    AppendMenu(menu2, MF_STRING, 8, "Analizuj");
+
+    AppendMenu(menu3, MF_STRING, 9, "Wy³¹cz");
+    AppendMenu(menu3, MF_STRING, 10, "Autoscroll z opóŸnieniem");
+    AppendMenu(menu3, MF_STRING, 11, "Autoscroll bez opóŸnienia");
+    AppendMenu(menu3, MF_SEPARATOR, 0, NULL);
+    AppendMenu(menu3, MF_STRING, 12, "Przyspiesz");
+    AppendMenu(menu3, MF_STRING, 13, "Zwolnij");
+
+    AppendMenu(menu_bar, MF_POPUP, (UINT_PTR)menu1, "Plik");
+    AppendMenu(menu_bar, MF_POPUP, (UINT_PTR)menu2, "Edycja");
+    AppendMenu(menu_bar, MF_POPUP, (UINT_PTR)menu3, "Autoscroll");
+    AppendMenu(menu_bar, MF_STRING, 4, "Rozwiñ");
+    SetMenu(main_window, menu_bar);
+
+
 	//autoscroll edits
     IO::geti()->log("Wype³nianie kontrolek, zmiana czcionek...");
     Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
@@ -127,9 +166,6 @@ void App::event_button(WPARAM wParam){
         chordsbase();
 	}else if(name == "autoscroll"){ //autoscroll
 		autoscroll_switch();
-	}else if(name == "toolbar_toggle"){ //schowanie paska
-		if(Config::geti()->fullscreen_on) fullscreen_set(false);
-        else toolbar_switch();
 	}
 }
 
@@ -154,8 +190,9 @@ void App::event_dropfiles(string filename){
 
 void App::event_resize(){
     IO::geti()->log("Resize okna - Odœwie¿anie uk³adu kontrolek...");
+    if(!Controls::geti()->exists("cmd_output1")) return;
+    if(!Controls::geti()->exists("editor")) return;
     int ch = Config::geti()->control_height;
-    int toolbar_b_w = Config::geti()->toolbar_button_width;
 	RECT wnd_rect;
 	GetClientRect(main_window, &wnd_rect);
 	int w = wnd_rect.right-wnd_rect.left;
@@ -163,16 +200,21 @@ void App::event_resize(){
     Config::geti()->window_w = w;
     Config::geti()->window_h = h;
     //rozmieszczenie kontrolek
+    int editor_h = h-ch;
+    int editor_y = 0;
+    if(Config::geti()->cmd_show){
+        editor_h -= ch*Config::geti()->cmd_outputs_num;
+    }
+
 	if(Config::geti()->toolbar_show){
-        Controls::i()->resize("editor", 0,ch*3,w,h-ch*4);
-	}else{
-        Controls::i()->resize("editor", 0,0,w,h-ch);
-	}
+        editor_h -= ch*3;
+        editor_y += ch*3;
+    }
+    Controls::i()->resize("editor", 0,editor_y,w,editor_h);
+
     Controls::i()->resize("filename", 0,0,Config::geti()->static_filename_width,ch);
     Controls::i()->resize("filename_edit", Config::geti()->static_filename_width,0,w-Config::geti()->static_filename_width,ch);
-    Controls::i()->resize("statusbar", 0,h-ch,w-toolbar_b_w,ch);
-    Controls::i()->resize("toolbar_toggle", w-toolbar_b_w,h-ch,toolbar_b_w,ch);
-    //resize panelu - 1. rz¹d
+    //1. rz¹d
     Controls::i()->resize("new", w*0/7,ch*1,w/7,ch);
     Controls::i()->resize("load", w*1/7,ch*1,w/7,ch);
     Controls::i()->resize("save", w*2/7,ch*1,w/7,ch);
@@ -183,9 +225,20 @@ void App::event_resize(){
 	//2. rz¹d
     Controls::i()->resize("find_edit", w*0/7,ch*2,w*2/7,ch);
     Controls::i()->resize("replace_edit", w*2/7,ch*2,w*2/7,ch);
-    Controls::i()->resize("find", w*5/7,ch*2,w/7,ch);
-    Controls::i()->resize("replace", w*4/7,ch*2,w/7,ch);
+    Controls::i()->resize("find", w*4/7,ch*2,w/7,ch);
+    Controls::i()->resize("replace", w*5/7,ch*2,w/7,ch);
     Controls::i()->resize("analyze", w*6/7,ch*2,w/7,ch);
+    //konsola
+    if(Config::geti()->cmd_show){
+        for(int i=0; i<Config::geti()->cmd_outputs_num; i++){
+            stringstream ss;
+            ss<<"cmd_output"<<i+1;
+            Controls::i()->resize(ss.str(), Config::geti()->cmd_outputs_space,h-ch*(i+2),w-Config::geti()->cmd_outputs_space,ch);
+        }
+        Controls::i()->resize("cmd", 0,h-ch,w,ch);
+    }else{
+        Controls::i()->resize("cmd_output1", 0,h-ch,w,ch);
+    }
 }
 
 void App::event_screensave(){
@@ -262,8 +315,13 @@ void App::event_keydown(WPARAM wParam){
 		}else if(wParam==VK_SUBTRACT){ // -
 			change_font_size(-1);
 		}else if(wParam==VK_OEM_3){ // `
-            Controls::geti()->set_focus("filename_edit");
-            Controls::geti()->select_all("filename_edit");
+            cmd_switch();
+            if(Config::geti()->cmd_show){
+                Controls::geti()->set_focus("cmd");
+                Controls::geti()->select_all("cmd");
+            }else{
+                Controls::geti()->set_focus("editor");
+            }
 		}else if(wParam==VK_LEFT){
 			transpose(-1);
 		}else if(wParam==VK_RIGHT){

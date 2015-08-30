@@ -85,7 +85,8 @@ public:
     void update_title();
     void controls_fonts_set();
     void change_font_size(int change);
-    void toolbar_switch(int change=2);
+    void toolbar_switch(int change = 2);
+    void cmd_switch(int change = 2);
     void fullscreen_set(bool full);
     void chordsbase();
     void quick_replace();

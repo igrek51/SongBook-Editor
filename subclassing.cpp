@@ -16,7 +16,29 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
     }
     string nazwa = kontrolka->name;
 	//nowe procedury kontrolek
-	if(nazwa=="filename_edit"){
+    if(nazwa=="filename_edit"){
+		switch(message){
+			case WM_CHAR:{
+				if(wParam==VK_ESCAPE){
+					Controls::geti()->set_focus("editor");
+					return 0;
+				}
+			}break;
+			case WM_KEYDOWN:{
+				if(wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F11){
+					CallWindowProc(windowProc, hwnd, message, wParam, lParam);
+					return 0;
+				}
+				if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
+                    if(wParam!='A'){
+                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
+                        return 0; //przechwycenie
+                    }
+				}
+			}break;
+		}
+	}
+    if(nazwa=="cmd"){
 		switch(message){
 			case WM_CHAR:{
 				if(wParam==VK_ESCAPE){
@@ -40,12 +62,12 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
                     }
 				}
 				if(wParam==VK_UP){
-                    Controls::geti()->set_text("filename_edit", last_cmd);
-					SendMessage(Controls::geti()->find("filename_edit"), EM_SETSEL, last_cmd.length(), last_cmd.length());
+                    Controls::geti()->set_text("cmd", last_cmd);
+					SendMessage(Controls::geti()->find("cmd"), EM_SETSEL, last_cmd.length(), last_cmd.length());
 					return 0;
 				}
 				if(wParam==VK_DOWN){
-					Controls::geti()->set_text("filename_edit", "");
+					Controls::geti()->set_text("cmd", "");
 					return 0;
 				}
 			}break;
@@ -219,7 +241,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 		}
 	}
     //buttony - przekazanie skrótów klawiszowych
-    if(nazwa=="new"||nazwa=="load"||nazwa=="save"||nazwa=="base"||nazwa=="find"||nazwa=="replace"||nazwa=="analyze"||nazwa=="autoscroll"||nazwa=="toolbar_toggle"){
+    if(nazwa=="new"||nazwa=="load"||nazwa=="save"||nazwa=="base"||nazwa=="find"||nazwa=="replace"||nazwa=="analyze"||nazwa=="autoscroll"){
 		switch(message){
 			case WM_KEYDOWN:{
 				CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej

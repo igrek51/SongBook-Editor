@@ -34,8 +34,9 @@ public:
     string find_edit_placeholder;
     string replace_edit_placeholder;
     int control_height;
-    int toolbar_button_width;
     int static_filename_width;
+    int cmd_outputs_num;
+    int cmd_outputs_space;
     //  Zmienne
     int window_w;
     int window_h;
@@ -44,9 +45,11 @@ public:
     int autoscroll_step;
 	bool autoscroll;
     bool fullscreen_on;
+    bool cmd_show;
     string opened_file; //atkualnie otwarty plik
     string file_to_open; //plik do otwarcia - polecenie z innej instancji
     string tekst_wstaw[9]; //schowki na akordy do wklejenia
+    string* cmd_outputs;
     //  Kolory edytora
     int color_background[3];
     int color_text[3];

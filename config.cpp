@@ -26,8 +26,9 @@ Config::Config(){
     find_edit_placeholder = "Szukaj...";
     replace_edit_placeholder = "Zamieñ...";
     control_height = 22;
-    toolbar_button_width = 20;
     static_filename_width = 40;
+    cmd_outputs_num = 4;
+    cmd_outputs_space = 5;
     //Zmienne
     window_w = 600;
     window_h = 680;
@@ -36,9 +37,11 @@ Config::Config(){
     autoscroll_step = 2;
 	autoscroll = false;
     fullscreen_on = false;
+    cmd_show = false;
 	opened_file = "";
     file_to_open = "";
 	for(int i=0; i<9; i++) tekst_wstaw[i]="";
+    cmd_outputs = new string[cmd_outputs_num];
     //Kolory
     color_background[0] = 0;
     color_background[1] = 0;

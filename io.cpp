@@ -66,7 +66,7 @@ void IO::log(string s, int l){
 }
 
 void IO::error(string l, bool show_output){
-    if(show_output && Controls::geti()->exists("statusbar")){
+    if(show_output && Controls::geti()->exists("cmd_output1")){
         echo("[B£¥D!] - "+l);
     }else{
         log("[B£¥D!] - "+l);
@@ -93,7 +93,16 @@ void IO::echo(string s){
 		ss<<s<<" ("<<repeated_echo<<")";
 		s = ss.str();
 	}
-    Controls::geti()->set_text("statusbar", s.c_str());
+    //przesuniêcie starych outputów
+    stringstream input, output;
+    for(int i=Config::geti()->cmd_outputs_num-1; i>0; i--){
+        ss_clear(input);
+        ss_clear(output);
+        output<<"cmd_output"<<i+1;
+        input<<"cmd_output"<<i;
+        Controls::geti()->set_text(output.str(), Controls::geti()->get_text(input.str()));
+    }
+    Controls::geti()->set_text("cmd_output1", s.c_str());
 	log(s);
 }
 

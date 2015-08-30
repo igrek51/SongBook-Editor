@@ -49,28 +49,52 @@ void App::toolbar_switch(int change){
     }else if(change==2){
         Config::geti()->toolbar_show = !Config::geti()->toolbar_show;
     }
-    event_resize();
     if(Config::geti()->toolbar_show){
         IO::geti()->log("Ods³anianie paska narzêdzi...");
-        Controls::geti()->set_text("toolbar_toggle", "^");
         for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
             Control* kontrolka = Controls::geti()->controls.at(i);
-            if(kontrolka->name=="statusbar") continue;
+            if(kontrolka->name=="cmd_output1") continue;
             if(kontrolka->name=="editor") continue;
-            if(kontrolka->name=="toolbar_toggle") continue;
             ShowWindow(kontrolka->handle, SW_SHOW);
         }
     }else{
         IO::geti()->log("Ukrywanie paska narzêdzi...");
-        Controls::geti()->set_text("toolbar_toggle", "v");
         for(unsigned int i=0; i<Controls::geti()->controls.size(); i++){
             Control* kontrolka = Controls::geti()->controls.at(i);
-            if(kontrolka->name=="statusbar") continue;
+            if(kontrolka->name=="cmd_output1") continue;
             if(kontrolka->name=="editor") continue;
-            if(kontrolka->name=="toolbar_toggle") continue;
             ShowWindow(kontrolka->handle,SW_HIDE);
         }
     }
+    event_resize();
+}
+
+void App::cmd_switch(int change){
+    if(change==1){
+        Config::geti()->cmd_show = true;
+    }else if(change==0){
+        Config::geti()->cmd_show = false;
+    }else if(change==2){
+        Config::geti()->cmd_show = !Config::geti()->cmd_show;
+    }
+    if(Config::geti()->cmd_show){
+        IO::geti()->log("Ods³anianie konsoli...");
+        ShowWindow(Controls::geti()->find("cmd"), SW_SHOW);
+        for(int i=1; i<Config::geti()->cmd_outputs_num; i++){
+            stringstream ss;
+            ss<<"cmd_output"<<i+1;
+            ShowWindow(Controls::geti()->find(ss.str()), SW_SHOW);
+        }
+    }else{
+        IO::geti()->log("Ukrywanie konsoli...");
+        ShowWindow(Controls::geti()->find("cmd"), SW_HIDE);
+        for(int i=1; i<Config::geti()->cmd_outputs_num; i++){
+            stringstream ss;
+            ss<<"cmd_output"<<i+1;
+            ShowWindow(Controls::geti()->find(ss.str()), SW_HIDE);
+        }
+    }
+    event_resize();
 }
 
 void App::fullscreen_set(bool full){
