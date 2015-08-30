@@ -86,9 +86,9 @@ void App::set_selected_1(unsigned int sel_start, unsigned int sel_end){
 }
 
 int App::get_scroll(){
-	POINT mypoint;
-	SendMessage(Controls::geti()->find("editor"), EM_GETSCROLLPOS, 0, (LPARAM)&mypoint);
-	return mypoint.y;
+	POINT scroll_pos;
+	SendMessage(Controls::geti()->find("editor"), EM_GETSCROLLPOS, 0, (LPARAM)&scroll_pos);
+	return scroll_pos.y;
 }
 
 void App::set_scroll(int scroll_pos){
@@ -98,16 +98,26 @@ void App::set_scroll(int scroll_pos){
 	SendMessage(Controls::geti()->find("editor"), EM_SETSCROLLPOS, 0, (LPARAM)&mypoint);
 }
 
-void App::change_scroll(int c){
-	int scroll = get_scroll() + c;
-	if(scroll<0) scroll = 0;
-	SCROLLINFO si;
-	si.cbSize = sizeof(si);
-	si.fMask = SIF_PAGE|SIF_RANGE|SIF_POS;
-	GetScrollInfo(Controls::geti()->find("editor"), SB_VERT, &si);
-	int max_scroll = si.nMax - si.nPage;
-	if(scroll>max_scroll) scroll = max_scroll;
-	set_scroll(scroll);
+bool App::change_scroll(int c){
+    int scroll_pos = get_scroll();
+    scroll_pos += c;
+    if(scroll_pos<0) scroll_pos = 0;
+    if(c > 0){
+        SCROLLINFO si;
+        si.cbSize = sizeof(si);
+        si.fMask = SIF_PAGE|SIF_RANGE|SIF_POS;
+        GetScrollInfo(Controls::geti()->find("editor"), SB_VERT, &si);
+        //teoretycznie maksymalna wartoœæ (w praktyce siê pierdoli)
+        int max_scroll = si.nMax - si.nPage + 1;
+        //jeœli jest poza maksimum lub jeœli siê nie zgadza pozycja scrolla
+        if(scroll_pos >= max_scroll || scroll_pos != si.nPos+c){
+            //wyrównanie do maksymalnej pozycji scrolla
+            SendMessage(Controls::geti()->find("editor"), WM_VSCROLL, SB_BOTTOM, 0);
+            return false;
+        }
+    }
+	set_scroll(scroll_pos);
+    return true;
 }
 
 string App::get_selected_text(){

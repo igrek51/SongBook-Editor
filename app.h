@@ -58,7 +58,7 @@ public:
     int last_scroll;
     int get_scroll();
     void set_scroll(int scroll_pos);
-    void change_scroll(int c);
+    bool change_scroll(int c);
     string get_selected_text();
     void select_all();
     void copy_text();

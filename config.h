@@ -41,6 +41,7 @@ public:
     int window_h;
     int transposed;
     int autoscroll_count;
+    int autoscroll_step;
 	bool autoscroll;
     bool fullscreen_on;
     string opened_file; //atkualnie otwarty plik

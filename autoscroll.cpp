@@ -7,21 +7,11 @@ void App::autoscroll_exec(){
 		KillTimer(main_window, 1);
 		SetTimer(main_window, 1, Config::geti()->autoscroll_interval, (TIMERPROC)NULL);
 	}
-	POINT mypoint;
-	SendMessage(Controls::geti()->find("editor"), EM_GETSCROLLPOS, 0, (LPARAM)&mypoint);
-	SCROLLINFO si;
-	si.cbSize = sizeof(si);
-	si.fMask = SIF_PAGE|SIF_RANGE|SIF_POS;
-	GetScrollInfo(Controls::geti()->find("editor"), SB_VERT, &si);
-	int scroll_max_pos = si.nMax - si.nPage + 1;
-	mypoint.y += 2;
-	if(mypoint.y>=scroll_max_pos || mypoint.y!=si.nPos+2){
-		SendMessage(Controls::geti()->find("editor"), WM_VSCROLL, SB_BOTTOM, 0);
-		autoscroll_off();
+    if(!change_scroll(+Config::geti()->autoscroll_step)){
+        autoscroll_off();
 		IO::geti()->echo("Autoscroll zakoñczony - koniec pliku");
 		return;
-	}
-	SendMessage(Controls::geti()->find("editor"), EM_SETSCROLLPOS, 0, (LPARAM)&mypoint);
+    }
 	//last_scroll=GetScrollPos(hctrl[2],SB_VERT);
 	//SendMessage(hctrl[2], EM_LINESCROLL, 0, 1);
 	//SendMessage(hctrl[2], WM_VSCROLL, 1, 0);

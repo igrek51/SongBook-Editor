@@ -37,6 +37,7 @@ void App::change_font_size(int change){
         Controls::geti()->set_text("autoscroll_interval", Config::geti()->autoscroll_interval);
 		ss<<", Interwa³ autoscrolla: "<<Config::geti()->autoscroll_interval<<" ms";
 	}
+    refresh_text();
 	IO::geti()->echo(ss.str());
 }
 

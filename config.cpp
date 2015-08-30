@@ -32,8 +32,9 @@ Config::Config(){
     window_w = 600;
     window_h = 680;
     transposed = 0;
-	autoscroll = false;
     autoscroll_count = 0;
+    autoscroll_step = 2;
+	autoscroll = false;
     fullscreen_on = false;
 	opened_file = "";
     file_to_open = "";

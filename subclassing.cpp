@@ -16,7 +16,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
     }
     string nazwa = kontrolka->name;
 	//nowe procedury kontrolek
-	if(nazwa=="filename_edit"){ //wiersz poleceñ
+	if(nazwa=="filename_edit"){
 		switch(message){
 			case WM_CHAR:{
 				if(wParam==VK_ESCAPE){
@@ -123,14 +123,22 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				}
 			}break;
 			case WM_MOUSEWHEEL:{
+                int zdelta = GET_WHEEL_DELTA_WPARAM(wParam);
 				if(LOWORD(wParam)==MK_CONTROL){
-					int zdelta = GET_WHEEL_DELTA_WPARAM(wParam);
 					if(zdelta>=0){
 						change_font_size(+1);
 					}else{
 						change_font_size(-1);
 					}
-				}
+				}else{
+                    int scroll_step = Config::geti()->editor_fontsize + 2;
+                    if(zdelta>=0){
+						change_scroll(-scroll_step);
+					}else{
+						change_scroll(+scroll_step);
+					}
+                    return 0;
+                }
 			}break;
 		}
 	}
