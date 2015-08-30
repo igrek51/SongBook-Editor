@@ -24,6 +24,7 @@ IO::IO(){
     instance = this;
     last_echo = "";
     repeated_echo = 0;
+    clock_last = clock();
 }
 
 
@@ -169,6 +170,15 @@ void IO::set_workdir(){
 }
 
 
+void IO::clock_checkpoint(string comment){
+    clock_t aktualny = clock();
+    stringstream ss;
+    ss<<"[Pomiar czasu] - "<<comment<<" - "<<((float)(aktualny-clock_last))*1000/CLOCKS_PER_SEC<<" ms ("<<(int)(aktualny-clock_last)<<" ticks)";
+    clock_last = aktualny;
+    log(ss.str());
+}
+
+
 string get_time(){
     time_t rawtime;
     struct tm *timeinfo;
@@ -188,3 +198,5 @@ void ss_clear(stringstream &sstream){
 	sstream.str("");
 	sstream.clear();
 }
+
+

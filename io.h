@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <ctime>
 
 using namespace std;
 
@@ -36,6 +37,9 @@ public:
     void log_args();
     bool is_arg(string parametr);
     void set_workdir();
+    //  Pomiar czasu wykonania
+    clock_t clock_last;
+    void clock_checkpoint(string comment);
 };
 
 string get_time();

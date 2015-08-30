@@ -5,7 +5,7 @@
 string* App::load_text(){
 	unsigned int str_size = get_editor_length();
 	char *str = new char[str_size+1];
-	str[str_size]=0;
+	str[str_size] = 0;
 	GetWindowText(Controls::geti()->find("editor"), str, str_size+1);
 	get_selected_1(last_sel_start, last_sel_end);
 	last_scroll = get_scroll();
@@ -160,64 +160,41 @@ void App::format_text(string* str){
 	SendMessage(Controls::geti()->find("editor"), EM_HIDESELECTION, 1, 0);
 	Controls::geti()->set_focus("filename_edit");
 	//t³o
-	COLORREF color = RGB(0,0,0);
-	SendMessage(Controls::geti()->find("editor"), EM_SETBKGNDCOLOR, 0, (LPARAM)((COLORREF)color));
-	//kolor tekstu
-	select_all();
-	CHARFORMAT cf;
-	cf.cbSize = sizeof(cf);
-	SendMessage(Controls::geti()->find("editor"), EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-	//kolor bia³y
-	cf.dwMask = CFM_COLOR;
-	cf.crTextColor = RGB(255,255,255);
-	cf.dwEffects = 0;
-	SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-	SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf);
-	//brak pogrubienia
-	cf.dwMask = CFM_BOLD;
-	cf.dwEffects = 0;
-	SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
+	COLORREF background_color = RGB(Config::i()->color_background[0], Config::i()->color_background[1], Config::i()->color_background[2]);
+	SendMessage(Controls::geti()->find("editor"), EM_SETBKGNDCOLOR, 0, (LPARAM)((COLORREF)background_color));
+	//tekst
+	CHARFORMAT cf_text;
+	cf_text.cbSize = sizeof(cf_text);
+    SendMessage(Controls::geti()->find("editor"), EM_GETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf_text);
+	//kolor bia³y + brak pogrubienia
+	cf_text.dwMask = CFM_COLOR | CFM_BOLD;
+	cf_text.crTextColor = RGB(Config::i()->color_text[0], Config::i()->color_text[1], Config::i()->color_text[2]);
+	cf_text.dwEffects = 0;
+    SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cf_text);
 	//formatowanie akordów
-	int nawias = 0;
+    CHARFORMAT cf_nawias = CHARFORMAT(cf_text);
+    CHARFORMAT cf_akord = CHARFORMAT(cf_text);
+    cf_nawias.dwMask = CFM_COLOR;
+    cf_nawias.crTextColor = RGB(Config::i()->color_bracket[0], Config::i()->color_bracket[1], Config::i()->color_bracket[2]);
+    cf_nawias.dwEffects = 0;
+    cf_akord.dwMask = CFM_COLOR | CFM_BOLD;
+    cf_akord.crTextColor = RGB(Config::i()->color_chord[0], Config::i()->color_chord[1], Config::i()->color_chord[2]);
+    cf_akord.dwEffects = CFE_BOLD;
+	bool nawias = false;
 	for(unsigned int i=0; i<str->length(); i++){
-		if(string_char(str, i)=='['){
-			nawias = 1;
+        if(str->at(i)==' ' || str->at(i)=='\n' || str->at(i)=='\r'){
+            continue;
+        }else if(str->at(i)=='['){
+			nawias = true;
 			set_selected(i, i+1, str);
-			SendMessage(Controls::geti()->find("editor"), EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-			//kolor szary
-			cf.dwMask = CFM_COLOR;
-			cf.crTextColor = RGB(180,180,180);
-			cf.dwEffects = 0;
-			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-			continue;
-		}
-		if(string_char(str, i)==']'){
-			nawias = 0;
+			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf_nawias);
+		}else if(str->at(i)==']'){
+			nawias = false;
 			set_selected(i, i+1, str);
-			SendMessage(Controls::geti()->find("editor"), EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-			//kolor szary
-			cf.dwMask = CFM_COLOR;
-			cf.crTextColor = RGB(180,180,180);
-			cf.dwEffects = 0;
-			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-			continue;
-		}
-		if(string_char(str, i)=='\r' || string_char(str, i)=='\n' || string_char(str, i)==' '){
-			continue;
-		}
-		if(nawias == 1){
+			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf_nawias);
+		}else if(nawias){
 			set_selected(i, i+1, str);
-			SendMessage(Controls::geti()->find("editor"), EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-			//kolor czerwony
-			cf.dwMask = CFM_COLOR;
-			cf.crTextColor = RGB(255,0,0);
-			cf.dwEffects = 0;
-			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-			//pogrubienie
-			cf.dwMask = CFM_BOLD;
-			cf.dwEffects = CFE_BOLD;
-			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-			continue;
+			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf_akord);
 		}
 	}
 	//przywrócenie zaznaczenia
@@ -230,9 +207,10 @@ void App::format_text(string* str){
 void App::refresh_text(){
 	unsigned int str_size = get_editor_length();
 	char *str = new char[str_size+1];
-	str[str_size]=0;
+	str[str_size] = 0;
 	GetWindowText(Controls::geti()->find("editor"), str, str_size+1);
     string* nowy = new string(str);
-	format_text(nowy);
     delete[] str;
+	format_text(nowy);
+    delete nowy;
 }

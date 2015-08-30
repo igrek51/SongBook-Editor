@@ -10,13 +10,6 @@ void App::event_init(HWND *window){
 	IO::geti()->set_workdir();
 	//ustawienia
     Config::geti()->load_from_file();
-	//log
-    if(Config::geti()->log_enabled){
-        IO::geti()->clear_log();
-        IO::geti()->log("Hello World...");
-        IO::geti()->log_args();
-        IO::geti()->log("Wczytano ustawienia z pliku: "+Config::geti()->config_filename);
-    }
     //jeœli aplikacja jest ju¿ uruchomiona
     if(IO::geti()->args.size()==2 && instancja2!=NULL){//jeden dodatkowy parametr - nazwa pliku do otwarcia
         IO::geti()->log("Wysy³anie pliku do otwartej instancji aplikacji...");
@@ -27,6 +20,13 @@ void App::event_init(HWND *window){
         IO::geti()->log("Zamykanie zbêdnej instancji aplikacji...");
         DestroyWindow(main_window);
         return;
+    }
+    //log
+    if(Config::geti()->log_enabled){
+        IO::geti()->clear_log();
+        IO::geti()->log("Hello World...");
+        IO::geti()->log_args();
+        IO::geti()->log("Wczytano ustawienia z pliku: "+Config::geti()->config_filename);
     }
 	//kontrolki
     IO::geti()->log("Tworzenie kontrolek...");

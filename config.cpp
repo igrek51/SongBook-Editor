@@ -39,6 +39,19 @@ Config::Config(){
 	opened_file = "";
     file_to_open = "";
 	for(int i=0; i<9; i++) tekst_wstaw[i]="";
+    //Kolory
+    color_background[0] = 0;
+    color_background[1] = 0;
+    color_background[2] = 0;
+    color_text[0] = 255;
+    color_text[1] = 255;
+    color_text[2] = 255;
+    color_bracket[0] = 180;
+    color_bracket[1] = 180;
+    color_bracket[2] = 180;
+    color_chord[0] = 255;
+    color_chord[1] = 0;
+    color_chord[2] = 0;
     //wczytywane z pliku - wartoœci domyœlne
     songs_dir = ".";
     editor_fontface = "Calibri";

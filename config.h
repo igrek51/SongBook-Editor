@@ -47,6 +47,11 @@ public:
     string opened_file; //atkualnie otwarty plik
     string file_to_open; //plik do otwarcia - polecenie z innej instancji
     string tekst_wstaw[9]; //schowki na akordy do wklejenia
+    //  Kolory edytora
+    int color_background[3];
+    int color_text[3];
+    int color_bracket[3];
+    int color_chord[3];
     //  z pliku konfiguracyjnego
     string songs_dir;
     string editor_fontface;
