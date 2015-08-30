@@ -171,7 +171,7 @@ void App::format_text(string* str){
 	cf_text.crTextColor = RGB(Config::i()->color_text[0], Config::i()->color_text[1], Config::i()->color_text[2]);
 	cf_text.dwEffects = 0;
     SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_ALL, (LPARAM)&cf_text);
-	//formatowanie akordów
+	//style
     CHARFORMAT cf_nawias = CHARFORMAT(cf_text);
     CHARFORMAT cf_akord = CHARFORMAT(cf_text);
     cf_nawias.dwMask = CFM_COLOR;
@@ -180,21 +180,25 @@ void App::format_text(string* str){
     cf_akord.dwMask = CFM_COLOR | CFM_BOLD;
     cf_akord.crTextColor = RGB(Config::i()->color_chord[0], Config::i()->color_chord[1], Config::i()->color_chord[2]);
     cf_akord.dwEffects = CFE_BOLD;
-	bool nawias = false;
+    //kolorowanie nawiasów i akordów
+    int nawias_start = -1;
 	for(unsigned int i=0; i<str->length(); i++){
-        if(str->at(i)==' ' || str->at(i)=='\n' || str->at(i)=='\r'){
+        if(str->at(i)==' ' || str->at(i)=='\n' || str->at(i)=='\r'){ //bia³e znaki
             continue;
         }else if(str->at(i)=='['){
-			nawias = true;
 			set_selected(i, i+1, str);
 			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf_nawias);
+            nawias_start = i+1;
 		}else if(str->at(i)==']'){
-			nawias = false;
+            if(nawias_start != -1){ //by³ nawias otwieraj¹cy
+                //kolorowanie akordu
+                set_selected(nawias_start, i, str);
+                SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf_akord);
+                nawias_start = -1; //reset nawiasu otwieraj¹cego
+            }
+            //kolorowanie nawiasu
 			set_selected(i, i+1, str);
 			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf_nawias);
-		}else if(nawias){
-			set_selected(i, i+1, str);
-			SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf_akord);
 		}
 	}
 	//przywrócenie zaznaczenia
