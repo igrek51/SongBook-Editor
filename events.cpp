@@ -169,7 +169,7 @@ void App::event_init(HWND *window){
         chordsbase();
     }
     refresh_text();
-	IO::geti()->echo("wersja "+version);
+	IO::geti()->echo("Gotów do pracy - wersja "+version);
 }
 
 void App::event_button(WPARAM wParam){
