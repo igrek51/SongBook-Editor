@@ -106,8 +106,16 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 						copy_text();
 						return 0;
 					}
-					if(wParam=='T'){
+                    if(wParam=='T'){
 						quick_replace();
+						return 0;
+					}
+                    if(wParam=='W'){
+						save_pattern();
+						return 0;
+					}
+                    if(wParam=='E'){
+						insert_pattern();
 						return 0;
 					}
 					if(wParam>='1'&&wParam<='9'){

@@ -399,7 +399,9 @@ void App::save_pattern(){
 		}else if(selected.at(i)==']' && nawias_start != -1){ //by³ nawias otwieraj¹cy
             pattern.push_back(selected.substr(nawias_start, i-nawias_start));
             nawias_start = -1; //reset nawiasu otwieraj¹cego
-		}
+		}else if(string_char(&selected, i)=='\r' && string_char(&selected, i-1)!=']'){ //enter bez poprzedzaj¹cego akordu - pusty wiersz bez akordów
+            pattern.push_back("");
+        }
 	}
     if(pattern.size()==0){
         IO::geti()->error("Brak akordów w zaznaczeniu");
@@ -438,9 +440,14 @@ void App::insert_pattern(){
     }
     //wstawienie przed entery kolejnych akordów ze schematu
     crlfs = 0;
+    string inserted;
     for(unsigned int i=sel_start; i<sel_end && i<str->length(); i++){
         if(str->at(i) == '\r'){
-            string inserted = " ["+pattern.at(crlfs)+"]";
+            if(pattern.at(crlfs).size()==0){
+                inserted = "";
+            }else{
+                inserted = " ["+pattern.at(crlfs)+"]";
+            }
             string_insert_string(str, i, inserted);
             //przesuniêcie przeszukiwania
             i += inserted.length();
@@ -451,7 +458,11 @@ void App::insert_pattern(){
         }
     }
     if(crlfs == (int)pattern.size()-1){ // zaznaczenie ostatniego wiersza bez entera
-        string inserted = " ["+pattern.at(crlfs)+"]";
+        if(pattern.at(crlfs).size()==0){
+            inserted = "";
+        }else{
+            inserted = " ["+pattern.at(crlfs)+"]";
+        }
         string_insert_string(str, sel_end, inserted);
         //zmiana zaznaczenia
         last_sel_end += inserted.length();

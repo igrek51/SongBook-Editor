@@ -139,6 +139,8 @@ void App::show_help(){
     ss<<"Ctrl + [0]: przywróc oryginaln¹ tonacjê"<<endl;
     ss<<"Ctrl + [1-9]: zapisz zaznaczony tekst do wstawienia"<<endl;
     ss<<"Alt + [1-9]: wstaw zapisany tekst"<<endl;
+    ss<<"Ctrl + [W]: zapisz schemat akordów"<<endl;
+    ss<<"Ctrl + [E]: wstaw schemat akordów"<<endl;
     ss<<endl<<"Polecenia:"<<endl;
     ss<<"log - poka¿ dziennik zdarzeñ"<<endl;
     ss<<"config - otwórz plik konfiguracyjny"<<endl;
