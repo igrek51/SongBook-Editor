@@ -84,6 +84,9 @@ void App::event_init(HWND *window){
     menu_edycja->add_separator();
     menu_edycja->add_option("Usuñ akordy", "remove_chords");
     menu_edycja->add_option("Usuñ dodatkowe wersje", "remove_alt");
+    menu_edycja->add_separator();
+    menu_edycja->add_option("Zapisz schemat akordów", "save_pattern");
+    menu_edycja->add_option("Wstaw schemat akordów", "insert_pattern");
     Menu* menu_widok = new Menu();
     menu_widok->add_option("Zwiêksz czcionkê", "font++");
     menu_widok->add_option("Zmniejsz czcionkê", "font--");
@@ -144,6 +147,10 @@ void App::event_init(HWND *window){
 	if(!Config::geti()->toolbar_show){
 		toolbar_switch(0);
 	}
+    //baza akordów na start (jeœli nie by³ otwierany wybrany plik)
+    if(Config::geti()->chordsbase_on_startup && IO::geti()->args.size()<=1){
+        chordsbase();
+    }
 	//okno na po³owie ekranu
 	if(Config::geti()->halfscreen==1){
         IO::geti()->log("Rozmieszczanie okna na po³owie ekranu...");
@@ -153,6 +160,7 @@ void App::event_init(HWND *window){
 		DeleteDC(screen);
 		SetWindowPos(main_window, HWND_TOP, -8, 0, screen_w/2, screen_h-34, 0);
         //  TODO
+
     }
     event_resize();
     //drag & drop
@@ -164,10 +172,6 @@ void App::event_init(HWND *window){
 		open_chords_file(IO::geti()->args.at(1));
 	}
 	update_title();
-    //baza akordów na start (jeœli nie by³ otwierany wybrany plik)
-    if(Config::geti()->chordsbase_on_startup && IO::geti()->args.size()<=1){
-        chordsbase();
-    }
     refresh_text();
 	IO::geti()->echo("Gotów do pracy - wersja "+version);
 }
@@ -276,6 +280,10 @@ void App::event_button(WPARAM wParam){
         set_scroll(0);
     }else if(name == "scroll_to_end"){
         SendMessage(Controls::geti()->find("editor"), WM_VSCROLL, SB_BOTTOM, 0);
+    }else if(name == "save_pattern"){
+        save_pattern();
+    }else if(name == "insert_pattern"){
+        insert_pattern();
     }else if(name == "exit"){
         DestroyWindow(main_window);
     }else{

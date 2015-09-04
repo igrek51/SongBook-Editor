@@ -156,7 +156,8 @@ void App::new_file(){
 
 void App::open_chords_file(string filename){
     filename = trim_quotes(filename);
-	char *file_content = open_file(filename);
+    int file_size;
+	char *file_content = open_file(filename, file_size);
     if(file_content==NULL) return;
 	SetWindowText(Controls::geti()->find("editor"), file_content);
     delete[] file_content;

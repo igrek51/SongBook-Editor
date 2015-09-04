@@ -28,13 +28,13 @@ bool dir_exists(string name){
 }
 
 vector<string>* get_all_lines(string filename){
+    vector<string>* lines = new vector<string>;
     fstream plik;
     plik.open(filename.c_str(),fstream::in|fstream::binary);
     if(!plik.good()){
         plik.close();
-        return NULL;
+        return lines;
     }
-    vector<string>* lines = new vector<string>;
     string linia;
     do{
         getline(plik,linia,'\n');
@@ -52,7 +52,7 @@ vector<string>* get_all_lines(string filename){
 }
 
 
-char* open_file(string filename){
+char* open_file(string filename, int &file_size){
     if(!file_exists(filename)){
 		IO::geti()->error("plik \""+filename+"\" nie istnieje");
 		return NULL;
@@ -65,11 +65,11 @@ char* open_file(string filename){
 		return NULL;
 	}
 	plik.seekg(0, plik.end);
-	unsigned int fsize = plik.tellg();
-	char *file_content = new char [fsize+1];
-	file_content[fsize] = 0;
+	file_size = plik.tellg();
+	char *file_content = new char [file_size+1];
+	file_content[file_size] = 0;
 	plik.seekg(0, plik.beg);
-	plik.read(file_content, fsize);
+	plik.read(file_content, file_size);
 	plik.close();
     return file_content;
 }

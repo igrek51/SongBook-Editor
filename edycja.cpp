@@ -384,3 +384,80 @@ void App::dodaj_alternatywne(){
 	refresh_text();
 	IO::geti()->echo("Dodano alternatywn¹ wersjê akordów");
 }
+
+void App::save_pattern(){
+    pattern.clear();
+    string selected = get_selected_text();
+    if(selected.length()==0){
+        IO::geti()->error("Brak zaznaczenia");
+        return;
+    }
+    int nawias_start = -1;
+	for(unsigned int i=0; i<selected.length(); i++){
+        if(selected.at(i)=='['){
+            nawias_start = i+1;
+		}else if(selected.at(i)==']' && nawias_start != -1){ //by³ nawias otwieraj¹cy
+            pattern.push_back(selected.substr(nawias_start, i-nawias_start));
+            nawias_start = -1; //reset nawiasu otwieraj¹cego
+		}
+	}
+    if(pattern.size()==0){
+        IO::geti()->error("Brak akordów w zaznaczeniu");
+    }else{
+        stringstream ss;
+        ss<<"Zapisano schemat "<<pattern.size()<<" akordów.";
+        IO::geti()->echo(ss.str());
+    }
+}
+
+void App::insert_pattern(){
+    if(pattern.size()==0){
+        IO::geti()->error("Brak zapisanych akordów w schemacie");
+        return;
+    }
+    string* str = load_text();
+    unsigned int sel_start, sel_end;
+    if(!get_selected(sel_start, sel_end, str)){
+        IO::geti()->error("Brak zaznaczenia");
+        delete str;
+        return;
+    }
+    string selected = get_selected_text();
+    //zliczenie crlf
+    int crlfs = 0;
+    for(unsigned int i=0; i<selected.length(); i++){
+        if(selected.at(i) == '\r') crlfs++;
+    }
+    //zgodnoœæ rozmiaru zaznaczenia
+    if(crlfs != (int)pattern.size() && crlfs != (int)pattern.size()-1){
+        stringstream ss;
+        ss<<"Nieprawid³owy rozmiar zaznaczenia (zaznaczenie: "<<crlfs<<", schemat akordów: "<<pattern.size()<<")";
+        IO::geti()->error(ss.str());
+        delete str;
+        return;
+    }
+    //wstawienie przed entery kolejnych akordów ze schematu
+    crlfs = 0;
+    for(unsigned int i=sel_start; i<sel_end && i<str->length(); i++){
+        if(str->at(i) == '\r'){
+            string inserted = " ["+pattern.at(crlfs)+"]";
+            string_insert_string(str, i, inserted);
+            //przesuniêcie przeszukiwania
+            i += inserted.length();
+            sel_end += inserted.length();
+            //zmiana zaznaczenia
+            last_sel_end += inserted.length();
+            crlfs++;
+        }
+    }
+    if(crlfs == (int)pattern.size()-1){ // zaznaczenie ostatniego wiersza bez entera
+        string inserted = " ["+pattern.at(crlfs)+"]";
+        string_insert_string(str, sel_end, inserted);
+        //zmiana zaznaczenia
+        last_sel_end += inserted.length();
+    }
+    save_text(str);
+    stringstream ss;
+    ss<<"Wstawiono schemat "<<pattern.size()<<" akordów.";
+    IO::geti()->echo(ss.str());
+}

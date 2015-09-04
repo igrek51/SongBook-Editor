@@ -42,7 +42,4 @@ public:
     void clock_checkpoint(string comment);
 };
 
-string get_time();
-void ss_clear(stringstream &sstream);
-
 #endif

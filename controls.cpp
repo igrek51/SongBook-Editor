@@ -50,11 +50,7 @@ Control* Controls::find_control(string name){
             return controls.at(i);
         }
     }
-    if(name=="cmd_output1"){
-        IO::geti()->critical_error("Nie odnaleziono kontrolki o nazwie: "+name);
-    }else{
-        IO::geti()->error("Nie odnaleziono kontrolki o nazwie: "+name);
-    }
+	IO::geti()->error("Nie odnaleziono kontrolki o nazwie: "+name);
     return NULL;
 }
 
@@ -125,7 +121,6 @@ void Controls::set_text(string control_name, string text){
     HWND uchwyt = find(control_name);
     if(uchwyt==NULL) return;
     SetWindowText(uchwyt, text.c_str());
-	//UpdateWindow(main_window);
 }
 
 void Controls::set_text(string control_name, int number){
@@ -180,11 +175,7 @@ void Controls::resize(string control_name, int x, int y, int w, int h){
 void Controls::set_font(HWND kontrolka, string fontface, int fontsize){
     if(kontrolka==NULL) return;
     HFONT hFont = CreateFont(fontsize, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, 0, fontface.c_str());
-    //HFONT hFont_old = SendMessage(kontrolka, WM_GETFONT, 0, 0);
 	SendMessage(kontrolka, WM_SETFONT, (WPARAM)hFont, true);
-    //usuniêcie starej czcionki
-    //  TODO
-	//if(hwdp==hctrl[2]) refresh_text();
 }
 
 void Controls::set_font(string name, string fontface, int fontsize){

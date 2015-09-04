@@ -1,4 +1,5 @@
 #include "app.h"
+#include "strings.h"
 
 void App::exec_cmd(){
     string input_cmd = Controls::geti()->get_text("cmd");

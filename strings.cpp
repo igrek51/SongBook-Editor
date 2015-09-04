@@ -1,4 +1,6 @@
 #include "strings.h"
+#include <sstream>
+#include <ctime>
 
 char string_char(string* str, int pos){
 	if(pos<0 || pos>=(int)str->length()) return 0;
@@ -20,6 +22,11 @@ void string_delete(string*& str, int &pos){
 void string_insert(string*& str, int pos, char c){
 	if(pos<0 || pos>(int)str->length()) return;
     str->insert(str->begin()+pos, c);
+}
+
+void string_insert_string(string*& str, int pos, string s){
+	if(pos<0 || pos>(int)str->length()) return;
+    str->insert(pos, s);
 }
 
 
@@ -74,7 +81,6 @@ string trim_quotes(string s){
     return s;
 }
 
-
 bool string_begins(string s1, string s2){
     if(s1.length() < s2.length()) return false;
     for(unsigned int i=0; i<s2.length(); i++){
@@ -82,7 +88,6 @@ bool string_begins(string s1, string s2){
     }
     return true;
 }
-
 
 char to_lowercase(char in){
 	if(in>='A' && in<='Z') return in-'A'+'a';
@@ -96,4 +101,24 @@ char to_lowercase(char in){
 	if(in=='Ó') return 'ó';
 	if(in=='£') return '³';
 	return in;
+}
+
+void ss_clear(stringstream &sstream){
+	sstream.str("");
+	sstream.clear();
+}
+
+string get_time(){
+    time_t rawtime;
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    stringstream ss2;
+    if(timeinfo->tm_hour<10) ss2<<"0";
+    ss2<<timeinfo->tm_hour<<":";
+    if(timeinfo->tm_min<10) ss2<<"0";
+    ss2<<timeinfo->tm_min<<":";
+    if(timeinfo->tm_sec<10) ss2<<"0";
+    ss2<<timeinfo->tm_sec;
+    return ss2.str();
 }

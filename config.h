@@ -33,6 +33,7 @@ public:
     string buttons_fontface;
     string find_edit_placeholder;
     string replace_edit_placeholder;
+    string output_control;
     int control_height;
     int static_filename_width;
     int cmd_outputs_num;

@@ -4,7 +4,6 @@
 #include "controls.h"
 #include "strings.h"
 #include <fstream>
-#include <ctime>
 #include <windows.h>
 
 IO* IO::instance = NULL;
@@ -66,7 +65,7 @@ void IO::log(string s, int l){
 }
 
 void IO::error(string l, bool show_output){
-    if(show_output && Controls::geti()->exists("cmd_output1")){
+    if(show_output && Controls::geti()->exists(Config::geti()->output_control)){
         echo("[B£¥D!] - "+l);
     }else{
         log("[B£¥D!] - "+l);
@@ -186,26 +185,3 @@ void IO::clock_checkpoint(string comment){
     clock_last = aktualny;
     log(ss.str());
 }
-
-
-string get_time(){
-    time_t rawtime;
-    struct tm *timeinfo;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-    stringstream ss2;
-    if(timeinfo->tm_hour<10) ss2<<"0";
-    ss2<<timeinfo->tm_hour<<":";
-    if(timeinfo->tm_min<10) ss2<<"0";
-    ss2<<timeinfo->tm_min<<":";
-    if(timeinfo->tm_sec<10) ss2<<"0";
-    ss2<<timeinfo->tm_sec;
-    return ss2.str();
-}
-
-void ss_clear(stringstream &sstream){
-	sstream.str("");
-	sstream.clear();
-}
-
-

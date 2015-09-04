@@ -82,6 +82,9 @@ public:
 	void zapisz_tekst(int nrt);
 	void dodaj_nawias();
 	void dodaj_alternatywne();
+    void save_pattern();
+    void insert_pattern();
+    vector<string> pattern;
 	//  program - inne funkcje
     void update_title();
     void controls_fonts_set();

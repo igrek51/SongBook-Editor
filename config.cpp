@@ -25,6 +25,7 @@ Config::Config(){
     program_name = "Igrek SongBook Editor";
     find_edit_placeholder = "Szukaj...";
     replace_edit_placeholder = "Zamieñ...";
+    output_control = "cmd_output1";
     control_height = 22;
     static_filename_width = 40;
     cmd_outputs_num = 5;
@@ -129,7 +130,7 @@ vector<ConfigVariable*>* Config::get_config_variables(string filename){
         for(unsigned int j=1; j<lines->at(i).length(); j++){
             if(lines->at(i)[j] == '='){
                 string name = trim_spaces(lines->at(i).substr(0, j));
-                string value = trim_spaces(lines->at(i).substr(j+1));
+                string value = trim_quotes(trim_spaces(lines->at(i).substr(j+1)));
                 variables->push_back(new ConfigVariable(name, value));
                 break;
             }
