@@ -220,9 +220,6 @@ void App::event_button(WPARAM wParam){
 	}else if(name == "autoscroll"){ //autoscroll
 		autoscroll_switch();
 	}else if(name == "reload"){
-        if(!Config::geti()->toolbar_show){
-            toolbar_switch(1);
-        }
         open_chords_file(Config::geti()->opened_file);
     }else if(name == "config"){
         ShellExecute(0,"open",Config::geti()->config_filename.c_str(),"",0,SW_SHOW);
