@@ -25,9 +25,6 @@ void App::event_init(HWND *window){
     //log
     if(Config::geti()->log_enabled){
         IO::geti()->clear_log();
-        IO::geti()->log("Hello World...");
-        IO::geti()->log_args();
-        IO::geti()->log("Wczytano ustawienia z pliku: "+Config::geti()->config_filename);
     }
 	//kontrolki
     IO::geti()->log("Tworzenie kontrolek...");

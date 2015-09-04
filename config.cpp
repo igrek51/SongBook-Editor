@@ -98,7 +98,8 @@ void Config::load_from_file(){
     for(unsigned int i=0; i<variables->size(); i++){
         delete variables->at(i);
     }
-    variables->clear();
+    delete variables;
+    IO::geti()->log("Wczytano ustawienia z pliku: "+Config::geti()->config_filename);
 }
 
 vector<string>* Config::get_config_lines(string filename){
@@ -140,26 +141,26 @@ vector<ConfigVariable*>* Config::get_config_variables(string filename){
     return variables;
 }
 
-string Config::get_config_string(vector<ConfigVariable*>* variables, string name){
-    if(variables==NULL) return "";
+string Config::get_config_string(vector<ConfigVariable*>* variables, string name, string domyslny){
+    if(variables==NULL) return domyslny;
     for(unsigned int i=0; i<variables->size(); i++){
         if(variables->at(i)->name == name){
             return variables->at(i)->value;
         }
     }
     IO::geti()->error("Nie znaleziono zmiennej w pliku konfiguracyjnym: "+name);
-    return "";
+    return domyslny;
 }
 
-int Config::get_config_int(vector<ConfigVariable*>* variables, string name){
+int Config::get_config_int(vector<ConfigVariable*>* variables, string name, int domyslny){
     string s = get_config_string(variables, name);
-    if(s.length()==0) return 0;
+    if(s.length()==0) return domyslny;
     return atoi(s.c_str());
 }
 
-bool Config::get_config_bool(vector<ConfigVariable*>* variables, string name){
+bool Config::get_config_bool(vector<ConfigVariable*>* variables, string name, bool domyslny){
     string s = get_config_string(variables, name);
-    if(s.length()==0) return false;
+    if(s.length()==0) return domyslny;
     if(s=="true") return true;
     if(s=="1") return true;
     return false;

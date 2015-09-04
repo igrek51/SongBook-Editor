@@ -21,6 +21,7 @@ IO* IO::i(){
 
 IO::IO(){
     instance = this;
+    log_init = false;
     last_echo = "";
     repeated_echo = 0;
     clock_last = clock();
@@ -30,6 +31,16 @@ IO::IO(){
 void IO::clear_log(){
     if(!Config::geti()->log_enabled) return;
     clear_file(Config::geti()->log_filename);
+    //w³¹czenie mo¿liwoœci zapisu do loga
+    log_init = true;
+    log("Dziennik zdarzeñ uruchomiony.");
+    if(log_buffer.size()>0){
+        log("Wpisywanie starych zdarzeñ do dziennika...");
+        for(unsigned int i=0; i<log_buffer.size(); i++){
+            log(log_buffer.at(i)); //zapisanie starych logów
+        }
+        log_buffer.clear();
+    }
 }
 
 void IO::delete_log(){
@@ -40,6 +51,10 @@ void IO::delete_log(){
 
 void IO::log(string l){
     if(!Config::geti()->log_enabled) return;
+    if(!log_init){
+        log_buffer.push_back(l);
+        return;
+    }
     if(!file_exists(Config::geti()->log_filename)) clear_log();
     fstream plik;
     plik.open(Config::geti()->log_filename.c_str(), fstream::out|fstream::app);
@@ -123,6 +138,13 @@ void IO::message_box(string title, string message){
 
 void IO::get_args(){
     get_args_from(GetCommandLine());
+    stringstream ss;
+	ss<<"Parametry uruchomienia ("<<args.size()<<"): ";
+	for(unsigned int i=0; i<args.size(); i++){
+		ss<<args.at(i);
+		if(i<args.size()-1) ss<<", ";
+	}
+	log(ss.str());
 }
 
 void IO::get_args_from(string args_text){
@@ -139,16 +161,6 @@ void IO::get_args_from(string args_text){
         }
     }
     if(args_text.length()>0) args.push_back(args_text);
-}
-
-void IO::log_args(){
-    stringstream ss;
-	ss<<"Parametry uruchomienia ("<<args.size()<<"): ";
-	for(unsigned int i=0; i<args.size(); i++){
-		ss<<args.at(i);
-		if(i<args.size()-1) ss<<", ";
-	}
-	log(ss.str());
 }
 
 bool IO::is_arg(string parametr){
@@ -174,7 +186,7 @@ void IO::set_workdir(){
     if(SetCurrentDirectory(workdir.c_str())==0){
         message_box("B³¹d", "B³¹d zmiany katalogu roboczego na: "+workdir);
     }
-	//log("Katalog roboczy: "+workdir);
+    log("Katalog roboczy: "+workdir);
 }
 
 

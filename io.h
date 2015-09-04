@@ -16,6 +16,8 @@ public:
     static IO* geti();
     static IO* i();
     //  LOG
+    bool log_init;
+    vector<string> log_buffer;
     void clear_log();
     void delete_log();
     void log(string l);
@@ -34,7 +36,6 @@ public:
     vector<string> args;
     void get_args();
     void get_args_from(string args_text);
-    void log_args();
     bool is_arg(string parametr);
     void set_workdir();
     //  Pomiar czasu wykonania
