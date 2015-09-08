@@ -141,28 +141,34 @@ bool App::skanuj_1(){
 
 void App::usun_akordy(){
 	string* str = load_text();
-	unsigned int sel_start, sel_end;
-	if(!get_selected(sel_start, sel_end, str)){
-		sel_start = 0;
-		sel_end = str->length();
+    if(last_sel_end > str->length()) last_sel_end = str->length();
+    bool is_selection = true;
+    if(last_sel_start>=last_sel_end){ //nie by³o zaznaczenia
+		last_sel_start = 0;
+		last_sel_end = str->length();
+        is_selection = false;
 	}
-	int nawias = 0;
-	for(int i=sel_start; i<(int)sel_end;i++){
+	bool nawias = false;
+	for(int i=last_sel_start; i<(int)last_sel_end;i++){
 		if(string_char(str, i)=='['){
-			nawias = 1;
+			nawias = true;
 			string_delete(str, i);
-			sel_end--;
+			last_sel_end--;
 		}else if(string_char(str, i)==']'){
-			nawias = 0;
+			nawias = false;
 			string_delete(str, i);
-			sel_end--;
-		}else if(nawias==1){
+			last_sel_end--;
+		}else if(nawias){
 			string_delete(str, i);
-			sel_end--;
+			last_sel_end--;
 		}
 	}
 	save_text(str);
-	IO::geti()->echo("Usuniêto akordy");
+    if(is_selection){
+        IO::geti()->echo("Usuniêto akordy w zaznaczeniu");
+    }else{
+        IO::geti()->echo("Usuniêto akordy w ca³ym pliku");
+    }
 }
 
 void App::usun_wersje(){
@@ -279,7 +285,6 @@ void App::znajdz(){
         delete str;
         return;
     }
-	get_selected(last_sel_start, last_sel_end, str);
     if(znajdz_w(str, last_sel_start+1, str->length(), wzor)){
         delete str;
         return;

@@ -110,6 +110,10 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 						quick_replace();
 						return 0;
 					}
+                    if(wParam=='Q'){
+						usun_akordy();
+						return 0;
+					}
                     if(wParam=='W'){
 						save_pattern();
 						return 0;

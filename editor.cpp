@@ -7,17 +7,17 @@ string* App::load_text(){
 	char *str = new char[str_size+1];
 	str[str_size] = 0;
 	GetWindowText(Controls::geti()->find("editor"), str, str_size+1);
-	get_selected_1(last_sel_start, last_sel_end);
-	last_scroll = get_scroll();
     string* nowy = new string(str);
     delete[] str;
+    get_selected(last_sel_start, last_sel_end, nowy);
+    last_scroll = get_scroll();
 	return nowy;
 }
 
 void App::save_text(string* str){
 	Controls::geti()->set_text("editor", *str);
 	format_text(str);
-	set_selected_1(last_sel_start, last_sel_end);
+	set_selected(last_sel_start, last_sel_end, str);
 	delete str;
 	set_scroll(last_scroll);
 }
@@ -41,9 +41,12 @@ bool App::get_selected(unsigned int &sel_start, unsigned int &sel_end, string* s
 			if(i<sel_start) sel_start++;
 		}
 	}
-	if(sel_start<0) sel_start = 0;
-	if(sel_end>str_size) sel_end = str_size;
-	if(sel_start>=sel_end) return false;
+	if(sel_start < 0) sel_start = 0;
+	if(sel_end > str_size) sel_end = str_size;
+    if(sel_start >= sel_end){
+        sel_start = sel_end;
+        return false;
+    }
 	return true;
 }
 
@@ -54,7 +57,10 @@ bool App::get_selected_1(unsigned int &sel_start, unsigned int &sel_end){
 	SendMessage(Controls::geti()->find("editor"), EM_EXGETSEL, 0, (LPARAM)&ch);
 	sel_start = ch.cpMin;
 	sel_end = ch.cpMax;
-	if(sel_start>=sel_end) return false;
+    if(sel_start >= sel_end){
+        sel_start = sel_end;
+        return false;
+    }
 	return true;
 }
 

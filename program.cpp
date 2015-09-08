@@ -132,8 +132,9 @@ void App::quick_replace(){
         IO::geti()->error("Pusty tekst do zamiany.");
         return;
     }
-    get_selected_1(last_sel_start, last_sel_end);
-    set_selected_1(last_sel_end, last_sel_end); //brak zaznaczenia - replace obejmuje ca³oœæ
+    unsigned int sel_start, sel_end;
+    get_selected_1(sel_start, sel_end);
+    set_selected_1(sel_end, sel_end); //brak zaznaczenia - replace obejmuje ca³oœæ
     Controls::geti()->set_text("find_edit", selected);
     Controls::geti()->set_text("replace_edit", selected);
     Controls::geti()->select_all("replace_edit");

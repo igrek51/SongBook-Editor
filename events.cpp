@@ -73,41 +73,41 @@ void App::event_init(HWND *window){
     menu_plik->add_separator();
     menu_plik->add_option("Zakoñcz", "exit");
     Menu* menu_edycja = new Menu();
-    menu_edycja->add_option("Analizuj", "analyze");
+    menu_edycja->add_option("Analizuj i napraw", "analyze");
     menu_edycja->add_separator();
-    menu_edycja->add_option("Szukaj", "find");
+    menu_edycja->add_option("Szukaj [Ctrl + F]", "find");
     menu_edycja->add_option("Zamieñ", "replace");
-    menu_edycja->add_option("Szybka zamiana", "quick_replace");
+    menu_edycja->add_option("Szybka zamiana [Ctrl + T]", "quick_replace");
     menu_edycja->add_separator();
-    menu_edycja->add_option("Usuñ akordy", "remove_chords");
-    menu_edycja->add_option("Usuñ dodatkowe wersje", "remove_alt");
+    menu_edycja->add_option("Usuñ akordy [Ctrl + Q]", "remove_chords");
+    menu_edycja->add_option("Usuñ alternatywne wersje akordów", "remove_alt");
     menu_edycja->add_separator();
-    menu_edycja->add_option("Zapisz schemat akordów", "save_pattern");
-    menu_edycja->add_option("Wstaw schemat akordów", "insert_pattern");
+    menu_edycja->add_option("Zapisz schemat akordów [Ctrl + W]", "save_pattern");
+    menu_edycja->add_option("Wstaw schemat akordów [Ctrl + E]", "insert_pattern");
     Menu* menu_widok = new Menu();
     menu_widok->add_option("Zwiêksz czcionkê", "font++");
     menu_widok->add_option("Zmniejsz czcionkê", "font--");
     menu_widok->add_separator();
     menu_widok->add_option("Formatuj tekst", "format_text");
-    menu_widok->add_option("Przewiñ na pocz¹tek", "scroll_to_begin");
+    menu_widok->add_option("Przewiñ na pocz¹tek [F1]", "scroll_to_begin");
     menu_widok->add_option("Przewiñ na koniec", "scroll_to_end");
     menu_widok->add_separator();
-    menu_widok->add_option("Pe³ny ekran", "fullscreen");
+    menu_widok->add_option("Pe³ny ekran [F11]", "fullscreen");
     Menu* menu_autoscroll = new Menu();
-    menu_autoscroll->add_option("W³¹cz z opóŸnieniem", "autoscroll_wait");
-    menu_autoscroll->add_option("W³¹cz bez opóŸnienia", "autoscroll_nowait");
+    menu_autoscroll->add_option("W³¹cz z opóŸnieniem [F7]", "autoscroll_wait");
+    menu_autoscroll->add_option("W³¹cz bez opóŸnienia [F8]", "autoscroll_nowait");
     menu_autoscroll->add_option("Wy³¹cz", "autoscroll_off");
     menu_autoscroll->add_separator();
-    menu_autoscroll->add_option("Zwolnij przewijanie", "autoscroll_slower");
-    menu_autoscroll->add_option("Przyspiesz przewijanie", "autoscroll_faster");
+    menu_autoscroll->add_option("Zwolnij przewijanie [F5]", "autoscroll_slower");
+    menu_autoscroll->add_option("Przyspiesz przewijanie [F6]", "autoscroll_faster");
     Menu* menu_transpozycja = new Menu();
     menu_transpozycja->add_option("Transponuj 5 pó³tonów w górê", "transpose+5");
-    menu_transpozycja->add_option("Transponuj 1 pó³ton w górê", "transpose++");
+    menu_transpozycja->add_option("Transponuj 1 pó³ton w górê [Ctrl + prawo]", "transpose++");
     menu_transpozycja->add_separator();
-    menu_transpozycja->add_option("Transponuj 1 pó³ton w dó³", "transpose--");
+    menu_transpozycja->add_option("Transponuj 1 pó³ton w dó³ [Ctrl + lewo]", "transpose--");
     menu_transpozycja->add_option("Transponuj 5 pó³tonów w dó³", "transpose-5");
     menu_transpozycja->add_separator();
-    menu_transpozycja->add_option("Oryginalna tonacja", "transpose0");
+    menu_transpozycja->add_option("Oryginalna tonacja [Ctrl + 0]", "transpose0");
     menu_transpozycja->add_separator();
     menu_transpozycja->add_option("Dodaj alternatywn¹ tonacjê", "alt");
     Menu* menu_ustawienia = new Menu();
@@ -157,7 +157,6 @@ void App::event_init(HWND *window){
 		DeleteDC(screen);
 		SetWindowPos(main_window, HWND_TOP, -8, 0, screen_w/2, screen_h-34, 0);
         //  TODO
-
     }
     event_resize();
     //drag & drop
