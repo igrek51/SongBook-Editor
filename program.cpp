@@ -100,10 +100,16 @@ void App::cmd_switch(int change){
 void App::fullscreen_set(bool full){
 	Config::geti()->fullscreen_on = full;
 	if(Config::geti()->fullscreen_on){
-		ShowWindow(main_window, SW_MAXIMIZE);
+        int window_style = GetWindowLong(main_window, GWL_STYLE);
+        SetWindowLong(main_window, GWL_STYLE, window_style & ~(WS_CAPTION | WS_THICKFRAME));
+        ShowWindow(main_window, SW_MAXIMIZE);
+        //dla pewnoœci
+		SetWindowPos(main_window, HWND_TOP, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0);
         IO::geti()->log("Fullscreen w³¹czony.");
 	}else{
-		ShowWindow(main_window, SW_RESTORE);
+        int window_style = GetWindowLong(main_window, GWL_STYLE);
+        SetWindowLong(main_window, GWL_STYLE, window_style | (WS_CAPTION | WS_THICKFRAME));
+        ShowWindow(main_window, SW_RESTORE);
         IO::geti()->log("Fullscreen wy³¹czony.");
 	}
 }

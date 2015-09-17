@@ -21,6 +21,11 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
             CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
             return 0; //przechwycenie
         }
+        //wyjœcie z fullscreena
+        if(wParam==VK_ESCAPE && Config::geti()->fullscreen_on){
+            CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+            return 0; //przechwycenie
+        }
         //ctrl
         if(is_control_pressed()){
             if(wParam=='S'||wParam=='F'||wParam=='N'||wParam=='B'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){

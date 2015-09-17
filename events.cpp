@@ -372,7 +372,11 @@ bool App::event_syskeydown(WPARAM wParam){
 
 bool App::event_keydown(WPARAM wParam){
 	if(wParam==VK_ESCAPE){
-		Controls::geti()->set_focus("editor");
+        if(Config::geti()->fullscreen_on){ //wyjœcie z fullscreena
+            fullscreen_set(false);
+        }else{
+            Controls::geti()->set_focus("editor");
+        }
 	}else if(wParam==VK_F1){
 		set_scroll(0);
 	}else if(wParam==VK_F2){
