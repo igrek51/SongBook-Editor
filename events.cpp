@@ -71,6 +71,7 @@ void App::event_init(HWND *window){
     menu_edycja->add_option("Zamieñ", "replace");
     menu_edycja->add_option("Szybka zamiana tekstu [Ctrl + T]", "quick_replace");
     menu_edycja->add_separator();
+    menu_edycja->add_option("Utwórz akord z zaznaczenia [Ctrl + D]", "add_chord");
     menu_edycja->add_option("Usuñ akordy [Ctrl + Q]", "remove_chords");
     menu_edycja->add_option("Usuñ alternatywne wersje akordów", "remove_alt");
     menu_edycja->add_separator();
@@ -214,6 +215,8 @@ void App::event_button(WPARAM wParam){
         usun_akordy();
     }else if(name == "remove_alt"){
         usun_wersje();
+    }else if(name == "add_chord"){
+        dodaj_nawias();
     }else if(name == "font++"){
         change_font_size(+1);
     }else if(name == "font--"){

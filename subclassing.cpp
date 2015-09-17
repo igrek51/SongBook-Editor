@@ -100,10 +100,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				}
 			}break;
 			case WM_KEYDOWN:{
-				if(wParam==VK_F4){
-					dodaj_nawias();
-					return 0;
-				}
 				if(is_control_pressed()){ //ctrl
 					if(wParam=='C'){
 						copy_text();
@@ -124,7 +120,10 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 						save_pattern();
 						return 0;
 					}else if(wParam=='E'){
-						insert_pattern();
+                        insert_pattern();
+						return 0;
+					}else if(wParam=='D'){
+                        dodaj_nawias();
 						return 0;
 					}else if(wParam>='1' && wParam<='9'){
 						zapisz_tekst(wParam-'1'+1);

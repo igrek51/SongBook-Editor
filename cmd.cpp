@@ -128,7 +128,6 @@ void App::show_help(){
     ss<<"F1: przewiñ na pocz¹tek"<<endl;
     ss<<"F2: przewiñ w górê"<<endl;
     ss<<"F3: przewiñ w dó³"<<endl;
-    ss<<"F4: dodaj nawiasy []"<<endl;
     ss<<"F5: zmniejsz szybkoœæ przewijania"<<endl;
     ss<<"F6: zwiêksz szybkoœæ przewijania"<<endl;
     ss<<"F7: uruchom autoscroll"<<endl;
@@ -146,6 +145,7 @@ void App::show_help(){
     ss<<"Ctrl + [W]: zapisz schemat akordów"<<endl;
     ss<<"Ctrl + [E]: wstaw schemat akordów"<<endl;
     ss<<"Ctrl + [Q]: usuñ akordy"<<endl;
+    ss<<"Ctrl + [D]: utwórz akord z zaznaczenia"<<endl;
     ss<<"Ctrl + [T]: szybka zamiana tekstu"<<endl;
     ss<<"Ctrl + [N]: nowy plik"<<endl;
     ss<<"Ctrl + [B]: otwórz bazê akordów"<<endl;

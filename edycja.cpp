@@ -329,15 +329,19 @@ void App::zapisz_tekst(int nrt){
 
 void App::dodaj_nawias(){
 	string* str = load_text();
-	unsigned int sel_start, sel_end;
-	get_selected(sel_start, sel_end, str);
-	if(sel_start==sel_end){
+	if(last_sel_start == last_sel_end){
 		IO::geti()->error("Nie zaznaczono ¿adnego fragmentu");
 		delete str;
 		return;
 	}
-	string_insert(str, sel_end, ']');
-	string_insert(str, sel_start, '[');
+    //jeœli jest to ju¿ akord
+    if(string_char(str, last_sel_start) == '[' || string_char(str, last_sel_end-1) == ']'){
+        IO::geti()->error("Zaznaczony fragment jest ju¿ akordem");
+		delete str;
+		return;
+    }
+	string_insert(str, last_sel_end, ']');
+	string_insert(str, last_sel_start, '[');
 	last_sel_end += 2;
 	save_text(str);
 }
