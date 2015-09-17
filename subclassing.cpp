@@ -50,7 +50,14 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				if(wParam==VK_ESCAPE){
 					Controls::geti()->set_focus("editor");
 					return 0;
-				}
+				}else if(wParam==VK_RETURN){
+                    if(!Config::geti()->cmd_show){
+                        cmd_switch(1);
+                    }
+                    Controls::geti()->set_focus("cmd");
+                    Controls::geti()->select_all("cmd");
+                    return 0;
+                }
 			}break;
 		}
 	}
@@ -60,8 +67,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				if(wParam==VK_ESCAPE){
 					Controls::geti()->set_focus("editor");
 					return 0;
-				}
-				if(wParam==VK_RETURN){
+				}else if(wParam==VK_RETURN){
 					exec_cmd();
 					return 0; //przechwycenie
 				}
@@ -173,7 +179,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
                 if(Controls::i()->get_text("find_edit")==Config::i()->find_edit_placeholder){
                     Controls::i()->set_text("find_edit", "");
                 }
-				IO::geti()->echo("(Szukany ci¹g znaków)");
+				IO::geti()->echo("(Wpisz szukany ci¹g znaków, Enter - szukaj)");
 			}break;
             case WM_KILLFOCUS:{
                 if(Controls::i()->get_text("find_edit").length()==0){
@@ -198,7 +204,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
             if(Controls::i()->get_text("replace_edit")==Config::i()->replace_edit_placeholder){
                 Controls::i()->set_text("replace_edit", "");
             }
-				IO::geti()->echo("(Tekst po zamianie)");
+				IO::geti()->echo("(Wpisz tekst do zamiany, Enter - zamieñ w zaznaczeniu lub ca³ym pliku)");
 			}break;
             case WM_KILLFOCUS:{
                 if(Controls::i()->get_text("replace_edit").length()==0){

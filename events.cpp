@@ -31,14 +31,11 @@ void App::event_init(HWND *window){
     Controls::geti()->create_static_center("Plik:", 0, 0, 0, 0, "filename");
     Controls::geti()->create_edit("", 0, 0, 0, 0, "filename_edit");
 
+    Controls::geti()->create_edit_center(Config::i()->find_edit_placeholder, 0, 0, 0, 0, "find_edit");
+    Controls::geti()->create_edit_center(Config::i()->replace_edit_placeholder, 0, 0, 0, 0, "replace_edit");
     Controls::geti()->create_edit_center("", 0, 0, 0, 0, "autoscroll_interval");
     Controls::geti()->create_edit_center("", 0, 0, 0, 0, "autoscroll_wait");
     Controls::geti()->create_button("Autoscroll: off", 0, 0, 0, 0, "autoscroll");
-
-    Controls::geti()->create_edit_center(Config::i()->find_edit_placeholder, 0, 0, 0, 0, "find_edit");
-    Controls::geti()->create_edit_center(Config::i()->replace_edit_placeholder, 0, 0, 0, 0, "replace_edit");
-    Controls::geti()->create_button("ZnajdŸ", 0, 0, 0, 0, "find");
-    Controls::geti()->create_button("Zamieñ", 0, 0, 0, 0, "replace");
     Controls::geti()->create_button("Analizuj", 0, 0, 0, 0, "analyze");
 
     for(int i=0; i<Config::geti()->cmd_outputs_num; i++){
@@ -83,7 +80,7 @@ void App::event_init(HWND *window){
     menu_widok->add_option("Zwiêksz czcionkê [Ctrl +]", "font++");
     menu_widok->add_option("Zmniejsz czcionkê [Ctrl -]", "font--");
     menu_widok->add_separator();
-    menu_widok->add_option("Formatuj tekst", "format_text");
+    menu_widok->add_option("Formatuj tekst [Ctrl + R]", "format_text");
     menu_widok->add_option("Przewiñ na pocz¹tek [F1]", "scroll_to_begin");
     menu_widok->add_option("Przewiñ na koniec", "scroll_to_end");
     menu_widok->add_separator();
@@ -312,25 +309,20 @@ void App::event_resize(){
     if(Config::geti()->cmd_show){
         editor_h -= ch*Config::geti()->cmd_outputs_num;
     }
-
 	if(Config::geti()->toolbar_show){
-        editor_h -= ch*3;
-        editor_y += ch*3;
+        editor_h -= ch*2;
+        editor_y += ch*2;
     }
     Controls::i()->resize("editor", 0,editor_y,w,editor_h);
-
     Controls::i()->resize("filename", 0,0,Config::geti()->static_filename_width,ch);
     Controls::i()->resize("filename_edit", Config::geti()->static_filename_width,0,w-Config::geti()->static_filename_width,ch);
     //1. rz¹d
-    Controls::i()->resize("autoscroll_interval", w*4/7,ch*1,w/7,ch);
-    Controls::i()->resize("autoscroll_wait", w*5/7,ch*1,w/7,ch);
-    Controls::i()->resize("autoscroll", w*6/7,ch*1,w/7,ch);
-	//2. rz¹d
-    Controls::i()->resize("find_edit", w*0/7,ch*2,w*2/7,ch);
-    Controls::i()->resize("replace_edit", w*2/7,ch*2,w*2/7,ch);
-    Controls::i()->resize("find", w*4/7,ch*2,w/7,ch);
-    Controls::i()->resize("replace", w*5/7,ch*2,w/7,ch);
-    Controls::i()->resize("analyze", w*6/7,ch*2,w/7,ch);
+    Controls::i()->resize("find_edit", w*0/12,ch*1,w*3/12,ch);
+    Controls::i()->resize("replace_edit", w*3/12,ch*1,w*3/12,ch);
+    Controls::i()->resize("autoscroll_interval", w*6/12,ch*1,w/12,ch);
+    Controls::i()->resize("autoscroll_wait", w*7/12,ch*1,w/12,ch);
+    Controls::i()->resize("autoscroll", w*8/12,ch*1,w*2/12,ch);
+    Controls::i()->resize("analyze", w*10/12,ch*1,w*2/12,ch);
     //konsola
     if(Config::geti()->cmd_show){
         for(int i=0; i<Config::geti()->cmd_outputs_num; i++){

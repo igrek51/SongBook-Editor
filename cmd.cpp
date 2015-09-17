@@ -133,7 +133,7 @@ void App::show_help(){
     ss<<"F6: zwiêksz szybkoœæ przewijania"<<endl;
     ss<<"F7: uruchom autoscroll"<<endl;
     ss<<"F8: uruchom autoscroll bez opóŸnienia"<<endl;
-    ss<<"F9: poka¿ / schowaj pasek przycisków"<<endl;
+    ss<<"F9: poka¿ / schowaj pasek narzêdzi"<<endl;
     ss<<"F10, F11: pe³ny ekran"<<endl;
     ss<<"Ctrl + [`]: wiersz poleceñ"<<endl;
     ss<<"Ctrl + [+]: zwiêksz czcionkê"<<endl;

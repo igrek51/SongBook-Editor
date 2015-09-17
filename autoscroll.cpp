@@ -22,8 +22,14 @@ void App::autoscroll_on(){
 	if(Config::geti()->autoscroll) autoscroll_off();
     Config::geti()->autoscroll_interval = Controls::geti()->get_int("autoscroll_interval");
     Config::geti()->autoscroll_wait = Controls::geti()->get_int("autoscroll_wait");
-	if(Config::geti()->autoscroll_interval<0) return;
-	if(Config::geti()->autoscroll_wait<0) return;
+    if(Config::geti()->autoscroll_interval <= 0){
+        IO::geti()->error("Nieprawid³owy interwa³ autoscrolla");
+        return;
+    }
+    if(Config::geti()->autoscroll_wait < 0){
+        IO::geti()->error("Nieprawid³owe opóŸnienie autoscrolla");
+        return;
+    }
 	Config::geti()->autoscroll = true;
 	Config::geti()->autoscroll_count = 0;
     Controls::geti()->set_text("autoscroll", "Autoscroll: on");
@@ -37,7 +43,10 @@ void App::autoscroll_on(){
 void App::autoscroll_nowait(int change){
 	if(Config::geti()->autoscroll) autoscroll_off();
     Config::geti()->autoscroll_interval = Controls::geti()->get_int("autoscroll_interval");
-	if(Config::geti()->autoscroll_interval < 0) return;
+    if(Config::geti()->autoscroll_interval <= 0){
+        IO::geti()->error("Nieprawid³owy interwa³ autoscrolla");
+        return;
+    }
 	if(change != 0){
 		Config::geti()->autoscroll_interval += change;
 		if(Config::geti()->autoscroll_interval < 1) Config::geti()->autoscroll_interval = 1;
