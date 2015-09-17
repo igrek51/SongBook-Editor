@@ -57,8 +57,10 @@ void App::exec_cmd(string cmd){
 	}else if(cmd1=="autoscroll_off"){
 		autoscroll_off();
 	}else if(cmd1=="siema"){
-		IO::geti()->message_box("Wiadomoœæ","No siema :)");
+        IO::geti()->message_box("Wiadomoœæ","No siema :)");
         Controls::geti()->set_focus("cmd");
+	}else if(cmd1=="dupa"){
+        IO::geti()->echo("Brawo! Odkry³eœ Easter Egga :)");
 	}else if(cmd1=="new"){
 		new_file();
     }else if(cmd1=="format"){

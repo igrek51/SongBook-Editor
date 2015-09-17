@@ -178,6 +178,9 @@ void App::open_chords_file(string filename){
 void App::save_chords_file(){
     string new_filename = Controls::geti()->get_text("filename_edit");
 	if(new_filename.length()==0){
+        if(!Config::geti()->toolbar_show){
+            toolbar_switch(1);
+        }
 		IO::geti()->error("Podaj nazwê pliku!");
 		return;
 	}

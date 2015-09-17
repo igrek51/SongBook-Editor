@@ -193,9 +193,6 @@ void App::event_button(WPARAM wParam){
 			open_chords_file(str2);
 		}
 	}else if(name == "save"){ //zapisz
-        if(!Config::geti()->toolbar_show){
-            toolbar_switch(1);
-        }
 		save_chords_file();
 	}else if(name == "analyze"){ //analizuj
 		analyze();
