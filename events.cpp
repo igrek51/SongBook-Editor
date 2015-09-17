@@ -31,11 +31,6 @@ void App::event_init(HWND *window){
     Controls::geti()->create_static_center("Plik:", 0, 0, 0, 0, "filename");
     Controls::geti()->create_edit("", 0, 0, 0, 0, "filename_edit");
 
-    Controls::geti()->create_button("Nowy", 0, 0, 0, 0, "new");
-    Controls::geti()->create_button("Wczytaj", 0, 0, 0, 0, "load");
-    Controls::geti()->create_button("Zapisz", 0, 0, 0, 0, "save");
-    Controls::geti()->create_button("Baza akordów", 0, 0, 0, 0, "base");
-
     Controls::geti()->create_edit_center("", 0, 0, 0, 0, "autoscroll_interval");
     Controls::geti()->create_edit_center("", 0, 0, 0, 0, "autoscroll_wait");
     Controls::geti()->create_button("Autoscroll: off", 0, 0, 0, 0, "autoscroll");
@@ -63,13 +58,13 @@ void App::event_init(HWND *window){
     //tworzenie menu
     IO::geti()->log("Tworzenie menu...");
     Menu* menu_plik = new Menu();
-    menu_plik->add_option("Nowy", "new");
+    menu_plik->add_option("Nowy [Ctrl + N]", "new");
     menu_plik->add_separator();
     menu_plik->add_option("Otwórz", "load");
     menu_plik->add_option("Prze³aduj", "reload");
-    menu_plik->add_option("Zapisz", "save");
+    menu_plik->add_option("Zapisz [Ctrl + S]", "save");
     menu_plik->add_separator();
-    menu_plik->add_option("Baza akordów", "base");
+    menu_plik->add_option("Baza akordów [Ctrl + B]", "base");
     menu_plik->add_separator();
     menu_plik->add_option("Zakoñcz", "exit");
     Menu* menu_edycja = new Menu();
@@ -77,7 +72,7 @@ void App::event_init(HWND *window){
     menu_edycja->add_separator();
     menu_edycja->add_option("Szukaj [Ctrl + F]", "find");
     menu_edycja->add_option("Zamieñ", "replace");
-    menu_edycja->add_option("Szybka zamiana [Ctrl + T]", "quick_replace");
+    menu_edycja->add_option("Szybka zamiana tekstu [Ctrl + T]", "quick_replace");
     menu_edycja->add_separator();
     menu_edycja->add_option("Usuñ akordy [Ctrl + Q]", "remove_chords");
     menu_edycja->add_option("Usuñ alternatywne wersje akordów", "remove_alt");
@@ -85,14 +80,14 @@ void App::event_init(HWND *window){
     menu_edycja->add_option("Zapisz schemat akordów [Ctrl + W]", "save_pattern");
     menu_edycja->add_option("Wstaw schemat akordów [Ctrl + E]", "insert_pattern");
     Menu* menu_widok = new Menu();
-    menu_widok->add_option("Zwiêksz czcionkê", "font++");
-    menu_widok->add_option("Zmniejsz czcionkê", "font--");
+    menu_widok->add_option("Zwiêksz czcionkê [Ctrl +]", "font++");
+    menu_widok->add_option("Zmniejsz czcionkê [Ctrl -]", "font--");
     menu_widok->add_separator();
     menu_widok->add_option("Formatuj tekst", "format_text");
     menu_widok->add_option("Przewiñ na pocz¹tek [F1]", "scroll_to_begin");
     menu_widok->add_option("Przewiñ na koniec", "scroll_to_end");
     menu_widok->add_separator();
-    menu_widok->add_option("Pe³ny ekran [F11]", "fullscreen");
+    menu_widok->add_option("Pe³ny ekran [F10, F11]", "fullscreen");
     Menu* menu_autoscroll = new Menu();
     menu_autoscroll->add_option("W³¹cz z opóŸnieniem [F7]", "autoscroll_wait");
     menu_autoscroll->add_option("W³¹cz bez opóŸnienia [F8]", "autoscroll_nowait");
@@ -112,7 +107,7 @@ void App::event_init(HWND *window){
     menu_transpozycja->add_option("Dodaj alternatywn¹ tonacjê", "alt");
     Menu* menu_ustawienia = new Menu();
     menu_ustawienia->add_option("Plik konfiguracyjny", "config");
-    menu_ustawienia->add_option("Wiersz poleceñ", "cmd_toggle");
+    menu_ustawienia->add_option("Wiersz poleceñ [Ctrl + `]", "cmd_toggle");
     menu_ustawienia->add_option("Dziennik zdarzeñ", "log");
     Menu* menu_pomoc = new Menu();
     menu_pomoc->add_option("Polecenia i skróty klawiszowe", "help");
@@ -327,10 +322,6 @@ void App::event_resize(){
     Controls::i()->resize("filename", 0,0,Config::geti()->static_filename_width,ch);
     Controls::i()->resize("filename_edit", Config::geti()->static_filename_width,0,w-Config::geti()->static_filename_width,ch);
     //1. rz¹d
-    Controls::i()->resize("new", w*0/7,ch*1,w/7,ch);
-    Controls::i()->resize("load", w*1/7,ch*1,w/7,ch);
-    Controls::i()->resize("save", w*2/7,ch*1,w/7,ch);
-    Controls::i()->resize("base", w*3/7,ch*1,w/7,ch);
     Controls::i()->resize("autoscroll_interval", w*4/7,ch*1,w/7,ch);
     Controls::i()->resize("autoscroll_wait", w*5/7,ch*1,w/7,ch);
     Controls::i()->resize("autoscroll", w*6/7,ch*1,w/7,ch);
@@ -423,7 +414,11 @@ bool App::event_keydown(WPARAM wParam){
                 toolbar_switch(1);
             }
 			Controls::geti()->set_focus("find_edit");
-		}else if(wParam==VK_ADD){
+		}else if(wParam=='N'){
+            new_file();
+        }else if(wParam=='B'){
+            chordsbase();
+        }else if(wParam==VK_ADD){
 			change_font_size(+1);
 		}else if(wParam==VK_SUBTRACT){
 			change_font_size(-1);

@@ -23,7 +23,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
         }
         //ctrl
         if(is_control_pressed()){
-            if(wParam=='S'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
+            if(wParam=='S'||wParam=='F'||wParam=='N'||wParam=='B'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
                 CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
                 return 0; //przechwycenie
             }

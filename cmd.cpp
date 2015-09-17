@@ -44,10 +44,8 @@ void App::exec_cmd(string cmd){
 		ShellExecute(0, "open", ".", "", 0, SW_SHOW);
 	}else if(cmd1=="exit"){
 		DestroyWindow(main_window);
-	}else if(cmd1=="opened_file"||cmd1=="o"){
+	}else if(cmd1=="opened_file"){
         Controls::geti()->set_text("filename_edit", Config::geti()->opened_file);
-	}else if(cmd1=="reload"){
-		open_chords_file(Config::geti()->opened_file);
 	}else if(cmd1=="font++"){
 		change_font_size(+1);
 	}else if(cmd1=="font--"){
@@ -65,17 +63,20 @@ void App::exec_cmd(string cmd){
 		new_file();
     }else if(cmd1=="format"){
         refresh_text();
-    }else if(cmd1=="remove_chords"){
-        usun_akordy();
-    }else if(cmd1=="remove_alt"){
-        usun_wersje();
     }else if(cmd1=="help"){
         show_help();
 		Controls::geti()->set_focus("cmd");
 	}else if(cmd1=="fontface"){
 		if(cmd2.length()>0){
-			Config::geti()->editor_fontface = cmd2;
+            ss_clear(ss);
+            for(unsigned int i=1; i<cmds.size(); i++){
+                ss<<cmds.at(i);
+                if(i<cmds.size()-1) ss<<" ";
+            }
+			Config::geti()->editor_fontface = ss.str();
 			Controls::geti()->set_font("editor", Config::geti()->editor_fontface, Config::geti()->editor_fontsize);
+            refresh_text();
+            Controls::geti()->set_focus("cmd");
 		}
 		ss_clear(ss);
 		ss<<"Czcionka edytora: "<<Config::geti()->editor_fontface;
@@ -85,6 +86,8 @@ void App::exec_cmd(string cmd){
 			Config::geti()->editor_fontsize = atoi(cmd2.c_str());
 			if(Config::geti()->editor_fontsize<1) Config::geti()->editor_fontsize = 1;
 			Controls::geti()->set_font("editor", Config::geti()->editor_fontface, Config::geti()->editor_fontsize);
+            refresh_text();
+            Controls::geti()->set_focus("cmd");
 		}
 		ss_clear(ss);
 		ss<<"Rozmiar czcionki edytora: "<<Config::geti()->editor_fontsize;
@@ -137,25 +140,25 @@ void App::show_help(){
     ss<<"Ctrl + [-]: zmniejsz czcionkê"<<endl;
     ss<<"Ctrl + [lewo]: transponuj akordy -1"<<endl;
     ss<<"Ctrl + [prawo]: transponuj akordy +1"<<endl;
-    ss<<"Ctrl + [T]: szybka zamiana tekstu"<<endl;
     ss<<"Ctrl + [0]: przywróc oryginaln¹ tonacjê"<<endl;
     ss<<"Ctrl + [1-9]: zapisz zaznaczony tekst do wstawienia"<<endl;
     ss<<"Alt + [1-9]: wstaw zapisany tekst"<<endl;
     ss<<"Ctrl + [W]: zapisz schemat akordów"<<endl;
     ss<<"Ctrl + [E]: wstaw schemat akordów"<<endl;
     ss<<"Ctrl + [Q]: usuñ akordy"<<endl;
-    ss<<endl<<"Polecenia:"<<endl;
-    ss<<"log - poka¿ dziennik zdarzeñ"<<endl;
+    ss<<"Ctrl + [T]: szybka zamiana tekstu"<<endl;
+    ss<<"Ctrl + [N]: nowy plik"<<endl;
+    ss<<"Ctrl + [B]: otwórz bazê akordów"<<endl;
+    ss<<endl<<"Polecenia wiersza poleceñ:"<<endl;
+    ss<<"log - dziennik zdarzeñ"<<endl;
     ss<<"config - otwórz plik konfiguracyjny"<<endl;
     ss<<"config reload - wczytaj ustawienia"<<endl;
     ss<<"dir - otwórz folder roboczy"<<endl;
-    ss<<"opened_file, o - wyœwietl nazwê otwartego pliku"<<endl;
-    ss<<"remove_chords - usuñ akordy z zaznaczenia (lub ca³oœci)"<<endl;
-    ss<<"remove_alt - usuñ alternatywne akordy"<<endl;
+    ss<<"opened_file - wyœwietl nazwê otwartego pliku"<<endl;
     ss<<"fontface [czcionka] - zmieñ czcionkê edytora"<<endl;
     ss<<"fontsize [rozmiar] - zmieñ rozmiar czcionki edytora"<<endl;
-    ss<<"alt [shift] - dodaj alternatywn¹ tonacjê"<<endl;
-    ss<<"transpose [shift] - transponuj tonacjê akordów"<<endl;
+    ss<<"alt [przesuniecie] - dodaj alternatywn¹ tonacjê"<<endl;
+    ss<<"transpose [przesuniecie] - transponuj tonacjê akordów"<<endl;
     ss<<"transpose 0 - przywróæ oryginaln¹ tonacjê"<<endl;
     IO::geti()->message_box("Pomoc",ss.str());
 }
