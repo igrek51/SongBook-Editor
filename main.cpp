@@ -66,10 +66,14 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			App::geti()->event_timer();
 		}break;
 		case WM_KEYDOWN:{
-			App::geti()->event_keydown(wParam);
+			if(App::geti()->event_keydown(wParam)){
+                return 0;
+            }
 		}
 		case WM_SYSKEYDOWN:{
-			App::geti()->event_syskeydown(wParam);
+			if(App::geti()->event_syskeydown(wParam)){
+                return 0;
+            }
 		}
         case WM_SYSCOMMAND:{
             if(wParam==SC_SCREENSAVE){

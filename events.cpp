@@ -354,7 +354,7 @@ void App::event_resize(){
 }
 
 void App::event_screensave(){
-	IO::geti()->log("Screensaver stop");
+	IO::geti()->log("Zatrzymywanie wygaszacza ekranu");
 	mouse_event(MOUSEEVENTF_MOVE,1,0,0,0);
 	mouse_event(MOUSEEVENTF_MOVE,-1,0,0,0);
 }
@@ -379,17 +379,18 @@ void App::event_appcommand(WPARAM wParam, LPARAM lParam){
     }
 }
 
-void App::event_syskeydown(WPARAM wParam){
+bool App::event_syskeydown(WPARAM wParam){
 	if(wParam==VK_F10){
-		event_keydown(wParam);
+		event_keydown(VK_F10);
+        return true;
 	}
+    return false;
 }
 
-void App::event_keydown(WPARAM wParam){
+bool App::event_keydown(WPARAM wParam){
 	if(wParam==VK_ESCAPE){
 		Controls::geti()->set_focus("editor");
-	}
-	if(wParam==VK_F1){
+	}else if(wParam==VK_F1){
 		set_scroll(0);
 	}else if(wParam==VK_F2){
 		change_scroll(-35);
@@ -410,26 +411,25 @@ void App::event_keydown(WPARAM wParam){
 		}
 	}else if(wParam==VK_F9){
 		toolbar_switch();
+	}else if(wParam==VK_F10){
+        fullscreen_toggle();
 	}else if(wParam==VK_F11){
         fullscreen_toggle();
 	}
-	if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-		if(wParam=='A'){
-			select_all();
-		}else if(wParam=='S'){
+    //ctrl
+	if(is_control_pressed()){
+		if(wParam=='S'){
 			save_chords_file();
-		}else if(wParam=='R'){
-			refresh_text();
 		}else if(wParam=='F'){
             if(!Config::geti()->toolbar_show){
                 toolbar_switch(1);
             }
 			Controls::geti()->set_focus("find_edit");
-		}else if(wParam==VK_ADD){ // +
+		}else if(wParam==VK_ADD){
 			change_font_size(+1);
-		}else if(wParam==VK_SUBTRACT){ // -
+		}else if(wParam==VK_SUBTRACT){
 			change_font_size(-1);
-		}else if(wParam==VK_OEM_3){ // `
+		}else if(wParam==VK_OEM_3){ // znaczek `
             cmd_switch();
             if(Config::geti()->cmd_show){
                 Controls::geti()->set_focus("cmd");
@@ -445,4 +445,13 @@ void App::event_keydown(WPARAM wParam){
 			transpose(-Config::geti()->transposed);
 		}
 	}
+    return true; //przechwycenie
+}
+
+bool App::is_control_pressed(){
+    return (GetAsyncKeyState(VK_CONTROL)&0x8000) && !(GetAsyncKeyState(VK_MENU)&0x8000);
+}
+
+bool App::is_alt_pressed(){
+    return ((GetAsyncKeyState(VK_MENU)&0x8000)&&!(GetAsyncKeyState(VK_CONTROL)&0x8000))||(GetAsyncKeyState(VK_RMENU)&0x8000);
 }

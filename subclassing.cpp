@@ -15,6 +15,34 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
         return 0;
     }
     string nazwa = kontrolka->name;
+    //globalne skróty klawiszowe
+    if(message == WM_KEYDOWN){
+        if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F10||wParam==VK_F11){
+            CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+            return 0; //przechwycenie
+        }
+        //ctrl
+        if(is_control_pressed()){
+            if(wParam=='S'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
+                CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+                return 0; //przechwycenie
+            }
+        }
+    }
+    if(message == WM_SYSKEYDOWN){
+        if(wParam==VK_F10){
+            //zamiana WM_SYSKEYDOWN na WM_KEYDOWN
+            subclass_wndproc_new(hwnd, WM_KEYDOWN, wParam, lParam);
+            return 0;
+        }
+    }
+    //globalne przechwycenie wygaszacza
+    if(message == WM_SYSCOMMAND){
+        if(wParam == SC_SCREENSAVE){
+            CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
+            return 0; //przechwycenie
+        }
+    }
 	//nowe procedury kontrolek
     if(nazwa=="filename_edit"){
 		switch(message){
@@ -22,18 +50,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				if(wParam==VK_ESCAPE){
 					Controls::geti()->set_focus("editor");
 					return 0;
-				}
-			}break;
-			case WM_KEYDOWN:{
-				if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
-					CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-					return 0;
-				}
-                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-					if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
-						CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
-						return 0; //przechwycenie
-					}
 				}
 			}break;
 		}
@@ -51,16 +67,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				}
 			}break;
 			case WM_KEYDOWN:{
-                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
-                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-                    return 0;
-                }
-                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-					if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
-						CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
-						return 0; //przechwycenie
-					}
-				}
 				if(wParam==VK_UP){
                     Controls::geti()->set_text("cmd", last_cmd);
 					SendMessage(Controls::geti()->find("cmd"), EM_SETSEL, last_cmd.length(), last_cmd.length());
@@ -75,20 +81,10 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 	}
 	if(nazwa=="editor"){ //edytor
 		switch(message){
-			case WM_SYSCOMMAND:{
-				if(wParam==SC_SCREENSAVE){
-					CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
-					return 0; //przechwycenie
-				}
-			}break;
 			case WM_SYSKEYDOWN:{
-                if(wParam==VK_F10){
-                    //zamiana na KeyDown
-                    subclass_wndproc_new(Controls::geti()->find("editor"), WM_KEYDOWN, wParam, lParam);
-                    return 0;
-                }
-                if(wParam>='1'&&wParam<='9'){
-                    subclass_wndproc_new(Controls::geti()->find("editor"), WM_KEYDOWN, wParam, lParam);
+                if(wParam>='1' && wParam<='9'){
+                    //zamiana WM_SYSKEYDOWN na WM_KEYDOWN
+                    subclass_wndproc_new(hwnd, WM_KEYDOWN, wParam, lParam);
                     return 0;
 				}
 			}break;
@@ -97,74 +93,69 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					dodaj_nawias();
 					return 0;
 				}
-				if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
-					CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-					return 0;
-				}
-				if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
+				if(is_control_pressed()){ //ctrl
 					if(wParam=='C'){
 						copy_text();
 						return 0;
-					}
-                    if(wParam=='T'){
+					}else if(wParam=='A'){
+                        select_all();
+                        return 0;
+					}else if(wParam=='R'){
+                        refresh_text();
+                        return 0;
+					}else if(wParam=='T'){
 						quick_replace();
 						return 0;
-					}
-                    if(wParam=='Q'){
+					}else if(wParam=='Q'){
 						usun_akordy();
 						return 0;
-					}
-                    if(wParam=='W'){
+					}else if(wParam=='W'){
 						save_pattern();
 						return 0;
-					}
-                    if(wParam=='E'){
+					}else if(wParam=='E'){
 						insert_pattern();
 						return 0;
-					}
-					if(wParam>='1'&&wParam<='9'){
+					}else if(wParam>='1' && wParam<='9'){
 						zapisz_tekst(wParam-'1'+1);
 						return 0;
 					}
-					if(wParam=='A'||wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_OEM_3||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0){
-						CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-						return 0;
-					}
 				}
-				if(((GetAsyncKeyState(VK_MENU)&0x8000)&&!(GetAsyncKeyState(VK_CONTROL)&0x8000))||(GetAsyncKeyState(VK_RMENU)&0x8000)){ //alt
-					if(wParam>='1'&&wParam<='9'){
+				if(is_alt_pressed()){ //alt
+					if(wParam>='1' && wParam<='9'){
 						wstaw_tekst(wParam-'1'+1);
 						return 0;
 					}
 				}
 			}break;
 			case WM_CHAR:{
-				if(wParam==']'){
+				if(wParam == ']'){
 					string add_text = "]";
-					SendMessage(Controls::geti()->find("editor"), EM_REPLACESEL, 0, (LPARAM)add_text.c_str());
-					refresh_text();
-					CHARFORMAT cf;
-                    cf.cbSize = sizeof(cf);
-					SendMessage(Controls::geti()->find("editor"), EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-					cf.dwMask = CFM_COLOR;
-					cf.crTextColor = RGB(255,255,255);
-					cf.dwEffects = 0;
-					SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-					cf.dwMask = CFM_BOLD;
-					cf.dwEffects = 0;
-					SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-					return 0;
+					SendMessage(Controls::geti()->find("editor"), EM_REPLACESEL, 0, (LPARAM)add_text.c_str()); //wstawienie znaku
+					refresh_text(); //odœwie¿enie tekstu
+                    //zmiana koloru po nawiasie na kolor tekstu
+                    CHARFORMAT cf_text;
+                    cf_text.cbSize = sizeof(cf_text);
+                    SendMessage(Controls::geti()->find("editor"), EM_GETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf_text);
+                    //kolor tekstu + brak pogrubienia
+                    cf_text.dwMask = CFM_COLOR | CFM_BOLD;
+                    cf_text.crTextColor = RGB(Config::i()->color_text[0], Config::i()->color_text[1], Config::i()->color_text[2]);
+                    cf_text.dwEffects = 0;
+                    SendMessage(Controls::geti()->find("editor"), EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf_text);
+                    return 0;
 				}
 			}break;
 			case WM_MOUSEWHEEL:{
                 int zdelta = GET_WHEEL_DELTA_WPARAM(wParam);
-				if(LOWORD(wParam)==MK_CONTROL){
+				if(LOWORD(wParam)==MK_CONTROL){ //z controlem
+                    //zmiana czcionki
 					if(zdelta>=0){
 						change_font_size(+1);
 					}else{
 						change_font_size(-1);
 					}
+                    return 0;
 				}else{
+                    //scrollowanie edytora
                     int scroll_step = Config::geti()->editor_fontsize + 2;
                     if(zdelta>=0){
 						change_scroll(-scroll_step);
@@ -199,18 +190,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 			}break;
-            case WM_KEYDOWN:{
-                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
-                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-                    return 0;
-                }
-                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-                    if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
-                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
-                        return 0; //przechwycenie
-                    }
-                }
-            }
 		}
 	}
 	if(nazwa=="replace_edit"){ //tekst do zamiany
@@ -236,18 +215,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 			}break;
-            case WM_KEYDOWN:{
-                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
-                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-                    return 0;
-                }
-                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-                    if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
-                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
-                        return 0; //przechwycenie
-                    }
-                }
-            }
 		}
 	}
 	if(nazwa=="autoscroll_interval"){ //autoscroll_interval
@@ -261,18 +228,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					return 0;
 				}
 			}break;
-            case WM_KEYDOWN:{
-                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
-                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-                    return 0;
-                }
-                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-                    if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
-                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
-                        return 0; //przechwycenie
-                    }
-                }
-            }
 		}
 	}
 	if(nazwa=="autoscroll_wait"){ //autoscroll_wait
@@ -285,27 +240,6 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					autoscroll_on();
 					return 0;
 				}
-			}break;
-            case WM_KEYDOWN:{
-                if(wParam==VK_F1||wParam==VK_F2||wParam==VK_F3||wParam==VK_F5||wParam==VK_F6||wParam==VK_F7||wParam==VK_F8||wParam==VK_F9||wParam==VK_F11){
-                    CallWindowProc(windowProc, hwnd, message, wParam, lParam);
-                    return 0;
-                }
-                if((GetAsyncKeyState(VK_CONTROL)&0x8000)&&!(GetAsyncKeyState(VK_MENU)&0x8000)){ //ctrl
-                    if(wParam=='S'||wParam=='R'||wParam=='F'||wParam==VK_ADD||wParam==VK_SUBTRACT||wParam==VK_LEFT||wParam==VK_RIGHT||wParam=='0'||wParam==VK_NUMPAD0||wParam==VK_OEM_3){
-                        CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej do mainwindow
-                        return 0; //przechwycenie
-                    }
-                }
-            }
-		}
-	}
-    //buttony - przekazanie skrótów klawiszowych
-    if(nazwa=="new"||nazwa=="load"||nazwa=="save"||nazwa=="base"||nazwa=="find"||nazwa=="replace"||nazwa=="analyze"||nazwa=="autoscroll"){
-		switch(message){
-			case WM_KEYDOWN:{
-				CallWindowProc(windowProc, hwnd, message, wParam, lParam); //przekazanie wy¿ej
-				return 0;
 			}break;
 		}
 	}
