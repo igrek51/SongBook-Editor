@@ -151,12 +151,12 @@ void App::event_init(HWND *window){
 	//okno na po³owie ekranu
 	if(Config::geti()->halfscreen==1){
         IO::geti()->log("Rozmieszczanie okna na po³owie ekranu...");
-		HDC screen = GetDC(GetDesktopWindow());
-		int screen_w = GetDeviceCaps(screen, HORZRES);
-		int screen_h = GetDeviceCaps(screen, VERTRES);
-		DeleteDC(screen);
-		SetWindowPos(main_window, HWND_TOP, -8, 0, screen_w/2, screen_h-34, 0);
-        //  TODO
+        RECT workArea;
+        SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
+        int offset_x = - GetSystemMetrics(SM_CXSIZEFRAME);
+        int w = (workArea.right - workArea.left) / 2 - offset_x*2;
+        int h = workArea.bottom - workArea.top + GetSystemMetrics(SM_CYSIZEFRAME);
+		SetWindowPos(main_window, HWND_TOP, workArea.left + offset_x, workArea.top, w, h, 0);
     }
     event_resize();
     //drag & drop
@@ -411,9 +411,7 @@ bool App::event_keydown(WPARAM wParam){
 		}
 	}else if(wParam==VK_F9){
 		toolbar_switch();
-	}else if(wParam==VK_F10){
-        fullscreen_toggle();
-	}else if(wParam==VK_F11){
+	}else if(wParam==VK_F10 || wParam==VK_F11){
         fullscreen_toggle();
 	}
     //ctrl

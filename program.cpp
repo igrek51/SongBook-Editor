@@ -109,10 +109,11 @@ void App::fullscreen_set(bool full){
 }
 
 void App::fullscreen_toggle(){
-    if(Config::geti()->toolbar_show && !Config::geti()->fullscreen_on){
+    fullscreen_set(!Config::geti()->fullscreen_on);
+    //schowanie paska narzêdzi
+    if(Config::geti()->fullscreen_on && Config::geti()->toolbar_show){
         toolbar_switch(0);
     }
-    fullscreen_set(!Config::geti()->fullscreen_on);
 }
 
 void App::chordsbase(){
