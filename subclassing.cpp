@@ -205,11 +205,11 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 	if(nazwa=="replace_edit"){ //tekst do zamiany
 		switch(message){
 			case WM_SETFOCUS:{
-            if(Controls::i()->get_text("replace_edit")==Config::i()->replace_edit_placeholder){
-                Controls::i()->set_text("replace_edit", "");
-            }
-				IO::geti()->echo("(Wpisz tekst do zamiany, Enter - zamieñ w zaznaczeniu lub ca³ym pliku)");
-			}break;
+                if(Controls::i()->get_text("replace_edit")==Config::i()->replace_edit_placeholder){
+                    Controls::i()->set_text("replace_edit", "");
+                }
+                    IO::geti()->echo("(Wpisz tekst do zamiany, Enter - zamieñ w zaznaczeniu lub ca³ym pliku)");
+                }break;
             case WM_KILLFOCUS:{
                 if(Controls::i()->get_text("replace_edit").length()==0){
                     Controls::i()->set_text("replace_edit", Config::i()->replace_edit_placeholder);

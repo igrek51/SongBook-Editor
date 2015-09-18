@@ -4,6 +4,7 @@
 #include "controls.h"
 #include "strings.h"
 #include <fstream>
+#define WINVER 0x0501 //WINXP
 #include <windows.h>
 
 IO* IO::instance = NULL;

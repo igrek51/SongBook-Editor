@@ -1,6 +1,7 @@
 #include "files.h"
 #include "io.h"
 #include <fstream>
+#define WINVER 0x0501 //WINXP
 #include <windows.h>
 
 void clear_file(string filename){

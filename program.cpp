@@ -122,11 +122,78 @@ void App::fullscreen_toggle(){
     }
 }
 
-void App::chordsbase(){
-    IO::geti()->log("Otwieranie bazy akordów...");
-    if(Config::geti()->songs_dir.length()>0){
-        ShellExecute(0, "open", Config::geti()->songs_dir.c_str(), "", "", SW_SHOW);
+class ProcessWindowsInfo {
+public:
+    DWORD ProcessID;
+    vector<HWND> Windows;
+    ProcessWindowsInfo(DWORD const AProcessID )
+        : ProcessID( AProcessID )
+    {
     }
+};
+
+BOOL __stdcall EnumProcessWindowsProc(HWND hwnd, LPARAM lParam){
+    ProcessWindowsInfo *Info = reinterpret_cast<ProcessWindowsInfo*>( lParam );
+    DWORD WindowProcessID;
+    GetWindowThreadProcessId(hwnd, &WindowProcessID );
+
+    char *str2 = new char[512];
+	GetWindowText(hwnd, str2, 512);
+    string tytul = str2;
+    GetClassName(hwnd, str2, 512);
+    string classname = str2;
+	delete[] str2;
+
+    if(classname=="CabinetWClass")
+        cout<<"Szukam: "<<WindowProcessID<<", tytul: "<<tytul<<", klasa: "<<classname<<endl;
+
+    if(WindowProcessID == Info->ProcessID){
+
+        cout<<"ZNALAZL: "<<endl;
+
+        Info->Windows.push_back(hwnd);
+    }
+    return true;
+}
+
+vector<HWND>* window_list(string classname){
+
+}
+
+void App::chordsbase_start(){
+    IO::geti()->log("Otwieranie bazy akordów...");
+    if(Config::geti()->songs_dir.length()==0){
+        IO::geti()->error("Brak zdefiniowanej bazy akordów.");
+        return;
+    }
+    SHELLEXECUTEINFO ShExecInfo = {0};
+    ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+    ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+    ShExecInfo.hwnd = main_window;
+    ShExecInfo.lpVerb = "open";
+    ShExecInfo.lpFile = "explorer.exe";
+    ShExecInfo.lpParameters = Config::geti()->songs_dir.c_str();
+    ShExecInfo.lpDirectory = NULL;
+    ShExecInfo.nShow = SW_SHOW;
+    ShExecInfo.hInstApp = NULL;
+    if(!ShellExecuteEx(&ShExecInfo)){
+        IO::geti()->error("B³¹d otwierania bazy akordów.");
+        return;
+    }
+    WaitForInputIdle(ShExecInfo.hProcess, INFINITE);
+    Sleep(1000);
+    //WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+
+    HANDLE process = ShExecInfo.hProcess;
+    cout<<"process: "<<process<<endl;
+    DWORD process_id = GetProcessId(process);
+    cout<<"process_id (szukany): "<<process_id<<endl;
+    ProcessWindowsInfo Info(process_id);
+    EnumWindows((WNDENUMPROC)EnumProcessWindowsProc, reinterpret_cast<LPARAM>(&Info));
+    // Use Info.Windows.....
+    cout<<"znalezione Okna: "<<Info.Windows.size()<<endl;
+
+    Controls::geti()->set_focus(main_window);
 }
 
 void App::quick_replace(){

@@ -139,7 +139,8 @@ void App::event_init(HWND *window){
 	}
     //baza akordów na start (jeœli nie by³ otwierany wybrany plik)
     if(Config::geti()->chordsbase_on_startup && IO::geti()->args.size()<=1){
-        chordsbase();
+        chordsbase_start();
+        SetForegroundWindow(main_window);
     }
 	//okno na po³owie ekranu
 	if(Config::geti()->halfscreen==1){
@@ -202,7 +203,7 @@ void App::event_button(WPARAM wParam){
         }
 		znajdz();
 	}else if(name == "base"){ //baza akordów
-        chordsbase();
+        chordsbase_start();
 	}else if(name == "autoscroll"){ //autoscroll
 		autoscroll_switch();
 	}else if(name == "reload"){
@@ -416,7 +417,7 @@ bool App::event_keydown(WPARAM wParam){
 		}else if(wParam=='N'){
             new_file();
         }else if(wParam=='B'){
-            chordsbase();
+            chordsbase_start();
         }else if(wParam==VK_ADD){
 			change_font_size(+1);
 		}else if(wParam==VK_SUBTRACT){

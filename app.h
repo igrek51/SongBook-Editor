@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#define WINVER 0x0501 //WINXP
 #include <windows.h>
 #include "config.h"
 #include "controls.h"
@@ -95,7 +96,7 @@ public:
     void cmd_switch(int change = 2);
     void fullscreen_set(bool full);
     void fullscreen_toggle();
-    void chordsbase();
+    void chordsbase_start();
     void quick_replace();
     void new_file();
     void open_chords_file(string filename);

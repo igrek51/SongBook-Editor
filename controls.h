@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#define WINVER 0x0501 //WINXP
 #include <windows.h>
 
 using namespace std;
@@ -54,6 +55,7 @@ public:
     int get_int(string control_name);
     void select_all(string control_name);
     void set_focus(string control_name);
+    void set_focus(HWND handle);
     //  Zmiana rozmiaru
     void resize(string control_name, int x, int y, int w=-1, int h=-1);
     //  Zmiana czcionki

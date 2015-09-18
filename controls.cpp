@@ -157,7 +157,12 @@ void Controls::set_focus(string control_name){
     Control* kontrolka = find_control(control_name);
     if(kontrolka==NULL) return;
     if(kontrolka->handle==NULL) return;
-    SetFocus(kontrolka->handle);
+    set_focus(kontrolka->handle);
+}
+
+void Controls::set_focus(HWND handle){
+    if(handle==NULL) return;
+    SetFocus(handle);
 }
 
 

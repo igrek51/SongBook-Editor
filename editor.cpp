@@ -164,7 +164,7 @@ void App::format_text(string* str){
 	get_selected_1(temp_sel_start, temp_sel_end);
 	temp_scroll = get_scroll();
 	SendMessage(Controls::geti()->find("editor"), EM_HIDESELECTION, 1, 0);
-	SetFocus(main_window);
+	Controls::geti()->set_focus(main_window);
 	//t³o
 	COLORREF background_color = RGB(Config::i()->color_background[0], Config::i()->color_background[1], Config::i()->color_background[2]);
 	SendMessage(Controls::geti()->find("editor"), EM_SETBKGNDCOLOR, 0, (LPARAM)((COLORREF)background_color));
