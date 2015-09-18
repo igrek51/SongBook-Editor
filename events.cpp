@@ -1,4 +1,5 @@
 #include "app.h"
+#include "system.h"
 #include <commctrl.h>
 #include <richedit.h>
 
@@ -439,12 +440,4 @@ bool App::event_keydown(WPARAM wParam){
 		}
 	}
     return true; //przechwycenie
-}
-
-bool App::is_control_pressed(){
-    return (GetAsyncKeyState(VK_CONTROL)&0x8000) && !(GetAsyncKeyState(VK_MENU)&0x8000);
-}
-
-bool App::is_alt_pressed(){
-    return ((GetAsyncKeyState(VK_MENU)&0x8000)&&!(GetAsyncKeyState(VK_CONTROL)&0x8000))||(GetAsyncKeyState(VK_RMENU)&0x8000);
 }

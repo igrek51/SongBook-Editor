@@ -1,5 +1,6 @@
 #include "app.h"
 #include "strings.h"
+#include "system.h"
 #include <richedit.h>
 #include <fstream>
 
@@ -122,43 +123,6 @@ void App::fullscreen_toggle(){
     }
 }
 
-class ProcessWindowsInfo {
-public:
-    DWORD ProcessID;
-    vector<HWND> Windows;
-    ProcessWindowsInfo(DWORD const AProcessID )
-        : ProcessID( AProcessID )
-    {
-    }
-};
-
-BOOL __stdcall EnumProcessWindowsProc(HWND hwnd, LPARAM lParam){
-    ProcessWindowsInfo *Info = reinterpret_cast<ProcessWindowsInfo*>( lParam );
-    DWORD WindowProcessID;
-    GetWindowThreadProcessId(hwnd, &WindowProcessID );
-
-    char *str2 = new char[512];
-	GetWindowText(hwnd, str2, 512);
-    string tytul = str2;
-    GetClassName(hwnd, str2, 512);
-    string classname = str2;
-	delete[] str2;
-
-    if(classname=="CabinetWClass")
-        cout<<"Szukam: "<<WindowProcessID<<", tytul: "<<tytul<<", klasa: "<<classname<<endl;
-
-    if(WindowProcessID == Info->ProcessID){
-
-        cout<<"ZNALAZL: "<<endl;
-
-        Info->Windows.push_back(hwnd);
-    }
-    return true;
-}
-
-vector<HWND>* window_list(string classname){
-
-}
 
 void App::chordsbase_start(){
     IO::geti()->log("Otwieranie bazy akordów...");
@@ -166,6 +130,7 @@ void App::chordsbase_start(){
         IO::geti()->error("Brak zdefiniowanej bazy akordów.");
         return;
     }
+    vector<HWND>* lista_przed = windows_list(Config::geti()->explorer_classname);
     SHELLEXECUTEINFO ShExecInfo = {0};
     ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
     ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
@@ -180,21 +145,38 @@ void App::chordsbase_start(){
         IO::geti()->error("B³¹d otwierania bazy akordów.");
         return;
     }
-    WaitForInputIdle(ShExecInfo.hProcess, INFINITE);
-    Sleep(1000);
-    //WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-
-    HANDLE process = ShExecInfo.hProcess;
-    cout<<"process: "<<process<<endl;
-    DWORD process_id = GetProcessId(process);
-    cout<<"process_id (szukany): "<<process_id<<endl;
-    ProcessWindowsInfo Info(process_id);
-    EnumWindows((WNDENUMPROC)EnumProcessWindowsProc, reinterpret_cast<LPARAM>(&Info));
-    // Use Info.Windows.....
-    cout<<"znalezione Okna: "<<Info.Windows.size()<<endl;
-
-    Controls::geti()->set_focus(main_window);
+    if(!Config::geti()->halfscreen) return;
+    IO::geti()->log("Szukanie okna bazy akordów...");
+    WaitForInputIdle(ShExecInfo.hProcess, 1000);
+    vector<HWND>* lista_po;
+    vector<HWND>* diff;
+    for(int i=Config::geti()->chordsbase_max_waits; i>=0; i--){
+        if(i==0){
+            IO::geti()->error("Nie znaleziono okna bazy akordów.");
+            delete lista_przed;
+            return;
+        }
+        lista_po = windows_list(Config::geti()->explorer_classname);
+        diff = windows_diff(lista_przed, lista_po);
+        delete lista_po;
+        if(diff->size()>0) break;
+        delete diff;
+        IO::geti()->log("Brak okna bazy akordów - czekam...");
+        Sleep(Config::geti()->chordsbase_wait);
+    }
+    delete lista_przed;
+    HWND okno_bazy = diff->at(0);
+    delete diff;
+    IO::geti()->log("Znaleziono okno bazy akordów - rozmieszczanie na po³owie ekranu");
+    RECT workArea;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &workArea, 0);
+    int cx = GetSystemMetrics(SM_CXSIZEFRAME);
+    int offset_x = (workArea.right - workArea.left) / 2 - cx;
+    int w = (workArea.right - workArea.left) / 2 + cx*2;
+    int h = workArea.bottom - workArea.top + GetSystemMetrics(SM_CYSIZEFRAME);
+    SetWindowPos(okno_bazy, HWND_TOP, workArea.left + offset_x, workArea.top, w, h, 0);
 }
+
 
 void App::quick_replace(){
     if(!Config::geti()->toolbar_show){

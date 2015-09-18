@@ -1,4 +1,5 @@
 #include "app.h"
+#include "system.h"
 #include <richedit.h>
 
 LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){

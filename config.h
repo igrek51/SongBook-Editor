@@ -34,10 +34,13 @@ public:
     string find_edit_placeholder;
     string replace_edit_placeholder;
     string output_control;
+    string explorer_classname;
     int control_height;
     int static_filename_width;
     int cmd_outputs_num;
     int cmd_outputs_space;
+    int chordsbase_wait;
+    int chordsbase_max_waits;
     //  Zmienne
     int window_w;
     int window_h;

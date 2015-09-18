@@ -26,10 +26,13 @@ Config::Config(){
     find_edit_placeholder = "Szukaj...";
     replace_edit_placeholder = "Zamieñ...";
     output_control = "cmd_output1";
+    explorer_classname = "CabinetWClass";
     control_height = 22;
     static_filename_width = 40;
     cmd_outputs_num = 5;
     cmd_outputs_space = 5;
+    chordsbase_wait = 50;
+    chordsbase_max_waits = 15;
     //Zmienne
     window_w = 600;
     window_h = 680;

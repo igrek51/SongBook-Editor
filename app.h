@@ -36,8 +36,6 @@ public:
     void event_appcommand(WPARAM wParam, LPARAM lParam);
     bool event_syskeydown(WPARAM wParam);
 	bool event_keydown(WPARAM wParam);
-    bool is_control_pressed();
-    bool is_alt_pressed();
     //  subclassing
 	WNDPROC windowProc, wndproc_new;
 	LRESULT CALLBACK subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
