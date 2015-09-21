@@ -68,6 +68,7 @@ void App::event_init(HWND *window){
     Menu* menu_edycja = new Menu();
     menu_edycja->add_option("Analizuj i napraw", "analyze");
     menu_edycja->add_separator();
+    menu_edycja->add_option("Cofnij [Ctrl + Z]", "undo");
     menu_edycja->add_option("Szukaj [Ctrl + F]", "find");
     menu_edycja->add_option("Zamieñ", "replace");
     menu_edycja->add_option("Szybka zamiana tekstu [Ctrl + T]", "quick_replace");
@@ -203,6 +204,8 @@ void App::event_button(WPARAM wParam){
             return;
         }
 		znajdz();
+	}else if(name == "undo"){
+        undo->revert();
 	}else if(name == "base"){ //baza akordów
         chordsbase_start();
 	}else if(name == "autoscroll"){ //autoscroll

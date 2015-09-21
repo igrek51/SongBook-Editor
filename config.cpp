@@ -33,6 +33,7 @@ Config::Config(){
     cmd_outputs_space = 5;
     chordsbase_wait = 50;
     chordsbase_max_waits = 15;
+    undos_number = 10;
     //Zmienne
     window_w = 600;
     window_h = 680;

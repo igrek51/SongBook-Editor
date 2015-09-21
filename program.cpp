@@ -208,6 +208,7 @@ void App::new_file(){
     Controls::i()->set_text("filename_edit", Config::geti()->opened_file);
 	Config::geti()->opened_file = "";
 	update_title();
+    undo->reset();
 	IO::geti()->echo("Nowy plik");
 }
 
@@ -229,6 +230,7 @@ void App::open_chords_file(string filename){
 	update_title();
 	Config::geti()->transposed = 0;
 	autoscroll_off();
+    undo->reset(); //reset historii zmian
 }
 
 void App::save_chords_file(){
@@ -261,6 +263,7 @@ void App::save_chords_file(){
 
 void App::analyze(){
     int licznik = 0;
+    undo->save();
     while(skanuj_1()) licznik++;
     if(licznik==0) IO::geti()->echo("Brak zmian");
     else IO::geti()->echo("Wprowadzono zmiany");
@@ -270,6 +273,7 @@ void App::transpose(int transponuj){
 	if(transponuj==0) return;
 	Config::geti()->transposed += transponuj;
     string* str = load_text();
+    undo->save(str);
     string trans = transpose_string(*str, transponuj);
     delete str;
 	Controls::geti()->set_text("editor", trans);

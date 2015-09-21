@@ -141,6 +141,7 @@ bool App::skanuj_1(){
 
 void App::usun_akordy(){
 	string* str = load_text();
+    undo->save(str);
     if(last_sel_end > str->length()) last_sel_end = str->length();
     bool is_selection = true;
     if(last_sel_start>=last_sel_end){ //nie by³o zaznaczenia
@@ -173,6 +174,7 @@ void App::usun_akordy(){
 
 void App::usun_wersje(){
 	string* str = load_text();
+    undo->save(str);
 	int nawias = 0;
 	for(int i=0; i<(int)str->length(); i++){
 		if(string_char(str, i)=='['){
@@ -202,6 +204,7 @@ void App::zamien(){
     string replace_edit = Controls::geti()->get_text("replace_edit");
     if(replace_edit == Config::i()->replace_edit_placeholder) replace_edit = "";
 	string* str = load_text();
+    undo->save(str);
 	string nowy = "";
 	int licznik = 0;
 	unsigned int sel_start = 0, sel_end = str->length();
@@ -300,6 +303,7 @@ void App::znajdz(){
 
 void App::wstaw_tekst(int nrt){
 	if(nrt<1 || nrt>9) return;
+    undo->save();
 	string add_text = Config::geti()->tekst_wstaw[nrt-1];
 	if(add_text.length()==0){
 		stringstream ss;
@@ -329,6 +333,7 @@ void App::zapisz_tekst(int nrt){
 
 void App::dodaj_nawias(){
 	string* str = load_text();
+    undo->save(str);
 	if(last_sel_start == last_sel_end){
 		IO::geti()->error("Nie zaznaczono ¿adnego fragmentu");
 		delete str;
@@ -352,6 +357,7 @@ void App::dodaj_alternatywne(){
 		return;
 	}
 	string* str = load_text();
+    undo->save(str);
 	string nowy="", akord="";
 	char ch;
 	int nawias=0;
@@ -427,6 +433,7 @@ void App::insert_pattern(){
         return;
     }
     string* str = load_text();
+    undo->save(str);
     unsigned int sel_start, sel_end;
     if(!get_selected(sel_start, sel_end, str)){
         IO::geti()->error("Brak zaznaczenia");

@@ -18,6 +18,7 @@ App::App(){
     version = VERSION;
     version += " (win)";
     instancja2 = NULL;
+    undo = new Undo();
 }
 
 App::~App(){

@@ -108,6 +108,9 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 					}else if(wParam=='A'){
                         select_all();
                         return 0;
+					}else if(wParam=='Z'){
+                        undo->revert();
+                        return 0;
 					}else if(wParam=='R'){
                         refresh_text();
                         return 0;
@@ -130,8 +133,7 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 						zapisz_tekst(wParam-'1'+1);
 						return 0;
 					}
-				}
-				if(is_alt_pressed()){ //alt
+				}else if(is_alt_pressed()){ //alt
 					if(wParam>='1' && wParam<='9'){
 						wstaw_tekst(wParam-'1'+1);
 						return 0;
@@ -139,6 +141,11 @@ LRESULT CALLBACK App::subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wPara
 				}
 			}break;
 			case WM_CHAR:{
+                //dla ka¿dego znaku (bez controla)
+                if(!is_control_pressed()){
+                    undo->save();
+                }
+                //undo->save();
 				if(wParam == ']'){
 					string add_text = "]";
 					SendMessage(Controls::geti()->find("editor"), EM_REPLACESEL, 0, (LPARAM)add_text.c_str()); //wstawienie znaku

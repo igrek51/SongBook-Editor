@@ -35,6 +35,7 @@ public:
     string replace_edit_placeholder;
     string output_control;
     string explorer_classname;
+    int undos_number;
     int control_height;
     int static_filename_width;
     int cmd_outputs_num;

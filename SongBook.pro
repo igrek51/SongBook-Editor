@@ -17,7 +17,8 @@ SOURCES +=\
     music.cpp \
     editor.cpp \
     strings.cpp \
-    system.cpp
+    system.cpp \
+    undo.cpp
 
 DISTFILES += \
     resource.rc
@@ -32,5 +33,6 @@ HEADERS += \
     controls.h \
     music.h \
     strings.h \
-    system.h
+    system.h \
+    undo.h
 

@@ -10,6 +10,8 @@
 #include "files.h"
 #include "io.h"
 #include "music.h"
+#include "undo.h"
+#include "system.h"
 
 using namespace std;
 
@@ -86,6 +88,8 @@ public:
     void save_pattern();
     void insert_pattern();
     vector<string> pattern;
+    //  UNDO
+    Undo* undo;
 	//  program - inne funkcje
     void update_title();
     void controls_fonts_set();
