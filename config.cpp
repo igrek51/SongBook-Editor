@@ -22,7 +22,7 @@ Config::Config(){
     config_filename = "conf.ini";
     log_filename = "log.txt";
     buttons_fontface = "MS Shell Dlg 2";
-    program_name = "Igrek SongBook Editor";
+    program_name = "Igrek SongBook";
     find_edit_placeholder = "Szukaj...";
     replace_edit_placeholder = "Zamieñ...";
     output_control = "cmd_output1";

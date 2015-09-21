@@ -9,7 +9,7 @@ SRC = *.cpp
 
 HEADERS = *.h -version.h
 
-OUTPUT = SongBook_Editor.exe
+OUTPUT = SongBook.exe
 
 LIBS = 
 

@@ -1,4 +1,4 @@
-TARGET = SongBook_Editor
+TARGET = SongBook
 TEMPLATE = app
 
 SOURCES +=\
