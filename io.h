@@ -33,6 +33,7 @@ public:
     //  Message Box
     void message_box(string title, string message = "");
     int message_box_yesnocancel(string title, string message);
+    int message_box_yesno(string title, string message);
     //  ARGUMENTY URUCHOMIENIA
     vector<string> args;
     void get_args();

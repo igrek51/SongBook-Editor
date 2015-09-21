@@ -144,6 +144,13 @@ int IO::message_box_yesnocancel(string title, string message){
     return 0;
 }
 
+int IO::message_box_yesno(string title, string message){
+    int answer = MessageBox(NULL, message.c_str(), title.c_str(), MB_YESNO);
+    if(answer == IDYES) return 1;
+    if(answer == IDNO) return 2;
+    return 0;
+}
+
 
 void IO::get_args(){
     get_args_from(GetCommandLine());

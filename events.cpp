@@ -447,7 +447,7 @@ bool App::event_keydown(WPARAM wParam){
 
 bool App::event_close(){
     if(undo->changed){
-        int answer = IO::geti()->message_box_yesnocancel("Zapisywanie zmian", "Zmiany wprowadzone w pliku nie zosta³y zapisane?\r\nCzy zapisaæ zmiany?");
+        int answer = IO::geti()->message_box_yesnocancel("Zapisywanie zmian", "Zmiany wprowadzone w pliku nie zosta³y zapisane?\r\nCzy chcesz zapisaæ zmiany?");
         if(answer == 3) return true; //przechwycenie
         if(answer == 1){ //zapisywanie zmian
             if(!save_chords_file()){ //jeœli nie uda³o siê zapisaæ

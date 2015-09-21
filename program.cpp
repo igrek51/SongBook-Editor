@@ -242,6 +242,18 @@ bool App::save_chords_file(){
 		IO::geti()->error("Podaj nazwê pliku!");
 		return false;
 	}
+    if(Config::geti()->transposed%12 != 0){
+        stringstream ss;
+        ss<<"Plik zapisywany jest w nowej tonacji: ";
+        if(Config::geti()->transposed>0) ss<<"+";
+		ss<<Config::geti()->transposed;
+        ss<<"\r\nCzy chcesz kontynuowaæ?";
+        int answer = IO::geti()->message_box_yesno("Ostrze¿enie", ss.str());
+        if(answer==2){
+            IO::geti()->echo("Przerwano zapisywanie pliku.");
+            return false;
+        }
+	}
 	Config::geti()->opened_file = new_filename;
 	string* str = load_text();
     if(!save_file(Config::geti()->opened_file, *str)){
@@ -251,15 +263,7 @@ bool App::save_chords_file(){
 	delete str;
 	update_title();
     undo->changed = false;
-	stringstream ss;
-	ss<<"Zapisano plik";
-	if(Config::geti()->transposed%12 != 0){
-		ss<<" (Zapis w nowej tonacji: ";
-		if(Config::geti()->transposed>0) ss<<"+";
-		ss<<Config::geti()->transposed;
-		ss<<" !)";
-	}
-	IO::geti()->echo(ss.str());
+	IO::geti()->echo("Zapisano plik");
     return true;
 }
 
