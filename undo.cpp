@@ -6,6 +6,11 @@ UndoHistory::UndoHistory(string *str){
     content = *str;
 }
 
+
+Undo::Undo(){
+    changed = false;
+}
+
 void Undo::revert(){
     if(undos.size()==0){
         IO::geti()->error("Brak zapisanej historii pliku do przywrócenia.");
@@ -32,6 +37,7 @@ void Undo::save(string *str){
             undos.erase(undos.begin() + undos.size()-1); //usuwanie ostatniego
         }
     }
+    changed = true;
 }
 
 void Undo::save(){
@@ -45,4 +51,5 @@ void Undo::reset(){
         delete undos.at(i);
     }
     undos.clear();
+    changed = false;
 }

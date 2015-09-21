@@ -83,6 +83,11 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         case 0x0319:{ //APP_COMMAND
             App::geti()->event_appcommand(wParam,lParam);
         }break;
+        case WM_CLOSE:{
+            if(App::geti()->event_close()){
+                return 0;
+            }
+        }break;
 		case WM_DESTROY:{
 			delete App::geti();
 			return 0;

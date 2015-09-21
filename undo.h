@@ -17,7 +17,9 @@ public:
 
 class Undo {
 public:
+    Undo();
     vector<UndoHistory*> undos; //historia zmian: element 0 - najnowszy
+    bool changed;
     void revert();
     void save(string *str);
     void save();

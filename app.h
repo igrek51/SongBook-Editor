@@ -38,6 +38,7 @@ public:
     void event_appcommand(WPARAM wParam, LPARAM lParam);
     bool event_syskeydown(WPARAM wParam);
 	bool event_keydown(WPARAM wParam);
+    bool event_close();
     //  subclassing
 	WNDPROC windowProc, wndproc_new;
 	LRESULT CALLBACK subclass_wndproc_new(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -102,7 +103,7 @@ public:
     void quick_replace();
     void new_file();
     void open_chords_file(string filename);
-	void save_chords_file();
+	bool save_chords_file();
     void analyze();
     void transpose(int transponuj);
 };

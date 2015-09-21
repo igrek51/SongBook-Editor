@@ -136,6 +136,14 @@ void IO::message_box(string title, string message){
     MessageBox(NULL, message.c_str(), title.c_str(), MB_OK|MB_ICONINFORMATION);
 }
 
+int IO::message_box_yesnocancel(string title, string message){
+    int answer = MessageBox(NULL, message.c_str(), title.c_str(), MB_YESNOCANCEL);
+    if(answer == IDYES) return 1;
+    if(answer == IDNO) return 2;
+    if(answer == IDCANCEL) return 3;
+    return 0;
+}
+
 
 void IO::get_args(){
     get_args_from(GetCommandLine());

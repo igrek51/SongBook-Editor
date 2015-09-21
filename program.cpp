@@ -233,23 +233,24 @@ void App::open_chords_file(string filename){
     undo->reset(); //reset historii zmian
 }
 
-void App::save_chords_file(){
+bool App::save_chords_file(){
     string new_filename = Controls::geti()->get_text("filename_edit");
 	if(new_filename.length()==0){
         if(!Config::geti()->toolbar_show){
             toolbar_switch(1);
         }
 		IO::geti()->error("Podaj nazwê pliku!");
-		return;
+		return false;
 	}
 	Config::geti()->opened_file = new_filename;
 	string* str = load_text();
     if(!save_file(Config::geti()->opened_file, *str)){
         delete str;
-        return;
+        return false;
     }
 	delete str;
 	update_title();
+    undo->changed = false;
 	stringstream ss;
 	ss<<"Zapisano plik";
 	if(Config::geti()->transposed%12 != 0){
@@ -259,6 +260,7 @@ void App::save_chords_file(){
 		ss<<" !)";
 	}
 	IO::geti()->echo(ss.str());
+    return true;
 }
 
 void App::analyze(){
