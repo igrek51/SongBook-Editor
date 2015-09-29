@@ -187,25 +187,6 @@ bool IO::is_arg(string parametr){
 }
 
 
-void IO::set_workdir(){
-    if(args.size()==0) return;
-    string arg0 = trim_quotes(args.at(0));
-    int last_slash = -1;
-	for(int i=(int)arg0.length()-1; i>=0; i--){ //szukaj od koñca
-        if(arg0[i]=='\\' || arg0[i]=='/'){
-            last_slash = i;
-            break;
-        }
-	}
-	if(last_slash==-1) return; //nie by³o slasha
-	string workdir = arg0.substr(0, last_slash);
-    if(SetCurrentDirectory(workdir.c_str())==0){
-        message_box("B³¹d", "B³¹d zmiany katalogu roboczego na: "+workdir);
-    }
-    log("Katalog roboczy: "+workdir);
-}
-
-
 void IO::clock_checkpoint(string comment){
     clock_t aktualny = clock();
     stringstream ss;

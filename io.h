@@ -39,7 +39,6 @@ public:
     void get_args();
     void get_args_from(string args_text);
     bool is_arg(string parametr);
-    void set_workdir();
     //  Pomiar czasu wykonania
     clock_t clock_last;
     void clock_checkpoint(string comment);

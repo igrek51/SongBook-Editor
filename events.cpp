@@ -8,7 +8,7 @@ void App::event_init(HWND *window){
     //parametry
 	IO::geti()->get_args();
 	//katalog roboczy
-	IO::geti()->set_workdir();
+	set_workdir();
 	//ustawienia
     Config::geti()->load_from_file();
     //jeœli aplikacja jest ju¿ uruchomiona
@@ -109,6 +109,7 @@ void App::event_init(HWND *window){
     menu_ustawienia->add_option("Plik konfiguracyjny", "config");
     menu_ustawienia->add_option("Wiersz poleceñ [Ctrl + `]", "cmd_toggle");
     menu_ustawienia->add_option("Dziennik zdarzeñ", "log");
+    menu_ustawienia->add_option("Skojarz pliki .crd z programem", "associate_files");
     Menu* menu_pomoc = new Menu();
     menu_pomoc->add_option("Polecenia i skróty klawiszowe", "help");
     menu_pomoc->add_option("O programie", "info");
@@ -255,6 +256,8 @@ void App::event_button(WPARAM wParam){
         dodaj_alternatywne();
     }else if(name == "log"){
         ShellExecute(0, "open", Config::geti()->log_filename.c_str(), "", 0, SW_SHOW);
+    }else if(name == "associate_files"){
+        associate_files();
     }else if(name == "help"){
         show_help();
     }else if(name == "info"){

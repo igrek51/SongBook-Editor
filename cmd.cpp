@@ -153,7 +153,7 @@ void App::show_help(){
     ss<<"log - dziennik zdarzeñ"<<endl;
     ss<<"config - otwórz plik konfiguracyjny"<<endl;
     ss<<"config reload - wczytaj ustawienia"<<endl;
-    ss<<"dir - otwórz folder roboczy"<<endl;
+    ss<<"dir - otwórz katalog roboczy"<<endl;
     ss<<"opened_file - wyœwietl nazwê otwartego pliku"<<endl;
     ss<<"fontface [czcionka] - zmieñ czcionkê edytora"<<endl;
     ss<<"fontsize [rozmiar] - zmieñ rozmiar czcionki edytora"<<endl;

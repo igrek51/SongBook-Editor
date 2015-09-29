@@ -25,4 +25,10 @@ bool EnumProcessWindowsProc(HWND hwnd, LPARAM lParam);
 vector<HWND>* windows_list(string classname);
 vector<HWND>* windows_diff(vector<HWND>* hwnds1, vector<HWND>* hwnds2);
 
+void set_workdir();
+string get_app_path();
+
+bool set_registry_default_value(HKEY hRootKey, string subkey, string value);
+bool set_registry_value(HKEY hRootKey, string subkey, string variable, string value);
+
 #endif

@@ -106,6 +106,7 @@ public:
 	bool save_chords_file();
     void analyze();
     void transpose(int transponuj);
+    void associate_files();
 };
 
 #endif // APP_H

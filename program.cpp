@@ -290,3 +290,28 @@ void App::transpose(int transponuj){
 	ss<<Config::geti()->transposed;
 	IO::geti()->echo(ss.str());
 }
+
+void App::associate_files(){
+    string exe_path = get_app_path();
+    IO::geti()->echo("exe_path: "+exe_path);
+    string command_value = "\""+exe_path+"\" \"%1\"";
+    string icon = exe_path+",0";
+    //HKEY_CURRENT_USER
+    if(!set_registry_default_value(HKEY_CURRENT_USER, "SOFTWARE\\Classes\\crd_auto_file\\shell\\open\\command", command_value)) return;
+    if(!set_registry_default_value(HKEY_CURRENT_USER, "SOFTWARE\\Classes\\crd_auto_file\\DefaultIcon", icon)) return;
+    if(!set_registry_default_value(HKEY_CURRENT_USER, "SOFTWARE\\Classes\\.crd", "crd_auto_file")) return;
+    //HKEY_CLASSES_ROOT
+    if(!set_registry_default_value(HKEY_CLASSES_ROOT, "crd_auto_file\\shell\\open\\command", command_value)) return;
+    if(!set_registry_default_value(HKEY_CLASSES_ROOT, "crd_auto_file\\DefaultIcon", icon)) return;
+    if(!set_registry_default_value(HKEY_CLASSES_ROOT, ".crd", "crd_auto_file")) return;
+    //HKEY_LOCAL_MACHINE
+    if(!set_registry_default_value(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\crd_auto_file\\shell\\open\\command", command_value)) return;
+    if(!set_registry_default_value(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\crd_auto_file\\DefaultIcon", icon)) return;
+    if(!set_registry_default_value(HKEY_LOCAL_MACHINE, "SOFTWARE\\Classes\\.crd", "crd_auto_file")) return;
+    //Applications/SongBook.exe
+    if(!set_registry_default_value(HKEY_CLASSES_ROOT, "Applications\\SongBook.exe\\shell\\open\\command", command_value)) return;
+    if(!set_registry_default_value(HKEY_CURRENT_USER, "SOFTWARE\\Classes\\Applications\\SongBook.exe\\shell\\open\\command", command_value)) return;
+    //user choice
+    if(!set_registry_value(HKEY_CURRENT_USER, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.crd\\UserChoice", "ProgId", "Applications\\SongBook.exe")) return;
+    IO::geti()->echo("Pliki .crd zosta³y skojarzone z programem.");
+}
