@@ -1,0 +1,3 @@
+[submodule "dist/guitarDB"]
+	path = dist/guitarDB
+	url = /mnt/data/Igrek/guitarDB/
